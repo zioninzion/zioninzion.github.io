@@ -90,7 +90,7 @@ p {
 }
 
 #music-square:hover {
-  display: block;
+  display: inline-block;
   transform: translate(-1px, -1px);
 }
 
