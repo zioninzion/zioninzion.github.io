@@ -25,5 +25,20 @@
     <div class="body-content">
       <p>Coming soon!</p>
     </div>
+    <script>
+      isKeyPressed = {
+              'l': false,
+              'h': false,
+            }
+      document.onkeydown = (keyDownEvent) => {
+              isKeyPressed[keyDownEvent.key] = true;
+              if (isKeyPressed["l"]) {
+                      window.location.href = "music/withthose.html";
+                    };
+              if (isKeyPressed["h"]) {
+                      window.location.href = "about.html";
+                    }
+            };
+    </script>
   </body>
 </html>

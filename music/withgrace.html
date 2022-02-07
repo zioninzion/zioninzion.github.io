@@ -27,5 +27,28 @@
       <p><b>Chords</b></p>
       <p>Coming soon!</p>
     </div>
+    <script>
+      isKeyPressed = {
+              'l': false,
+              'h': false,
+              'j': false,
+              'k': false,
+            }
+      document.onkeydown = (keyDownEvent) => {
+              isKeyPressed[keyDownEvent.key] = true;
+              if (isKeyPressed["l"]) {
+                      window.location.href = "../index.html";
+                    };
+              if (isKeyPressed["h"]) {
+                      window.location.href = "../apogee.html";
+                    }
+              if (isKeyPressed["j"]) {
+                      window.location.href = "other.html";
+                    }
+              if (isKeyPressed["k"]) {
+                      window.location.href = "withthose.html";
+                    }
+            };
+    </script>
   </body>
 </html>
