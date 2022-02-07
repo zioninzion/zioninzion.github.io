@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home - Zion in Zion</title>
     <link rel="stylesheet" href="css/styles.css">
+    <script src="https://kit.fontawesome.com/90134a5084.js" crossorigin="anonymous"></script>
   </head>
   <body>
     <div class="nav" id="myNav">
@@ -21,8 +22,10 @@
           <a href="music/other.html">Other</a>
         </div>
       </div>
+      <a href="settings.html" class="fas fa-cog" id="cog"></a>
     </div>
     <div class="body-content">
+      <div class="title">Home</div>
       <div style="text-align: center">
         <p>Welcome!</p>
       </div>
@@ -31,6 +34,7 @@
       isKeyPressed = {
               'l': false,
               'h': false,
+              's': false,
             }
       document.onkeydown = (keyDownEvent) => {
               isKeyPressed[keyDownEvent.key] = true;
@@ -39,6 +43,9 @@
                     };
               if (isKeyPressed["h"]) {
                       window.location.href = "music/withthose.html";
+                    }
+              if (isKeyPressed["s"]) {
+                      window.location.href = "settings.html";
                     }
             };
     </script>

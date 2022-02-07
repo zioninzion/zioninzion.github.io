@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Apogee - Zion in Zion</title>
+    <title>Settings - Zion in Zion</title>
     <link rel="stylesheet" href="css/styles.css">
     <script src="https://kit.fontawesome.com/90134a5084.js" crossorigin="anonymous"></script>
   </head>
@@ -12,7 +12,7 @@
     <div class="nav" id="myNav">
       <a href="index.html">Home</a>
       <a href="about.html">About</a>
-      <a href="apogee.html" class=active>Apogee</a>
+      <a href="apogee.html">Apogee</a>
       <div class="dd">
         <button class="dbtn">Music
         </button>
@@ -22,28 +22,35 @@
           <a href="music/other.html">Other</a>
         </div>
       </div>
-      <a href="settings.html" class="fas fa-cog" id="cog"></a>
+      <a href="settings.html" class="fas fa-cog" id="cog" style="color:white"></a>
     </div>
     <div class="body-content">
-      <div class="title">Apogee</div>
-      <p>Coming soon!</p>
+      <div class="title">Settings</div>
+      <div style="text-align: center">
+        <div style="text-align: left">
+          <b>Keyboard Navigation:</b>
+          <ul>
+            <li><b>h</b> - move left</li>
+            <li><b>l</b> - move right</li>
+            <li><b>j</b> - move down</li>
+            <li><b>k</b> - move up</li>
+            <li><b>s</b> - Settings</li>
+          </ul>
+        </div>
+      </div>
     </div>
     <script>
       isKeyPressed = {
               'l': false,
               'h': false,
-              's': false,
             }
       document.onkeydown = (keyDownEvent) => {
               isKeyPressed[keyDownEvent.key] = true;
               if (isKeyPressed["l"]) {
-                      window.location.href = "music/withthose.html";
+                      window.location.href = "index.html";
                     };
               if (isKeyPressed["h"]) {
-                      window.location.href = "about.html";
-                    }
-              if (isKeyPressed["s"]) {
-                      window.location.href = "settings.html";
+                      window.location.href = "music/withthose.html";
                     }
             };
     </script>

@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Other Music - Zion in Zion</title>
     <link rel="stylesheet" href="../css/styles.css">
+    <script src="https://kit.fontawesome.com/90134a5084.js" crossorigin="anonymous"></script>
   </head>
   <body>
     <div class="nav" id="myNav">
@@ -21,8 +22,10 @@
           <a href="other.html" class="active">Other</a>
         </div>
       </div>
+      <a href="../settings.html" class="fas fa-cog" id="cog"></a>
     </div>
     <div class="body-content">
+      <div class="title">Music</div>
       <p>Coming soon!</p>
     </div>
     <script>
@@ -31,6 +34,7 @@
               'h': false,
               'j': false,
               'k': false,
+              's': false,
             }
       document.onkeydown = (keyDownEvent) => {
               isKeyPressed[keyDownEvent.key] = true;
@@ -45,6 +49,9 @@
                     }
               if (isKeyPressed["k"]) {
                       window.location.href = "withgrace.html";
+                    }
+              if (isKeyPressed["s"]) {
+                      window.location.href = "../settings.html";
                     }
             };
     </script>

@@ -12,6 +12,13 @@ p {
   padding: 5px 15px;
 }
 
+.body-content .title {
+  text-align: center;
+  font-size: 73px;
+  font-weight: bold;
+  padding: 15px 15px;
+}
+
 .nav {
   overflow: hidden;
   background-color: #111;
@@ -25,6 +32,10 @@ p {
   padding: 15px 15px;
   text-decoration: none;
   font-size: 15px;
+}
+
+#cog{
+  float: right;
 }
 
 .nav .active {
