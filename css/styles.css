@@ -89,7 +89,9 @@ p {
   color: #ff7142;
 }
 
-#music_square:hover {
+#music-square:hover {
+  display: block;
+  transform: translate(-1px, -1px);
 }
 
 .withthose_pdf {
