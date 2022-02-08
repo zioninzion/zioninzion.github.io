@@ -10,9 +10,14 @@ p {
 
 .body-content {
   margin: auto;
-  width: 61.8%;
+  width: 73%;
+  max-width: 700px;
   min-width: 350px;
   padding: 5px 15px;
+}
+
+.texts {
+  line-height: 150%;
 }
 
 .title {
