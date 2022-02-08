@@ -15,11 +15,16 @@ p {
   padding: 5px 15px;
 }
 
-.body-content .title {
+.title {
   text-align: center;
   font-size: 73px;
   font-weight: bold;
   padding: 15px 15px;
+}
+
+.heading {
+  font-size: 37px;
+  font-weight: bold;
 }
 
 .body-content .listed {
@@ -113,6 +118,10 @@ p {
 #music-square:hover {
   display: inline-block;
   transform: translate(-2px, -2px);
+
+}
+.withthose {
+  color: #4284ff;
 }
 
 .withthose_pdf {
@@ -128,6 +137,10 @@ p {
 .withthose_pdf:hover {
   color: #4284ff;
   text-decoration: underline;
+}
+
+.withgrace {
+  color: #ff7142;
 }
 
 .withgrace_pdf:link {
