@@ -14,7 +14,8 @@
       <a href="about.html">About</a>
       <a href="apogee.html" class=active>Apogee</a>
       <div class="dd">
-        <button class="dbtn">Music
+        <button class="dbtn">
+          <a href="music.html">Music</a>
         </button>
         <div class="dd-cont">
           <a href="music/withthose.html" id="withthose">With those</a>
@@ -37,7 +38,7 @@
       document.onkeydown = (keyDownEvent) => {
               isKeyPressed[keyDownEvent.key] = true;
               if (isKeyPressed["l"]) {
-                      window.location.href = "music/withthose.html";
+                      window.location.href = "music.html";
                     };
               if (isKeyPressed["h"]) {
                       window.location.href = "about.html";
