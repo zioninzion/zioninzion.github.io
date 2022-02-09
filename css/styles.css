@@ -35,7 +35,7 @@ p {
   text-align: center;
 }
 
-.body-content .listed p{
+.body-content .listed a{
 }
 
 .nav {
@@ -106,7 +106,8 @@ p {
 
 .music-square-list {
   width: 173px;
-  padding: 0px 10px 15px 10px;
+  border-radius: 48px;
+  padding: 15px
 }
 
 .music-square-list:hover {
@@ -115,11 +116,12 @@ p {
 }
 
 
-#music-square {
+.music-square {
   width: 100px;
+  border-radius: 19px;
 }
 
-#music-square:hover {
+.music-square:hover {
   display: inline-block;
   transform: translate(-2px, -2px);
 
