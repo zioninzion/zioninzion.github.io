@@ -27,7 +27,9 @@
     </div>
     <div class="body-content">
       <div class="title">Music <p class="withthose heading">With those<p></div>
-      <p><a href="https://soundcloud.com/withthose" target="_blank"><img src="withthose/img/With those.png" class="music-square"></img></a></p>
+      <a href="https://soundcloud.com/withthose" target="_blank"><img src="withthose/img/With those.png" class="music-square"></img></a>
+      <a href="other.html"><img src="other/img/other.png" class="music-square-little"></img></a>
+      <a href="withgrace.html"><img src="withgrace/img/With grace.png" class="music-square-little"></img></a>
       <div class="texts">
         <p><b>Albums</b></p>
         <ul>
@@ -73,19 +75,15 @@
       isKeyPressed = {
               'l': false,
               'h': false,
-              'j': false,
               'k': false,
               's': false,
             }
       document.onkeydown = (keyDownEvent) => {
               isKeyPressed[keyDownEvent.key] = true;
-              if (isKeyPressed["l"]) {
-                      window.location.href = "../index.html";
-                    };
               if (isKeyPressed["h"]) {
-                      window.location.href = "../apogee.html";
+                      window.location.href = "other.html";
                     }
-              if (isKeyPressed["j"]) {
+              if (isKeyPressed["l"]) {
                       window.location.href = "withgrace.html";
                     }
               if (isKeyPressed["k"]) {

@@ -86,6 +86,8 @@ p {
   background-color: #111;
   width: 120px;
   z-index: 1;
+  border-bottom-left-radius: 15px;
+  border-bottom-right-radius: 15px;
 }
 
 .nav a:hover, .dd:hover .dbtn {
@@ -126,6 +128,20 @@ p {
   transform: translate(-2px, -2px);
 
 }
+
+.music-square-little {
+  width: 73px;
+  border-radius: 24px;
+  text-decoration:none;
+  float: right;
+  padding: 10px;
+}
+
+.music-square-little:hover {
+  display: inline-block;
+  transform: translate(-1px, -1px);
+}
+
 .withthose {
   color: #4284ff;
 }

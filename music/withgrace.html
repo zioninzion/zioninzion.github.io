@@ -27,7 +27,9 @@
     </div>
     <div class="body-content">
       <div class="title">Music <p class="withgrace heading">With grace<p></div>
-      <p><a href="https://soundcloud.com/withcharis" target="_blank"><img src="withgrace/img/With grace.png" class="music-square"></img></a></p>
+      <a href="https://soundcloud.com/withcharis" target="_blank"><img src="withgrace/img/With grace.png" class="music-square"></img></a>
+      <a href="withthose.html"><img src="withthose/img/With those.png" class="music-square-little"></img></a>
+      <a href="other.html"><img src="other/img/other.png" class="music-square-little"></img></a>
       <p><b>Chords</b></p>
       <p class="texts">Coming soon!</p>
     </div>
@@ -35,23 +37,19 @@
       isKeyPressed = {
               'l': false,
               'h': false,
-              'j': false,
               'k': false,
               's': false,
             }
       document.onkeydown = (keyDownEvent) => {
               isKeyPressed[keyDownEvent.key] = true;
               if (isKeyPressed["l"]) {
-                      window.location.href = "../index.html";
+                      window.location.href = "other.html";
                     };
               if (isKeyPressed["h"]) {
-                      window.location.href = "../apogee.html";
-                    }
-              if (isKeyPressed["j"]) {
-                      window.location.href = "other.html";
+                      window.location.href = "withthose.html";
                     }
               if (isKeyPressed["k"]) {
-                      window.location.href = "withthose.html";
+                      window.location.href = "../music.html";
                     }
               if (isKeyPressed["s"]) {
                       window.location.href = "../settings.html";
