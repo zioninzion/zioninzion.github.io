@@ -108,7 +108,7 @@ p {
 
 .music-square-list {
   width: 173px;
-  border-radius: 48px;
+  border-radius: 102px;
   padding: 15px
 }
 
@@ -120,7 +120,7 @@ p {
 
 .music-square {
   width: 100px;
-  border-radius: 19px;
+  border-radius: 50px;
 }
 
 .music-square:hover {
@@ -129,9 +129,14 @@ p {
 
 }
 
+.music-square-static {
+  width: 100px;
+  border-radius: 50px;
+}
+
 .music-square-little {
   width: 73px;
-  border-radius: 24px;
+  border-radius: 47px;
   text-decoration:none;
   float: right;
   padding: 10px;
