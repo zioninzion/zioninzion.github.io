@@ -134,6 +134,26 @@ p {
   border-radius: 50px;
 }
 
+.withthose-soundcloud {
+  width: 100px;
+  border-radius: 50px;
+}
+
+.withthose-soundcloud:hover {
+  display: inline-block;
+  transform: translate(-1px, -1px);
+}
+
+.withgrace-soundcloud {
+  width: 100px;
+  border-radius: 50px;
+}
+
+.withgrace-soundcloud:hover {
+  display: inline-block;
+  transform: translate(-1px, -1px);
+}
+
 .music-square-little {
   width: 73px;
   border-radius: 47px;
