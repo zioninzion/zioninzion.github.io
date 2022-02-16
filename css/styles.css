@@ -8,6 +8,15 @@ p {
   font-size: 18px;
 }
 
+.unsb {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
 .body-content {
   margin: auto;
   width: 73%;
@@ -190,7 +199,7 @@ p {
   color: #ff7142;
 }
 
-.withgrace_pdf:link {
+.withgrace_pdf {
   color: #ff7142;
   text-decoration: none;
 }
