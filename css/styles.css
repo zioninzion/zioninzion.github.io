@@ -233,7 +233,7 @@ p {
   display: none;
 }
 
-.ref:active + .ver {
+.ref:hover + .ver {
   display: inline;
   font-weight: bold;
 }
