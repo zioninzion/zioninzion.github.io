@@ -228,3 +228,19 @@ p {
   color: blue;
   text-decoration: underline;
 }
+
+.ver {
+  display: none;
+}
+
+.ver:hover + .ref{
+  display: none;
+}
+
+.ref:hover {
+}
+
+.ref:hover + .ver {
+  display: inline;
+  font-weight: bold;
+}
