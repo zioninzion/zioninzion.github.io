@@ -53,6 +53,7 @@ p {
   position: fixed;
   overflow: hidden;
   background-color: #111;
+  opacity: 0.97;
 }
 
 .nav a {
@@ -96,6 +97,7 @@ p {
 }
 
 .dd-cont {
+  opacity: 0.95;
   display: none;
   position: fixed;
   background-color: #111;
