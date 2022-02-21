@@ -19,6 +19,7 @@ p {
 
 .body-content {
   margin: auto;
+  padding: 49px 0px 0px 0px;
   width: 73%;
   max-width: 700px;
   min-width: 391px;
@@ -48,6 +49,8 @@ p {
 }
 
 .nav {
+  width: 100%;
+  position: fixed;
   overflow: hidden;
   background-color: #111;
 }
@@ -94,7 +97,7 @@ p {
 
 .dd-cont {
   display: none;
-  position: absolute;
+  position: fixed;
   background-color: #111;
   width: 120px;
   z-index: 1;
