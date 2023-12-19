@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Truth - Zion in Zion</title>
+    <link rel="icon" href="../img/favicon.png">
+    <link rel="stylesheet" href="../css/styles.css">
+    <script src="https://kit.fontawesome.com/90134a5084.js" crossorigin="anonymous"></script>
+  </head>
+  <body>
+    <div class="nav" id="myNav">
+      <a href="../index.html">Home</a>
+      <a href="../about.html">About</a>
+      <a href="../apogee.html" class=active>Apogee</a>
+      <div class="dd">
+        <button class="dbtn">
+          <a href="../music.html">Music</a>
+        </button>
+        <div class="dd-cont">
+          <a href="../music/withthose.html" id="withthose">With those</a>
+          <a href="../music/withgrace.html" id="withgrace">With grace</a>
+          <a href="../music/other.html">Other</a>
+        </div>
+      </div>
+      <a href="../settings.html" class="fas fa-cog" id="cog"></a>
+    </div>
+    <div class="body-content">
+      <div class="title">Is Truth What?</div>
+      <p></p>
+      <p></p>
+      <p></p>
+      <p></p>
+      <p></p>
+      <p></p>
+      <p></p>
+      <p></p>
+      <p></p>
+    </div>
+    <script>
+      isKeyPressed = {
+        'k': false,
+        'j': false,
+        's': false,
+      }
+      document.onkeydown = (keyDownEvent) => {
+        isKeyPressed[keyDownEvent.key] = true;
+        if (isKeyPressed["k"]) {
+          window.location.href = "truth.html";
+        };
+        if (isKeyPressed["j"]) {
+          window.location.href = "truthwhatis.html";
+        }
+        if (isKeyPressed["s"]) {
+          window.location.href = "../settings.html";
+        }
+      };
+    </script>
+  </body>
+</html>
