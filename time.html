@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Current Time and Date (Millisecond Update)</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        #datetime {
+            text-align: center;
+        }
+        #time {
+            font-size: 48px;
+            font-weight: bold;
+            color: #333;
+        }
+        #milliseconds {
+            font-size: 24px;
+            color: #666;
+        }
+        #date, #timezone {
+            font-size: 24px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div id="datetime">
+        <div id="time"></div>
+        <div id="milliseconds"></div>
+        <div id="date"></div>
+        <div id="timezone"></div>
+    </div>
+
+    <script>
+        function updateDateTime() {
+            const now = new Date();
+            
+            // Time
+            let hours = now.getHours();
+            let minutes = now.getMinutes();
+            let seconds = now.getSeconds();
+            let milliseconds = now.getMilliseconds();
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+
+            hours = hours % 12;
+            hours = hours ? hours : 12; // the hour '0' should be '12'
+            hours = hours < 10 ? '0' + hours : hours;
+            minutes = minutes < 10 ? '0' + minutes : minutes;
+            seconds = seconds < 10 ? '0' + seconds : seconds;
+            milliseconds = milliseconds.toString().padStart(3, '0');
+
+          const timeString = `${hours}:${minutes}:${seconds} ${ampm}`;
+            document.getElementById('time').textContent = timeString;
+            document.getElementById('milliseconds').textContent = `.${milliseconds}`;
+
+            // Date
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const dateString = now.toLocaleDateString(undefined, options);
+            document.getElementById('date').textContent = dateString;
+
+            // Time Zone
+            const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+            document.getElementById('timezone').textContent = `Time Zone: ${timeZone}`;
+
+            // Schedule the next update
+            requestAnimationFrame(updateDateTime);
+        }
+
+        // Start updating
+        updateDateTime();
+    </script>
+</body>
+</html>
