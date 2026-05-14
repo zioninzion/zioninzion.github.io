@@ -1,0 +1,987 @@
+<plan>
+  <title>New Testament in 35 Weeks (5 Days a Week)</title>
+  <reading>
+    <day>1</day>
+    <passage>Matthew 1</passage>
+  </reading>
+  <reading>
+    <day>2</day>
+    <passage>Matthew 2</passage>
+  </reading>
+  <reading>
+    <day>3</day>
+    <passage>Matthew 3-4</passage>
+  </reading>
+  <reading>
+    <day>4</day>
+    <passage>Matthew 5</passage>
+  </reading>
+  <reading>
+    <day>5</day>
+    <passage></passage>
+  </reading>
+  <reading>
+    <day>6</day>
+    <passage></passage>
+  </reading>
+  <reading>
+    <day>7</day>
+    <passage>Matthew 6</passage>
+  </reading>
+  <reading>
+    <day>8</day>
+    <passage>Matthew 7-8</passage>
+  </reading>
+  <reading>
+    <day>9</day>
+    <passage>Matthew 9</passage>
+  </reading>
+  <reading>
+    <day>10</day>
+    <passage>Matthew 10-11</passage>
+  </reading>
+  <reading>
+    <day>11</day>
+    <passage>Matthew 12</passage>
+  </reading>
+  <reading>
+    <day>12</day>
+    <passage></passage>
+  </reading>
+  <reading>
+    <day>13</day>
+    <passage></passage>
+  </reading>
+  <reading>
+    <day>14</day>
+    <passage>Matthew 13</passage>
+  </reading>
+  <reading>
+    <day>15</day>
+    <passage>Matthew 14</passage>
+  </reading>
+  <reading>
+    <day>16</day>
+    <passage>Matthew 15</passage>
+  </reading>
+  <reading>
+    <day>17</day>
+    <passage>Matthew 16-17</passage>
+  </reading>
+  <reading>
+    <day>18</day>
+    <passage>Matthew 18</passage>
+  </reading>
+  <reading>
+    <day>19</day>
+    <passage></passage>
+  </reading>
+  <reading>
+    <day>20</day>
+    <passage></passage>
+  </reading>
+  <reading>
+    <day>21</day>
+    <passage>Matthew 19</passage>
+  </reading>
+  <reading>
+    <day>22</day>
+    <passage>Matthew 20</passage>
+  </reading>
+  <reading>
+    <day>23</day>
+    <passage>Matthew 21</passage>
+  </reading>
+  <reading>
+    <day>24</day>
+    <passage>Matthew 22</passage>
+  </reading>
+  <reading>
+    <day>25</day>
+    <passage>Matthew 23</passage>
+  </reading>
+  <reading>
+    <day>26</day>
+    <passage></passage>
+  </reading>
+  <reading>
+    <day>27</day>
+    <passage></passage>
+  </reading>
+  <reading>
+    <day>28</day>
+    <passage>Matthew 24</passage>
+  </reading>
+  <reading>
+    <day>29</day>
+    <passage>Matthew 25</passage>
+  </reading>
+  <reading>
+    <day>30</day>
+    <passage>Matthew 26</passage>
+  </reading>
+  <reading>
+    <day>31</day>
+    <passage>Matthew 27-28</passage>
+  </reading>
+  <reading>
+    <day>32</day>
+    <passage>Mark 1</passage>
+  </reading>
+  <reading>
+    <day>33</day>
+    <passage></passage>
+  </reading>
+  <reading>
+    <day>34</day>
+    <passage></passage>
+  </reading>
+  <reading>
+    <day>35</day>
+    <passage>Mark 2-3</passage>
+  </reading>
+  <reading>
+    <day>36</day>
+    <passage>Mark 4</passage>
+  </reading>
+  <reading>
+    <day>37</day>
+    <passage>Mark 5</passage>
+  </reading>
+  <reading>
+    <day>38</day>
+    <passage>Mark 6</passage>
+  </reading>
+  <reading>
+    <day>39</day>
+    <passage>Mark 7</passage>
+  </reading>
+  <reading>
+    <day>40</day>
+    <passage></passage>
+  </reading>
+  <reading>
+    <day>41</day>
+    <passage></passage>
+  </reading>
+  <reading>
+    <day>42</day>
+    <passage>Mark 8</passage>
+  </reading>
+  <reading>
+    <day>43</day>
+    <passage>Mark 9</passage>
+  </reading>
+  <reading>
+    <day>44</day>
+    <passage>Mark 10</passage>
+  </reading>
+  <reading>
+    <day>45</day>
+    <passage>Mark 11</passage>
+  </reading>
+  <reading>
+    <day>46</day>
+    <passage>Mark 12</passage>
+  </reading>
+  <reading>
+    <day>47</day>
+    <passage></passage>
+  </reading>
+  <reading>
+    <day>48</day>
+    <passage></passage>
+  </reading>
+  <reading>
+    <day>49</day>
+    <passage>Mark 13</passage>
+  </reading>
+  <reading>
+    <day>50</day>
+    <passage>Mark 14</passage>
+  </reading>
+  <reading>
+    <day>51</day>
+    <passage>Mark 15-16</passage>
+  </reading>
+  <reading>
+    <day>52</day>
+    <passage>Luke 1</passage>
+  </reading>
+  <reading>
+    <day>53</day>
+    <passage>Luke 2</passage>
+  </reading>
+  <reading>
+    <day>54</day>
+    <passage></passage>
+  </reading>
+  <reading>
+    <day>55</day>
+    <passage></passage>
+  </reading>
+  <reading>
+    <day>56</day>
+    <passage>Luke 3</passage>
+  </reading>
+  <reading>
+    <day>57</day>
+    <passage>Luke 4</passage>
+  </reading>
+  <reading>
+    <day>58</day>
+    <passage>Luke 5</passage>
+  </reading>
+  <reading>
+    <day>59</day>
+    <passage>Luke 6</passage>
+  </reading>
+  <reading>
+    <day>60</day>
+    <passage>Luke 7</passage>
+  </reading>
+  <reading>
+    <day>61</day>
+    <passage></passage>
+  </reading>
+  <reading>
+    <day>62</day>
+    <passage></passage>
+  </reading>
+  <reading>
+    <day>63</day>
+    <passage>Luke 8</passage>
+  </reading>
+  <reading>
+    <day>64</day>
+    <passage>Luke 9</passage>
+  </reading>
+  <reading>
+    <day>65</day>
+    <passage>Luke 10</passage>
+  </reading>
+  <reading>
+    <day>66</day>
+    <passage>Luke 11</passage>
+  </reading>
+  <reading>
+    <day>67</day>
+    <passage>Luke 12</passage>
+  </reading>
+  <reading>
+    <day>68</day>
+    <passage></passage>
+  </reading>
+  <reading>
+    <day>69</day>
+    <passage></passage>
+  </reading>
+  <reading>
+    <day>70</day>
+    <passage>Luke 13</passage>
+  </reading>
+  <reading>
+    <day>71</day>
+    <passage>Luke 14</passage>
+  </reading>
+  <reading>
+    <day>72</day>
+    <passage>Luke 15</passage>
+  </reading>
+  <reading>
+    <day>73</day>
+    <passage>Luke 16</passage>
+  </reading>
+  <reading>
+    <day>74</day>
+    <passage>Luke 17</passage>
+  </reading>
+  <reading>
+    <day>75</day>
+    <passage></passage>
+  </reading>
+  <reading>
+    <day>76</day>
+    <passage></passage>
+  </reading>
+  <reading>
+    <day>77</day>
+    <passage>Luke 18</passage>
+  </reading>
+  <reading>
+    <day>78</day>
+    <passage>Luke 19</passage>
+  </reading>
+  <reading>
+    <day>79</day>
+    <passage>Luke 20</passage>
+  </reading>
+  <reading>
+    <day>80</day>
+    <passage>Luke 21</passage>
+  </reading>
+  <reading>
+    <day>81</day>
+    <passage>Luke 22</passage>
+  </reading>
+  <reading>
+    <day>82</day>
+    <passage></passage>
+  </reading>
+  <reading>
+    <day>83</day>
+    <passage></passage>
+  </reading>
+  <reading>
+    <day>84</day>
+    <passage>Luke 23</passage>
+  </reading>
+  <reading>
+    <day>85</day>
+    <passage>Luke 24</passage>
+  </reading>
+  <reading>
+    <day>86</day>
+    <passage>John 1</passage>
+  </reading>
+  <reading>
+    <day>87</day>
+    <passage>John 2</passage>
+  </reading>
+  <reading>
+    <day>88</day>
+    <passage>John 3</passage>
+  </reading>
+  <reading>
+    <day>89</day>
+    <passage></passage>
+  </reading>
+  <reading>
+    <day>90</day>
+    <passage></passage>
+  </reading>
+  <reading>
+    <day>91</day>
+    <passage>John 4</passage>
+  </reading>
+  <reading>
+    <day>92</day>
+    <passage>John 5</passage>
+  </reading>
+  <reading>
+    <day>93</day>
+    <passage>John 6</passage>
+  </reading>
+  <reading>
+    <day>94</day>
+    <passage>John 7</passage>
+  </reading>
+  <reading>
+    <day>95</day>
+    <passage>John 8</passage>
+  </reading>
+  <reading>
+    <day>96</day>
+    <passage></passage>
+  </reading>
+  <reading>
+    <day>97</day>
+    <passage></passage>
+  </reading>
+  <reading>
+    <day>98</day>
+    <passage>John 9</passage>
+  </reading>
+  <reading>
+    <day>99</day>
+    <passage>John 10</passage>
+  </reading>
+  <reading>
+    <day>100</day>
+    <passage>John 11</passage>
+  </reading>
+  <reading>
+    <day>101</day>
+    <passage>John 12</passage>
+  </reading>
+  <reading>
+    <day>102</day>
+    <passage>John 13</passage>
+  </reading>
+  <reading>
+    <day>103</day>
+    <passage></passage>
+  </reading>
+  <reading>
+    <day>104</day>
+    <passage></passage>
+  </reading>
+  <reading>
+    <day>105</day>
+    <passage>John 14</passage>
+  </reading>
+  <reading>
+    <day>106</day>
+    <passage>John 15</passage>
+  </reading>
+  <reading>
+    <day>107</day>
+    <passage>John 16</passage>
+  </reading>
+  <reading>
+    <day>108</day>
+    <passage>John 17</passage>
+  </reading>
+  <reading>
+    <day>109</day>
+    <passage>John 18</passage>
+  </reading>
+  <reading>
+    <day>110</day>
+    <passage></passage>
+  </reading>
+  <reading>
+    <day>111</day>
+    <passage></passage>
+  </reading>
+  <reading>
+    <day>112</day>
+    <passage>John 19</passage>
+  </reading>
+  <reading>
+    <day>113</day>
+    <passage>John 20</passage>
+  </reading>
+  <reading>
+    <day>114</day>
+    <passage>John 21</passage>
+  </reading>
+  <reading>
+    <day>115</day>
+    <passage>Acts 1</passage>
+  </reading>
+  <reading>
+    <day>116</day>
+    <passage>Acts 2</passage>
+  </reading>
+  <reading>
+    <day>117</day>
+    <passage></passage>
+  </reading>
+  <reading>
+    <day>118</day>
+    <passage></passage>
+  </reading>
+  <reading>
+    <day>119</day>
+    <passage>Acts 3</passage>
+  </reading>
+  <reading>
+    <day>120</day>
+    <passage>Acts 4</passage>
+  </reading>
+  <reading>
+    <day>121</day>
+    <passage>Acts 5-6</passage>
+  </reading>
+  <reading>
+    <day>122</day>
+    <passage>Acts 7</passage>
+  </reading>
+  <reading>
+    <day>123</day>
+    <passage>Acts 8</passage>
+  </reading>
+  <reading>
+    <day>124</day>
+    <passage></passage>
+  </reading>
+  <reading>
+    <day>125</day>
+    <passage></passage>
+  </reading>
+  <reading>
+    <day>126</day>
+    <passage>Acts 9</passage>
+  </reading>
+  <reading>
+    <day>127</day>
+    <passage>Acts 10</passage>
+  </reading>
+  <reading>
+    <day>128</day>
+    <passage>Acts 11-12</passage>
+  </reading>
+  <reading>
+    <day>129</day>
+    <passage>Acts 13</passage>
+  </reading>
+  <reading>
+    <day>130</day>
+    <passage>Acts 14-15</passage>
+  </reading>
+  <reading>
+    <day>131</day>
+    <passage></passage>
+  </reading>
+  <reading>
+    <day>132</day>
+    <passage></passage>
+  </reading>
+  <reading>
+    <day>133</day>
+    <passage>Acts 16</passage>
+  </reading>
+  <reading>
+    <day>134</day>
+    <passage>Acts 17</passage>
+  </reading>
+  <reading>
+    <day>135</day>
+    <passage>Acts 18</passage>
+  </reading>
+  <reading>
+    <day>136</day>
+    <passage>Acts 19</passage>
+  </reading>
+  <reading>
+    <day>137</day>
+    <passage>Acts 20</passage>
+  </reading>
+  <reading>
+    <day>138</day>
+    <passage></passage>
+  </reading>
+  <reading>
+    <day>139</day>
+    <passage></passage>
+  </reading>
+  <reading>
+    <day>140</day>
+    <passage>Acts 21</passage>
+  </reading>
+  <reading>
+    <day>141</day>
+    <passage>Acts 22</passage>
+  </reading>
+  <reading>
+    <day>142</day>
+    <passage>Acts 23</passage>
+  </reading>
+  <reading>
+    <day>143</day>
+    <passage>Acts 24-25</passage>
+  </reading>
+  <reading>
+    <day>144</day>
+    <passage>Acts 26</passage>
+  </reading>
+  <reading>
+    <day>145</day>
+    <passage></passage>
+  </reading>
+  <reading>
+    <day>146</day>
+    <passage></passage>
+  </reading>
+  <reading>
+    <day>147</day>
+    <passage>Acts 27</passage>
+  </reading>
+  <reading>
+    <day>148</day>
+    <passage>Acts 28</passage>
+  </reading>
+  <reading>
+    <day>149</day>
+    <passage>Romans 1</passage>
+  </reading>
+  <reading>
+    <day>150</day>
+    <passage>Romans 2-3</passage>
+  </reading>
+  <reading>
+    <day>151</day>
+    <passage>Romans 4-5</passage>
+  </reading>
+  <reading>
+    <day>152</day>
+    <passage></passage>
+  </reading>
+  <reading>
+    <day>153</day>
+    <passage></passage>
+  </reading>
+  <reading>
+    <day>154</day>
+    <passage>Romans 6-7</passage>
+  </reading>
+  <reading>
+    <day>155</day>
+    <passage>Romans 8</passage>
+  </reading>
+  <reading>
+    <day>156</day>
+    <passage>Romans 9-10</passage>
+  </reading>
+  <reading>
+    <day>157</day>
+    <passage>Romans 11</passage>
+  </reading>
+  <reading>
+    <day>158</day>
+    <passage>Romans 12-14</passage>
+  </reading>
+  <reading>
+    <day>159</day>
+    <passage></passage>
+  </reading>
+  <reading>
+    <day>160</day>
+    <passage></passage>
+  </reading>
+  <reading>
+    <day>161</day>
+    <passage>Romans 15-16</passage>
+  </reading>
+  <reading>
+    <day>162</day>
+    <passage>1 Corinthians 1-2</passage>
+  </reading>
+  <reading>
+    <day>163</day>
+    <passage>1 Corinthians 3-4</passage>
+  </reading>
+  <reading>
+    <day>164</day>
+    <passage>1 Corinthians 5-6</passage>
+  </reading>
+  <reading>
+    <day>165</day>
+    <passage>1 Corinthians 7-8</passage>
+  </reading>
+  <reading>
+    <day>166</day>
+    <passage></passage>
+  </reading>
+  <reading>
+    <day>167</day>
+    <passage></passage>
+  </reading>
+  <reading>
+    <day>168</day>
+    <passage>1 Corinthians 9-10</passage>
+  </reading>
+  <reading>
+    <day>169</day>
+    <passage>1 Corinthians 11-12</passage>
+  </reading>
+  <reading>
+    <day>170</day>
+    <passage>1 Corinthians 13-14</passage>
+  </reading>
+  <reading>
+    <day>171</day>
+    <passage>1 Corinthians 15-16</passage>
+  </reading>
+  <reading>
+    <day>172</day>
+    <passage>2 Corinthians 1-2</passage>
+  </reading>
+  <reading>
+    <day>173</day>
+    <passage></passage>
+  </reading>
+  <reading>
+    <day>174</day>
+    <passage></passage>
+  </reading>
+  <reading>
+    <day>175</day>
+    <passage>2 Corinthians 3-4</passage>
+  </reading>
+  <reading>
+    <day>176</day>
+    <passage>2 Corinthians 5-7</passage>
+  </reading>
+  <reading>
+    <day>177</day>
+    <passage>2 Corinthians 8-10</passage>
+  </reading>
+  <reading>
+    <day>178</day>
+    <passage>2 Corinthians 11</passage>
+  </reading>
+  <reading>
+    <day>179</day>
+    <passage>2 Corinthians 12-13</passage>
+  </reading>
+  <reading>
+    <day>180</day>
+    <passage></passage>
+  </reading>
+  <reading>
+    <day>181</day>
+    <passage></passage>
+  </reading>
+  <reading>
+    <day>182</day>
+    <passage>Galatians 1-2</passage>
+  </reading>
+  <reading>
+    <day>183</day>
+    <passage>Galatians 3-4</passage>
+  </reading>
+  <reading>
+    <day>184</day>
+    <passage>Galatians 5-6</passage>
+  </reading>
+  <reading>
+    <day>185</day>
+    <passage>Ephesians 1-2</passage>
+  </reading>
+  <reading>
+    <day>186</day>
+    <passage>Ephesians 3-4</passage>
+  </reading>
+  <reading>
+    <day>187</day>
+    <passage></passage>
+  </reading>
+  <reading>
+    <day>188</day>
+    <passage></passage>
+  </reading>
+  <reading>
+    <day>189</day>
+    <passage>Ephesians 5-6</passage>
+  </reading>
+  <reading>
+    <day>190</day>
+    <passage>Philippians 1-2</passage>
+  </reading>
+  <reading>
+    <day>191</day>
+    <passage>Philippians 3-4</passage>
+  </reading>
+  <reading>
+    <day>192</day>
+    <passage>Colossians 1-2</passage>
+  </reading>
+  <reading>
+    <day>193</day>
+    <passage>Colossians 3-4</passage>
+  </reading>
+  <reading>
+    <day>194</day>
+    <passage></passage>
+  </reading>
+  <reading>
+    <day>195</day>
+    <passage></passage>
+  </reading>
+  <reading>
+    <day>196</day>
+    <passage>1 Thessalonians 1-3</passage>
+  </reading>
+  <reading>
+    <day>197</day>
+    <passage>1 Thessalonians 4-5</passage>
+  </reading>
+  <reading>
+    <day>198</day>
+    <passage>2 Thessalonians 1-3</passage>
+  </reading>
+  <reading>
+    <day>199</day>
+    <passage>1 Timothy 1-3</passage>
+  </reading>
+  <reading>
+    <day>200</day>
+    <passage>1 Timothy 4-6</passage>
+  </reading>
+  <reading>
+    <day>201</day>
+    <passage></passage>
+  </reading>
+  <reading>
+    <day>202</day>
+    <passage></passage>
+  </reading>
+  <reading>
+    <day>203</day>
+    <passage>2 Timothy 1-2</passage>
+  </reading>
+  <reading>
+    <day>204</day>
+    <passage>2 Timothy 3-4</passage>
+  </reading>
+  <reading>
+    <day>205</day>
+    <passage>Titus 1-3</passage>
+  </reading>
+  <reading>
+    <day>206</day>
+    <passage>Philippiansmon 1</passage>
+  </reading>
+  <reading>
+    <day>207</day>
+    <passage>Hebrews 1-3</passage>
+  </reading>
+  <reading>
+    <day>208</day>
+    <passage></passage>
+  </reading>
+  <reading>
+    <day>209</day>
+    <passage></passage>
+  </reading>
+  <reading>
+    <day>210</day>
+    <passage>Hebrews 4-6</passage>
+  </reading>
+  <reading>
+    <day>211</day>
+    <passage>Hebrews 7</passage>
+  </reading>
+  <reading>
+    <day>212</day>
+    <passage>Hebrews 8-9</passage>
+  </reading>
+  <reading>
+    <day>213</day>
+    <passage>Hebrews 10</passage>
+  </reading>
+  <reading>
+    <day>214</day>
+    <passage>Hebrews 11</passage>
+  </reading>
+  <reading>
+    <day>215</day>
+    <passage></passage>
+  </reading>
+  <reading>
+    <day>216</day>
+    <passage></passage>
+  </reading>
+  <reading>
+    <day>217</day>
+    <passage>Hebrews 12-13</passage>
+  </reading>
+  <reading>
+    <day>218</day>
+    <passage>James 1-2</passage>
+  </reading>
+  <reading>
+    <day>219</day>
+    <passage>James 3-5</passage>
+  </reading>
+  <reading>
+    <day>220</day>
+    <passage>1 Peter 1-2</passage>
+  </reading>
+  <reading>
+    <day>221</day>
+    <passage>1 Peter 3-5</passage>
+  </reading>
+  <reading>
+    <day>222</day>
+    <passage></passage>
+  </reading>
+  <reading>
+    <day>223</day>
+    <passage></passage>
+  </reading>
+  <reading>
+    <day>224</day>
+    <passage>2 Peter 1-3</passage>
+  </reading>
+  <reading>
+    <day>225</day>
+    <passage>1 John 1-2</passage>
+  </reading>
+  <reading>
+    <day>226</day>
+    <passage>1 John 3</passage>
+  </reading>
+  <reading>
+    <day>227</day>
+    <passage>1 John 4-5</passage>
+  </reading>
+  <reading>
+    <day>228</day>
+    <passage>2 John 1, 3 John 3, Jude 1</passage>
+  </reading>
+  <reading>
+    <day>229</day>
+    <passage></passage>
+  </reading>
+  <reading>
+    <day>230</day>
+    <passage></passage>
+  </reading>
+  <reading>
+    <day>231</day>
+    <passage>Revelation 1-2</passage>
+  </reading>
+  <reading>
+    <day>232</day>
+    <passage>Revelation 3-4</passage>
+  </reading>
+  <reading>
+    <day>233</day>
+    <passage>Revelation 5-6</passage>
+  </reading>
+  <reading>
+    <day>234</day>
+    <passage>Revelation 7-8</passage>
+  </reading>
+  <reading>
+    <day>235</day>
+    <passage>Revelation 9-10</passage>
+  </reading>
+  <reading>
+    <day>236</day>
+    <passage></passage>
+  </reading>
+  <reading>
+    <day>237</day>
+    <passage></passage>
+  </reading>
+  <reading>
+    <day>238</day>
+    <passage>Revelation 11</passage>
+  </reading>
+  <reading>
+    <day>239</day>
+    <passage>Revelation 12-13</passage>
+  </reading>
+  <reading>
+    <day>240</day>
+    <passage>Revelation 14-15</passage>
+  </reading>
+  <reading>
+    <day>241</day>
+    <passage>Revelation 16-17</passage>
+  </reading>
+  <reading>
+    <day>242</day>
+    <passage>Revelation 18</passage>
+  </reading>
+  <reading>
+    <day>243</day>
+    <passage></passage>
+  </reading>
+  <reading>
+    <day>244</day>
+    <passage></passage>
+  </reading>
+  <reading>
+    <day>245</day>
+    <passage>Revelation 19-20</passage>
+  </reading>
+  <reading>
+    <day>246</day>
+    <passage>Revelation 21-22</passage>
+  </reading>
+</plan>
