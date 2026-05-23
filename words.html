@@ -2,37 +2,200 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>How Do I Say This</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: var(--font-sans); }
-.wrap { padding: 2rem 1.5rem; max-width: 680px; margin: 0 auto; }
+
+/* Dynamic type scale using clamp() — 1.5x */
+:root {
+  --text-title:   clamp(27px, 6.75vw, 33px);
+  --text-subtitle: clamp(18px, 4.5vw, 21px);
+  --text-name:    clamp(22px, 6vw, 27px);
+  --text-badge:   clamp(15px, 3.75vw, 16.5px);
+  --text-syllable: clamp(16.5px, 4.2vw, 19.5px);
+  --text-meta:    clamp(16.5px, 4.2vw, 19.5px);
+  --text-count:   clamp(16.5px, 4.2vw, 19.5px);
+  --text-input:   clamp(22px, 6vw, 24px);
+  --text-empty:   clamp(18px, 4.5vw, 21px);
+  --speak-text:   clamp(16.5px, 4.2vw, 19.5px);
+}
+
+.wrap {
+  padding: clamp(1rem, 4vw, 2rem) clamp(1rem, 4vw, 1.5rem);
+  max-width: 680px;
+  margin: 0 auto;
+}
+
 .search-box { position: relative; margin-bottom: 1.5rem; }
-.search-box input { width: 100%; padding: 12px 44px 12px 16px; font-size: 16px; border: 1px solid var(--color-border-secondary); border-radius: var(--border-radius-lg); background: var(--color-background-primary); color: var(--color-text-primary); outline: none; transition: border-color 0.15s; }
-.search-box input:focus { border-color: #7F77DD; box-shadow: 0 0 0 3px rgba(127,119,221,0.15); }
-.search-icon { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: var(--color-text-tertiary); font-size: 16px; pointer-events: none; }
-.results { display: flex; flex-direction: column; gap: 10px; }
-.card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1rem 1.25rem; cursor: pointer; transition: border-color 0.15s, box-shadow 0.15s; }
+.search-box input {
+  width: 100%;
+  padding: clamp(10px, 2.5vw, 12px) 44px clamp(10px, 2.5vw, 12px) 16px;
+  font-size: var(--text-input);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--border-radius-lg);
+  background: var(--color-background-primary);
+  color: var(--color-text-primary);
+  outline: none;
+  transition: border-color 0.15s;
+  /* Prevents iOS zoom on focus (font-size >= 16px handles this, but min enforces it) */
+  min-height: 44px;
+}
+.search-box input:focus { border-color: var(--color-border-primary); box-shadow: 0 0 0 3px rgba(127,119,221,0.15); }
+.search-icon {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-text-tertiary);
+  font-size: clamp(21px, 5.25vw, 24px);
+  pointer-events: none;
+}
+
+.results { display: flex; flex-direction: column; gap: clamp(6px, 2vw, 10px); }
+
+.card {
+  background: var(--color-background-primary);
+  border: 0.5px solid var(--color-border-tertiary);
+  border-radius: var(--border-radius-lg);
+  padding: clamp(0.75rem, 3vw, 1rem) clamp(1rem, 3.5vw, 1.25rem);
+  cursor: pointer;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  /* Ensure tap targets are large enough */
+  min-height: 44px;
+}
 .card:hover { border-color: var(--color-border-secondary); }
 .card.active { border-color: #7F77DD; background: #EEEDFE; }
-.card-header { display: flex; align-items: center; justify-content: space-between; }
-.name-text { font-size: 18px; font-weight: 500; color: var(--color-text-primary); }
-.origin-badge { font-size: 11px; padding: 3px 10px; border-radius: 100px; background: var(--color-background-secondary); color: var(--color-text-secondary); border: 0.5px solid var(--color-border-tertiary); }
+
+.card-header { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+
+.name-text {
+  font-size: var(--text-name);
+  font-weight: 500;
+  color: var(--color-text-primary);
+  /* Allow wrapping on very small screens */
+  word-break: break-word;
+}
+
+.origin-badge {
+  font-size: var(--text-badge);
+  padding: clamp(2px, 0.5vw, 3px) clamp(7px, 2vw, 10px);
+  border-radius: 100px;
+  background: var(--color-background-secondary);
+  color: var(--color-text-secondary);
+  border: 0.5px solid var(--color-border-tertiary);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
 .pronunciation { margin-top: 10px; display: none; }
 .pronunciation.show { display: block; }
-.syllables { font-size: 13px; color: var(--color-text-secondary); margin-bottom: 8px; }
-.syllables span { display: inline-block; padding: 2px 8px; background: var(--color-background-secondary); border-radius: 4px; margin-right: 4px; margin-bottom: 4px; border: 0.5px solid var(--color-border-tertiary); }
-.meaning { font-size: 13px; color: var(--color-text-secondary); line-height: 1.6; border-top: 0.5px solid var(--color-border-tertiary); padding-top: 8px; margin-top: 6px; }
-.speak-btn { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: #534AB7; background: none; border: 0.5px solid #AFA9EC; padding: 5px 12px; border-radius: 100px; cursor: pointer; margin-bottom: 10px; transition: background 0.12s; }
+
+.syllables {
+  font-size: var(--text-syllable);
+  color: var(--color-text-secondary);
+  margin-bottom: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.syllables span {
+  display: inline-block;
+  padding: clamp(2px, 0.5vw, 2px) clamp(6px, 1.5vw, 8px);
+  background: var(--color-background-secondary);
+  border-radius: 4px;
+  border: 0.5px solid var(--color-border-tertiary);
+}
+
+.meaning {
+  font-size: var(--text-meta);
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+  border-top: 0.5px solid var(--color-border-tertiary);
+  padding-top: 8px;
+  margin-top: 6px;
+}
+
+.speak-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--speak-text);
+  color: #534AB7;
+  background: none;
+  border: 0.5px solid #AFA9EC;
+  padding: clamp(4px, 1.2vw, 5px) clamp(10px, 2.5vw, 12px);
+  border-radius: 100px;
+  cursor: pointer;
+  margin-bottom: 10px;
+  transition: background 0.12s;
+  /* Minimum tap target */
+  min-height: 36px;
+}
 .speak-btn:hover { background: #EEEDFE; }
-.empty { text-align: center; padding: 2.5rem 1rem; color: var(--color-text-tertiary); font-size: 14px; }
-.count { font-size: 13px; color: var(--color-text-tertiary); margin-bottom: 12px; }
+
+.empty {
+  text-align: center;
+  padding: clamp(1.5rem, 5vw, 2.5rem) 1rem;
+  color: var(--color-text-tertiary);
+  font-size: var(--text-empty);
+}
+
+.count {
+  font-size: var(--text-count);
+  color: var(--color-text-tertiary);
+  margin-bottom: clamp(8px, 2vw, 12px);
+}
+
 .highlight { background: #CECBF6; border-radius: 2px; padding: 0 2px; }
+
+.num-badge {
+  font-size: calc(var(--text-badge) * 0.9);
+  font-weight: 600;
+  color: var(--color-text-tertiary);
+  background: var(--color-background-secondary);
+  border: 0.5px solid var(--color-border-tertiary);
+  border-radius: 5px;
+  min-width: 1.6em;
+  height: 1.6em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-left: 10px;
+  font-variant-numeric: tabular-nums;
+}
+.card.active .num-badge {
+  background: #AFA9EC;
+  border-color: #7F77DD;
+  color: #fff;
+}
+
+/* Responsive title block spacing */
+h2 {
+  font-size: var(--text-title) !important;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  margin-bottom: 6px;
+}
+.subtitle {
+  font-size: var(--text-subtitle);
+  color: var(--color-text-secondary);
+  margin-bottom: 1.5rem;
+}
+
+/* Small phone: tighten up further */
+@media (max-width: 360px) {
+  .card-header { flex-direction: column; align-items: flex-start; }
+}
 </style>
+</head>
+<body>
 
 <div class="wrap">
-  <h2 style="font-size: 22px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 6px;">How do I say this?</h2>
-  <p style="font-size: 14px; color: var(--color-text-secondary); margin-bottom: 1.5rem;">Type a non-common word from the Bible to instantly find its pronunciation.</p>
+  <h2>How do I say this?</h2>
+  <p class="subtitle">Type a non-common word from the Bible to find its pronunciation.</p>
 
   <div class="search-box">
     <input type="text" id="search" placeholder="Search names… e.g. Aalar, Beelzebul, Zion" autocomplete="off" spellcheck="false" />
@@ -7678,6 +7841,7 @@ const names = [
   { name: "Zuth", syllables: ["zooth"], origin: "", meaning: "" },
   { name: "Zuzim", syllables: ["ZOO-zim"], origin: "", meaning: "" },
   { name: "Zuzite", syllables: ["ZOO-zite"], origin: "", meaning: "" },
+
 ];
 
 let activeCard = null;
@@ -7729,56 +7893,52 @@ function render(query) {
   const countEl = document.getElementById('count');
 
   if (!q) {
+    filteredCount = 0;
     countEl.textContent = '';
     resultsEl.innerHTML = `<div class="empty">Start typing to search ${names.length} names</div>`;
     activeCard = null;
     return;
   }
 
-  // Filter first
-  let filtered = names.filter(n => 
-    n.name.toLowerCase().includes(q) || 
+  let filtered = names.filter(n =>
+    n.name.toLowerCase().includes(q) ||
     n.origin.toLowerCase().includes(q)
   );
 
   if (filtered.length === 0) {
+    filteredCount = 0;
     countEl.textContent = '';
     resultsEl.innerHTML = `<div class="empty">No names found for "${query.trim()}"</div>`;
     activeCard = null;
     return;
   }
 
-  // === SORT WITH PRIORITY ===
   const lowerQ = q;
   filtered.sort((a, b) => {
     const nameA = a.name.toLowerCase();
     const nameB = b.name.toLowerCase();
-
-    // 1. Exact match (highest priority)
     const exactA = nameA === lowerQ ? 1 : 0;
     const exactB = nameB === lowerQ ? 1 : 0;
-    if (exactA !== exactB) return exactB - exactA; // exact matches first
-
-    // 2. Starts with query
+    if (exactA !== exactB) return exactB - exactA;
     const startsA = nameA.startsWith(lowerQ) ? 1 : 0;
     const startsB = nameB.startsWith(lowerQ) ? 1 : 0;
     if (startsA !== startsB) return startsB - startsA;
-
-    // 3. Otherwise, keep original order (or you can add more rules)
     return 0;
   });
 
-  // Update count
+  filteredCount = filtered.length;
   countEl.textContent = `${filtered.length} result${filtered.length !== 1 ? 's' : ''}`;
 
-  // Render cards
   resultsEl.innerHTML = filtered.map((n, i) => `
     <div class="card" id="card-${i}" onclick="toggle(${i})">
       <div class="card-header">
         <span class="name-text">${highlight(n.name, query.trim())}</span>
+        ${n.origin ? `<span class="origin-badge">${n.origin}</span>` : ''}
+        ${i < 9 ? `<span class="num-badge">${i + 1}</span>` : ''}
       </div>
       <div class="pronunciation" id="pron-${i}">
         <div class="syllables">${n.syllables.map(s => `<span>${s}</span>`).join('')}</div>
+        ${n.meaning ? `<div class="meaning">${n.meaning}</div>` : ''}
       </div>
     </div>
   `).join('');
@@ -7786,9 +7946,43 @@ function render(query) {
   activeCard = null;
   openCard(0);
 }
+
 const input = document.getElementById('search');
+let filteredCount = 0;
+
 input.addEventListener('input', () => render(input.value));
-render('');
+
+input.addEventListener('keydown', (event) => {
+  if (event.key === 'ArrowDown') {
+    event.preventDefault();
+    if (filteredCount === 0) return;
+    const next = activeCard === null ? 0 : Math.min(activeCard + 1, filteredCount - 1);
+    openCard(next);
+    document.getElementById('card-' + next)?.scrollIntoView({ block: 'nearest' });
+  } else if (event.key === 'ArrowUp') {
+    event.preventDefault();
+    if (filteredCount === 0) return;
+    const prev = activeCard === null ? 0 : Math.max(activeCard - 1, 0);
+    openCard(prev);
+    document.getElementById('card-' + prev)?.scrollIntoView({ block: 'nearest' });
+  } else if (/^[1-9]$/.test(event.key)) {
+    const idx = parseInt(event.key) - 1;
+    if (idx < filteredCount && idx < 9) {
+      event.preventDefault();
+      openCard(idx);
+      document.getElementById('card-' + idx)?.scrollIntoView({ block: 'nearest' });
+    }
+  }
+});
+
+document.addEventListener('keydown', (event) => {
+  if (event.key === '/') {
+    event.preventDefault();
+    input.value = '';
+    input.focus();
+    render('');
+  }
+});
 </script>
-</head>
+</body>
 </html>
