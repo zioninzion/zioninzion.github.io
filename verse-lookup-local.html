@@ -74,7 +74,7 @@
 <main>
   <form id="form">
     <input type="text" id="q" placeholder="Reference (Gen. 1:1; Eph. 4:4-6) or words to search" autocomplete="off" autofocus>
-    <button type="button" id="helpBtn">How to use</button>
+    <button type="button" id="helpBtn" title="How to use this page" aria-label="How to use this page">?</button>
   </form>
   <div id="info" hidden></div>
 
@@ -115,18 +115,18 @@
   <table>
     <tr><td><kbd>/</kbd></td><td>Jump to the text box from anywhere</td></tr>
     <tr><td><kbd>?</kbd></td><td>Open this help (when not typing in the box)</td></tr>
-    <tr><td><kbd>Tab</kbd></td><td>From the text box, move into the verses</td></tr>
+    <tr><td><kbd>Tab</kbd> <kbd>&darr;</kbd></td><td>From the text box, move into the verses</td></tr>
   </table>
   <p><strong>In the verse list</strong></p>
   <table>
     <tr><td><kbd>&darr;</kbd> <kbd>Tab</kbd></td><td>Next verse</td></tr>
-    <tr><td><kbd>&uarr;</kbd> <kbd>Shift</kbd>+<kbd>Tab</kbd></td><td>Previous verse (Shift+Tab on the first verse returns to the box)</td></tr>
+    <tr><td><kbd>&uarr;</kbd> <kbd>Shift</kbd>+<kbd>Tab</kbd></td><td>Previous verse (on the first verse, either one returns to the text box)</td></tr>
     <tr><td><kbd>&larr;</kbd> / <kbd>&rarr;</kbd></td><td>First / last verse listed (<kbd>Home</kbd> / <kbd>End</kbd> also work)</td></tr>
     <tr><td><kbd>Shift</kbd>+<kbd>&uarr;</kbd><kbd>&darr;</kbd><kbd>&larr;</kbd><kbd>&rarr;</kbd></td><td>Select several verses</td></tr>
     <tr><td><kbd>H</kbd> <kbd>J</kbd> <kbd>K</kbd> <kbd>L</kbd></td><td>Same as &larr; &darr; &uarr; &rarr; (hold Shift to select); these also work in presentation mode</td></tr>
     <tr><td><kbd>Ctrl/Cmd</kbd>+<kbd>A</kbd></td><td>Select all listed verses</td></tr>
     <tr><td><kbd>C</kbd></td><td>Copy the selected verses (or the current one); <kbd>Ctrl/Cmd</kbd>+<kbd>C</kbd> also works</td></tr>
-    <tr><td><kbd>Enter</kbd></td><td>Present the current verse full screen</td></tr>
+    <tr><td><kbd>Enter</kbd></td><td>Present the current verse, maximized in the window (<kbd>Shift</kbd>+<kbd>F</kbd> for true full screen)</td></tr>
     <tr><td><kbd>Esc</kbd></td><td>Clear the selection; press again to return to the box</td></tr>
   </table>
   <p><strong>Presentation mode</strong></p>
@@ -135,7 +135,8 @@
     <tr><td><kbd>&larr;</kbd> <kbd>&uarr;</kbd> <kbd>Page Up</kbd></td><td>Previous verse</td></tr>
     <tr><td><kbd>Home</kbd> / <kbd>End</kbd></td><td>First / last verse listed</td></tr>
     <tr><td><kbd>+</kbd> / <kbd>&minus;</kbd></td><td>Make the text larger / smaller</td></tr>
-    <tr><td><kbd>F</kbd></td><td>Fill the whole screen with the verse (largest size that fits)</td></tr>
+    <tr><td><kbd>F</kbd></td><td>Fill the presentation area with the verse (largest size that fits)</td></tr>
+    <tr><td><kbd>Shift</kbd>+<kbd>F</kbd></td><td>Toggle true full screen (the browser&rsquo;s <kbd>Esc</kbd> leaves it but stays in presentation mode)</td></tr>
     <tr><td><kbd>Enter</kbd> <kbd>Esc</kbd></td><td>Exit, returning to the verse you were on</td></tr>
   </table>
 
@@ -562,7 +563,6 @@
     var p = $("present");
     p.hidden = false;
     renderPresent();
-    if (p.requestFullscreen) p.requestFullscreen().catch(function () {});
   }
   function closePresent() {
     if (!presenting) return;
@@ -571,6 +571,10 @@
     if (document.fullscreenElement && document.exitFullscreen) document.exitFullscreen().catch(function () {});
     var all = verses();
     if (all[pi]) focusVerse(all[pi]);
+  }
+  function toggleFullscreen() {
+    if (document.fullscreenElement) { if (document.exitFullscreen) document.exitFullscreen().catch(function () {}); }
+    else { var p = $("present"); if (p.requestFullscreen) p.requestFullscreen().catch(function () {}); }
   }
   function goPresent(n) {
     var t = Math.max(0, Math.min(verses().length - 1, n));
@@ -588,14 +592,14 @@
     else if (k === "ArrowLeft" || k === "ArrowUp" || k === "PageUp") goPresent(pi - 1);
     else if (k === "+" || k === "=") resizePresent(1);
     else if (k === "-" || k === "_") resizePresent(-1);
-    else if (k === "f" || k === "F") { presSize = null; fitPresent(); }
+    else if (k === "F") toggleFullscreen();
+    else if (k === "f") { presSize = null; fitPresent(); }
     else if (k === "Home") goPresent(0);
     else if (k === "End") goPresent(verses().length - 1);
   }, true);
 
   document.addEventListener("fullscreenchange", function () {
-    if (!presenting) return;
-    if (!document.fullscreenElement) closePresent(); else fitPresent();
+    if (presenting) fitPresent();   // leaving real full screen (e.g. Esc) keeps the window-sized presentation
   });
   window.addEventListener("resize", function () { if (presenting) fitPresent(); });
 
@@ -660,7 +664,7 @@
   });
 
   $("q").addEventListener("keydown", function (e) {
-    if (e.key === "Tab" && !e.shiftKey) {
+    if ((e.key === "Tab" && !e.shiftKey) || e.key === "ArrowDown") {
       flushLive();
       if (verses().length) { e.preventDefault(); focusVerse(verses()[0]); }
     }
@@ -675,6 +679,7 @@
 
     if (key === "ArrowDown" || key === "ArrowUp") {
       e.preventDefault();
+      if (key === "ArrowUp" && !shift && i === 0) { $("q").focus(); return; }
       var n = i + (key === "ArrowDown" ? 1 : -1);
       if (shift) extendTo(n); else focusVerse(all[n]);
     } else if (key === "Home" || key === "End" || key === "ArrowLeft" || key === "ArrowRight") {
