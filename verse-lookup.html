@@ -98,9 +98,19 @@
   .bkgrid { display: flex; flex-wrap: wrap; gap: 2px 8px; }
   .bkgrid label { white-space: nowrap; font-size: .85rem; cursor: pointer; padding: 3px 6px; border-radius: 6px; }
   /* highlight the control the cursor is on while navigating the panel */
-  #scope .chips button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; box-shadow: 0 0 0 5px color-mix(in srgb, var(--accent) 28%, transparent); }
+  #scope .chips button:focus { outline: 2px solid var(--accent); outline-offset: 2px; box-shadow: 0 0 0 5px color-mix(in srgb, var(--accent) 28%, transparent); }
   #scope .bkgrid label:focus-within { background: color-mix(in srgb, var(--accent) 24%, transparent); outline: 2px solid var(--accent); }
   #scope .bkgrid input:focus { outline: none; }
+  /* go-to picker (book / chapter / verse) */
+  #gotoBtn { display: inline-flex; align-items: center; justify-content: center; padding: 10px 12px; }
+  #gotoBtn[aria-expanded="true"] { background: var(--accent); color: var(--bg); }
+  #goto { margin-top: 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); padding: 10px 12px; font-size: .9rem; }
+  #goto .grow { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; }
+  #goto label { display: flex; flex-direction: column; gap: 3px; color: var(--muted); font-weight: 700; font-size: .8rem; }
+  #goto select { font: inherit; font-size: 16px; font-weight: 400; color: var(--text); background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 9px 10px; min-width: 120px; max-width: 100%; }
+  #goto select:disabled { opacity: .5; }
+  #goto select#gBook { min-width: 190px; }
+  #goto .gnote { color: var(--muted); font-size: .8rem; margin: 8px 0 0; }
   #info .vgroup { display: inline-flex; margin: 2px 6px 2px 0; }
   #info .vchip { padding: 3px 12px; min-height: 30px; font-size: .85rem; font-weight: 400; background: none; color: var(--accent); border: 1px solid var(--border); border-radius: 999px 0 0 999px; }
   #info .vchip.on { background: var(--accent); color: var(--bg); }
@@ -140,10 +150,20 @@
 <body>
 <main>
   <form id="form">
+    <button type="button" class="ghost" id="gotoBtn" title="Browse by book, chapter or verse" aria-label="Browse by book, chapter or verse" aria-expanded="false" aria-controls="goto"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></button>
     <input type="text" id="q" placeholder="Reference or words (Gen. 1:1)" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="search">
     <button type="button" class="ghost" id="scopeBtn" title="Word-search scope: All books" aria-label="Word-search scope" aria-expanded="false"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
     <button type="button" id="helpBtn" title="How to use this page" aria-label="How to use this page">?</button>
   </form>
+  <div id="goto" hidden>
+    <div class="grow">
+      <label>Book<select id="gBook"></select></label>
+      <label>Chapter<select id="gChap" disabled></select></label>
+      <label>Verse<select id="gVerse" disabled></select></label>
+      <button type="button" id="gGo">Go</button>
+    </div>
+    <p class="gnote" id="gNote">Pick a book for the whole book, add a chapter for that chapter, or add a verse for just that verse.</p>
+  </div>
   <div id="scope" hidden>
     <div class="scopetitle" id="scopeSum">Word-search scope: All books</div>
     <div class="chips" id="scopeQuick"></div>
@@ -205,6 +225,15 @@
 
   <p>Click the <strong>cog icon</strong> beside the <strong>?</strong> button (or press <kbd>\</kbd>) to open the word-search scope panel and limit word searches to the Old Testament, the New Testament, a section (Law, Gospels, &hellip;) or any books you tick. Click a section again to remove it. Inside the panel, move with the arrow keys or <kbd>H</kbd> <kbd>J</kbd> <kbd>K</kbd> <kbd>L</kbd>, and press <kbd>Space</kbd> or <kbd>Enter</kbd> to choose. References are never limited by the scope.</p>
 
+  <h3>Keys that are easy to remember</h3>
+  <table>
+    <tr><td><kbd>C</kbd></td><td><strong>C</strong>opy the selected verses</td></tr>
+    <tr><td><kbd>P</kbd></td><td><strong>P</strong>ronunciation</td></tr>
+    <tr><td><kbd>O</kbd></td><td><strong>O</strong>pen the chapter, and get <strong>O</strong>ut of the chapter</td></tr>
+    <tr><td><kbd>B</kbd></td><td>Go <strong>B</strong>ack a chapter</td></tr>
+    <tr><td><kbd>N</kbd></td><td>Go to the <strong>N</strong>ext chapter</td></tr>
+  </table>
+
   <h3>Keyboard shortcuts</h3>
   <table>
     <tr><td><kbd>/</kbd></td><td>Jump to the text box from anywhere</td></tr>
@@ -224,6 +253,8 @@
     <tr><td><kbd>Ctrl/Cmd</kbd>+<kbd>A</kbd></td><td>Select all listed verses</td></tr>
     <tr><td><kbd>C</kbd></td><td>Copy the selected verses (or the current one) as plain text</td></tr>
     <tr><td><kbd>Ctrl/Cmd</kbd>+<kbd>C</kbd></td><td>Copy with formatting: reference in bold, in the page&rsquo;s font (pastes as rich text; plain text where that isn&rsquo;t supported)</td></tr>
+    <tr><td><kbd>O</kbd></td><td>Show the whole chapter of the selected verse, with that verse still selected; press <kbd>O</kbd> again to go back</td></tr>
+    <tr><td><kbd>B</kbd> / <kbd>N</kbd></td><td>While the whole chapter is shown: previous / next chapter (after the last chapter of a book, N continues to the first chapter of the next book)</td></tr>
     <tr><td><kbd>P</kbd></td><td>Show the pronunciation of each word: the first word is highlighted with a small box above or below it. Move between words with the arrow keys or <kbd>H</kbd> <kbd>J</kbd> <kbd>K</kbd> <kbd>L</kbd> (past the last word it continues into the next verse); <kbd>P</kbd> or <kbd>Esc</kbd> turns it off. The accented (stressed) syllable is in capitals. Greek is worked out on the page (approximate, Erasmian-style). Biblical names use the built-in pronunciation list (no internet needed). Other English words are looked up online at api.dictionaryapi.dev, so they need an internet connection and each word you look at is sent there; results are remembered in this browser</td></tr>
     <tr><td><kbd>Enter</kbd></td><td>Present the current verse, maximized in the window (<kbd>Shift</kbd>+<kbd>F</kbd> for true full screen). If two or more verses are selected, only those are cycled through</td></tr>
     <tr><td><kbd>Esc</kbd></td><td>Clear the selection; press again to return to the box</td></tr>
@@ -234,6 +265,7 @@
     <tr><td><kbd>&larr;</kbd> <kbd>&uarr;</kbd> <kbd>Page Up</kbd></td><td>Previous verse</td></tr>
     <tr><td><kbd>Home</kbd> / <kbd>End</kbd></td><td>First / last verse listed</td></tr>
     <tr><td><kbd>+</kbd> / <kbd>&minus;</kbd></td><td>Make the text larger / smaller (your size is remembered next time)</td></tr>
+    <tr><td><kbd>O</kbd></td><td>Show the whole chapter of the selected verse, with that verse still selected; press <kbd>O</kbd> again to go back</td></tr>
     <tr><td><kbd>P</kbd></td><td>Pronunciation of words, as above (arrows / <kbd>H</kbd> <kbd>J</kbd> <kbd>K</kbd> <kbd>L</kbd> move between words)</td></tr>
     <tr><td><kbd>F</kbd></td><td>Fill the presentation area with the verse (largest size that fits)</td></tr>
     <tr><td><kbd>Shift</kbd>+<kbd>F</kbd></td><td>Toggle true full screen (the browser&rsquo;s <kbd>Esc</kbd> leaves it but stays in presentation mode)</td></tr>
@@ -349,7 +381,50 @@
         });
       });
     });
+    softenCaps();
     return count;
+  }
+
+  // A verse that continues the previous verse's sentence shouldn't start with a capital:
+  // "...and God said," / "And God saw" -> "...and God said, / and God saw".
+  // Proper nouns are kept: a word is only lowercased if the text itself writes it lowercase
+  // more often than capitalized in the middle of sentences.
+  var CONNECTIVES = {};
+  "and but for nor or yet so then now thus therefore wherefore moreover furthermore also even if when whenever while whereas where wherein whereby whereof because since as unless until till though although lest in on at to of by with without from into unto upon through among according the a an that yea behold".split(" ").forEach(function (w) { CONNECTIVES[w] = true; });
+  function softenCaps() {
+    var cap = {}, low = {}, wre = /[A-Za-z][A-Za-z\u2019']*/g;
+    flat.forEach(function (e) {
+      var t = e.text, m;
+      wre.lastIndex = 0;
+      while ((m = wre.exec(t))) {
+        if (m.index === 0) continue;
+        var before = t.slice(0, m.index).replace(/[\s"\u201c\u201d\u2018\u2019'()\[\]\d*\u2020\u2021\u00b9\u00b2\u00b3\u2070-\u2079]+$/, "").slice(-1);
+        if (/[.?!:]/.test(before)) continue;   // capital only because a sentence starts here
+        var w = m[0], k = w.toLowerCase();
+        if (/^[A-Z][a-z\u2019']*$/.test(w)) {
+          // a capital right after , or ; (or a dash) doesn't show a name: the text may just capitalize clause starts there ("; But God")
+          if (/[;,\u2014\u2013\-]/.test(before)) continue;
+          cap[k] = (cap[k] || 0) + 1;
+        } else if (/^[a-z\u2019']+$/.test(w)) low[k] = (low[k] || 0) + 1;
+      }
+    });
+    flat.forEach(function (e, i) {
+      var prev = flat[i - 1];
+      if (!prev || !follows(prev, e)) return;
+      // ignore trailing quotes, brackets and footnote marks when judging how the previous verse ended
+      var end = prev.text.replace(/[\s"\u201d\u2019'\)\]\d*\u2020\u2021\u00b9\u00b2\u00b3\u2070-\u2079]+$/, "");
+      if (!end || /[.?!:\u2014\u2013\-]$/.test(end)) return;   // previous verse ended a sentence (or a speech / dash)
+      var m = /^([(\[\u00b6\s]*)([A-Z][a-z\u2019']*)(?![A-Za-z\u2019'])(\s+([A-Z]))?/.exec(e.text);
+      if (!m || m[2] === "I" || m[2].charAt(1) === "\u2019") return;
+      var k = m[2].toLowerCase();
+      if (CONNECTIVES[k]) { e.text = m[1] + k.charAt(0) + e.text.slice(m[1].length + 1); return; }   // never a name
+      // keep the capital only if the text itself shows this word capitalized mid-sentence (a name or divine title);
+      // words never seen capitalized elsewhere (e.g. "predestinating") are ordinary words
+      if (cap[k] && cap[k] >= (low[k] || 0)) return;
+      // e.g. "Holy Spirit", "Son of ...": keep when the word is often capitalized; but "Which He ..." is still just "which"
+      if (cap[k] && m[4] && cap[k] >= 0.1 * ((low[k] || 0) + cap[k])) return;
+      e.text = m[1] + k.charAt(0) + e.text.slice(m[1].length + 1);
+    });
   }
 
   function refOfV(ver, bi, ch, v) {
@@ -710,7 +785,7 @@
       if (!r.out.length && !r.notes.every(isMissing)) { $("status").textContent = ""; $("status").className = ""; return; }
       r.notes = r.notes.filter(isMissing);
     }
-    pronOff();
+    pronOff(); chapSaved = null;
     box.innerHTML = "";
     lastTerms = r.textMode ? r.terms : null;
     var single = r.out.length === 1 && versions.length > 1;
@@ -762,6 +837,93 @@
     st.textContent = r.notes.join(" \u00b7 ") || (r.out.length ? "" : "Nothing found.");
     st.className = r.out.length && !r.notes.length ? "" : (r.out.length ? "" : "error");
   }
+
+  // ---- go-to picker: book / chapter / verse ----
+  (function () {
+    var gBook = $("gBook"), gChap = $("gChap"), gVerse = $("gVerse");
+    function opt(sel, val, text) { var o = document.createElement("option"); o.value = val; o.textContent = text; sel.appendChild(o); }
+    function nums(o) { return Object.keys(o || {}).map(Number).sort(function (a, b) { return a - b; }); }
+    function fillBooks() {
+      var keep = gBook.value, have = nums(data), i;
+      gBook.innerHTML = ""; opt(gBook, "", "Select a book\u2026");
+      [["Old Testament", 0, 38], ["New Testament", 39, 65]].forEach(function (g) {
+        var og = document.createElement("optgroup"); og.label = g[0];
+        for (i = g[1]; i <= g[2]; i++) if (!count || data[i]) opt(og, i, BOOKS[i][0]);
+        if (og.children.length) gBook.appendChild(og);
+      });
+      gBook.value = keep; if (gBook.value !== keep) gBook.value = "";
+      if (!gBook.value) fillChaps();
+      $("gNote").textContent = count ? "Pick a book for the whole book, add a chapter for that chapter, or add a verse for just that verse."
+                                     : "Load your text file first, then you can browse it here.";
+    }
+    function fillChaps() {
+      var bi = gBook.value === "" ? null : +gBook.value;
+      gChap.innerHTML = ""; gVerse.innerHTML = "";
+      gVerse.disabled = true;
+      if (bi === null || !data[bi]) { gChap.disabled = true; return; }
+      if (SINGLE[BOOKS[bi][0]] || noChap[bi]) {   // one-chapter books: go straight to verses
+        gChap.disabled = true; opt(gChap, "", "\u2014");
+        fillVerses(); return;
+      }
+      gChap.disabled = false; opt(gChap, "", "Whole book");
+      nums(data[bi]).forEach(function (c) { opt(gChap, c, c); });
+    }
+    function fillVerses() {
+      var bi = gBook.value === "" ? null : +gBook.value, single = bi !== null && (SINGLE[BOOKS[bi][0]] || noChap[bi]);
+      var ch = single ? nums(data[bi])[0] : (gChap.value === "" ? null : +gChap.value);
+      gVerse.innerHTML = "";
+      if (bi === null || ch === null || !data[bi] || !data[bi][ch]) { gVerse.disabled = true; return; }
+      gVerse.disabled = false; opt(gVerse, "", single ? "Whole book" : "Whole chapter");
+      nums(data[bi][ch]).forEach(function (v) { opt(gVerse, v, v); });
+    }
+    gBook.addEventListener("change", fillChaps);
+    gChap.addEventListener("change", fillVerses);
+
+    function openGoto() {
+      if (!$("scope").hidden) closeScope();
+      fillBooks();
+      $("goto").hidden = false; $("gotoBtn").setAttribute("aria-expanded", "true");
+      gBook.focus();
+    }
+    function closeGoto(refocus) {
+      $("goto").hidden = true; $("gotoBtn").setAttribute("aria-expanded", "false");
+      if (refocus) $("q").focus();
+    }
+    $("gotoBtn").addEventListener("click", function () { if ($("goto").hidden) openGoto(); else closeGoto(true); });
+
+    // opening the scope panel closes this one
+    $("scopeBtn").addEventListener("click", function () { if (!$("goto").hidden) closeGoto(false); }, true);
+
+    function go() {
+      if (!count) { $("status").textContent = "Load your text file first."; $("status").className = "error"; return; }
+      if (gBook.value === "") { $("status").textContent = "Choose a book first."; $("status").className = "error"; gBook.focus(); return; }
+      var bi = +gBook.value, name = BOOKS[bi][0], single = SINGLE[BOOKS[bi][0]] || noChap[bi], q;
+      if (single) {
+        var vs = nums(data[bi][nums(data[bi])[0]]);
+        q = gVerse.value !== "" ? name + " " + gVerse.value : name + " " + vs[0] + "-" + vs[vs.length - 1];
+      } else if (gChap.value === "") {
+        var cs = nums(data[bi]);
+        q = name + " " + cs[0] + (cs.length > 1 ? "-" + cs[cs.length - 1] : "");
+      } else if (gVerse.value === "") {
+        q = name + " " + gChap.value;
+      } else {
+        q = name + " " + gChap.value + ":" + gVerse.value;
+      }
+      $("q").value = q;
+      clearTimeout(liveTimer); liveTimer = null;
+      show(q);
+      closeGoto(false);
+      var vl = verses();
+      if (isCoarse()) $("q").blur(); else if (vl.length) focusVerse(vl[0]);
+      window.scrollTo(0, 0);
+    }
+    $("gGo").addEventListener("click", go);
+    $("goto").addEventListener("keydown", function (e) {
+      if (e.key === "Enter" && e.target.tagName === "SELECT") { e.preventDefault(); go(); }
+      else if (e.key === "Escape") { e.preventDefault(); e.stopPropagation(); closeGoto(true); }
+    });
+    fillBooks();
+  })();
 
   // ---- storage of the loaded file (this browser only) ----
   function db() {
@@ -872,6 +1034,7 @@
   function clearAll() {
     kv("readwrite", function (s) { return s.delete("versions"); }).catch(function () {});
     kv("readwrite", function (s) { return s.delete("bible"); }).catch(function () {});
+    chapSaved = null;
     versions = []; cur = 0; data = {}; labels = {}; noChap = {}; flat = []; count = 0;
     $("info").hidden = true; $("load").hidden = false;
     $("results").innerHTML = ""; $("status").textContent = ""; $("status").className = "";
@@ -1005,6 +1168,76 @@
     verses().forEach(function (v) { v.tabIndex = -1; });
     el.tabIndex = 0; el.focus(); el.scrollIntoView({ block: "nearest" });
   }
+  // ---- O: whole chapter around the focused verse; O again goes back ----
+  var chapSaved = null;
+  function toggleChapter(v) {
+    var box = $("results"), st = $("status"), i, e;
+    pronOff();
+    if (chapSaved) {   // back to the view we left
+      var s = chapSaved; chapSaved = null;
+      box.innerHTML = s.html; compareMode = s.compareMode; cmp = s.cmp; lastTerms = s.lastTerms;
+      st.textContent = s.status; st.className = s.cls;
+      if (compareMode) renderSingle(cmp.bi, cmp.ch, cmp.v); else applyVersion();   // pick up a version change made meanwhile
+      var back = verses().filter(function (x) { return x.dataset.bi === s.bi && x.dataset.ch === s.ch && x.dataset.v === s.v; })[0] || verses()[0];
+      if (back) moveFocus(back);
+      return;
+    }
+    var bi = +v.dataset.bi, ch = +v.dataset.ch, vs = +v.dataset.v;
+    if (!data[bi] || !data[bi][ch] || !Object.keys(data[bi][ch]).length) return;
+    chapSaved = { html: box.innerHTML, compareMode: compareMode, cmp: cmp, lastTerms: lastTerms, status: st.textContent, cls: st.className, bi: v.dataset.bi, ch: v.dataset.ch, v: v.dataset.v };
+    renderChapter(bi, ch, vs, true);
+  }
+  // draw one whole chapter; vs = verse to select (falls back to the first verse)
+  function renderChapter(bi, ch, vs, centre) {
+    var box = $("results"), st = $("status"), e;
+    var chap = data[bi][ch];
+    var nums = Object.keys(chap).map(Number).sort(function (a, b) { return a - b; });
+    compareMode = false; lastTerms = null;
+    box.innerHTML = "";
+    var pas = document.createElement("div"); pas.className = "passage";
+    var head = document.createElement("div"); head.className = "phead";
+    head.dataset.bi = bi; head.dataset.c1 = ch; head.dataset.v1 = nums[0]; head.dataset.c2 = ch; head.dataset.v2 = nums[nums.length - 1];
+    head.textContent = rangeLabel(bi, ch, nums[0], ch, nums[nums.length - 1]);
+    var body = document.createElement("div"); body.className = "pbody";
+    pas.appendChild(head); pas.appendChild(body); box.appendChild(pas);
+    var target = null;
+    nums.forEach(function (n) {
+      e = chap[n];
+      var d = document.createElement("div"); d.className = "verse"; d.tabIndex = -1;
+      var ref = refOf({ bi: bi, ch: ch, v: n });
+      d.dataset.copy = ref + " " + e.text; d.dataset.ref = ref; d.dataset.text = e.text;
+      d.dataset.bi = bi; d.dataset.ch = ch; d.dataset.v = n; d.dataset.vnum = String(n);
+      var a = document.createElement("div"); a.className = "ref"; a.textContent = String(n);
+      var p = document.createElement("p"); p.className = "text"; p.textContent = e.text;
+      d.appendChild(a); d.appendChild(p); body.appendChild(d); body.appendChild(document.createTextNode(" "));
+      if (n === vs) target = d;
+    });
+    target = target || verses()[0];
+    chapCur = { bi: bi, ch: ch };
+    st.textContent = "Whole chapter \u00b7 B previous \u00b7 N next \u00b7 O to go back"; st.className = "";
+    target.classList.add("sel"); anchor = verses().indexOf(target);
+    moveFocus(target);
+    if (centre) target.scrollIntoView({ block: "center" }); else window.scrollTo(0, 0);
+  }
+  // B / N: previous / next chapter (crossing into the neighbouring book at either end)
+  var chapCur = null;
+  function chapterStep(dir) {
+    if (!chapSaved || !chapCur) return;
+    pronOff();
+    var bi = chapCur.bi, ch = chapCur.ch;
+    var nums = function (b) { return Object.keys(data[b] || {}).map(Number).sort(function (x, y) { return x - y; }); };
+    var list = nums(bi), k = list.indexOf(ch), nb = bi, nc = null;
+    if (k + dir >= 0 && k + dir < list.length) nc = list[k + dir];
+    else {
+      for (nb = bi + dir; nb >= 0 && nb < BOOKS.length; nb += dir) {
+        var l2 = nums(nb);
+        if (l2.length) { nc = dir > 0 ? l2[0] : l2[l2.length - 1]; break; }
+      }
+    }
+    if (nc === null) { $("status").textContent = dir > 0 ? "This is the last chapter" : "This is the first chapter"; return; }
+    renderChapter(nb, nc, dir > 0 ? null : null, false);
+  }
+
   function clearSel() { verses().forEach(function (v) { v.classList.remove("sel"); }); }
 
   // plain move: single verse, selection cleared
@@ -1356,14 +1589,102 @@
   // "Cherub" is the place (KER-uhb) only in Ezra 2:59 and Nehemiah 7:61; everywhere else it is the angel (CHAIR-uhb)
   var CHERUB_PLACE = "KER-uhb", CHERUB_PLACE_REF = /(?:^|\s)(?:Ezra\s+2:59|Neh(?:emiah|\.)?\s+7:61)(?!\d)/i;
   function localPron(word, ref, anyCase) {
-    if (!anyCase && !/^[A-Z]/.test(word)) return null;   // names are capitalised; keeps ordinary words like "so", "on", "one" out of it
+    if (!anyCase && !/^[A-Z]/.test(word)) return commonPron(word);   // names are capitalised; keeps ordinary words like "so", "on", "one" out of it
     var k = engKey(word), tries = [k];
     if (k === "cherub" && ref && CHERUB_PLACE_REF.test(ref)) return { resp: CHERUB_PLACE, ipa: "biblical name (place)" };
     if (/'s$/.test(k)) tries.push(k.slice(0, -2));
     var base = k.split("'")[0];
     if (base && tries.indexOf(base) < 0) tries.push(base);
     for (var i = 0; i < tries.length; i++) if (ENG_NAMES.hasOwnProperty(tries[i])) return { resp: ENG_NAMES[tries[i]], ipa: "biblical name" };
+    return commonPron(word);
+  }
+
+  // ---- Offline English pronunciation: common-word list + rule-based fallback (approximate) ----
+  var COMMON = {};
+  ("a=uh the=thuh and=AND of=uhv to=too in=IN is=IZ it=IT that=THAT he=HEE was=WUZ for=FOR on=ON are=AR as=AZ with=WITH his=HIZ they=THAY at=AT be=BEE this=THIS from=FRUM or=OR one=WUN had=HAD by=BIGH but=BUT not=NOT what=WUT all=AWL were=WUR we=WEE when=WEN your=YOR can=KAN said=SED there=THAIR an=AN each=EECH which=WICH she=SHEE do=DOO how=HOW their=THAIR if=IF will=WIL up=UP other=UH-thuhr about=uh-BOWT out=OWT many=MEN-ee then=THEN them=THEM these=THEEZ so=SOH some=SUM her=HUR would=WUUD make=MAYK like=LIGHK him=HIM into=IN-too time=TIGHM has=HAZ look=LUUK two=TOO more=MOR go=GOH see=SEE no=NOH way=WAY could=KUUD my=MIGH than=THAN first=FURST been=BIN call=KAWL who=HOO its=ITS now=NOW find=FIGHND long=LONG down=DOWN day=DAY did=DID get=GET come=KUM made=MAYD may=MAY part=PART over=OH-vuhr new=NOO take=TAYK only=OHN-lee little=LIT-uhl work=WURK know=NOH place=PLAYS year=YEER live=LIV me=MEE back=BAK give=GIV most=MOHST very=VER-ee after=AF-tuhr thing=THING our=OWR just=JUST name=NAYM good=GUUD sentence=SEN-tuhns man=MAN think=THINGK say=SAY great=GRAYT where=WAIR help=HELP through=THROO much=MUCH before=bee-FOR line=LIGHN right=RIGHT too=TOO mean=MEEN old=OHLD any=EN-ee same=SAYM tell=TEL boy=BOY follow=FOL-oh came=KAYM want=WONT show=SHOH also=AWL-soh around=uh-ROWND form=FORM three=THREE small=SMAWL set=SET put=PUUT end=END does=DUZ another=uh-NUH-thuhr well=WEL large=LARJ must=MUST big=BIG even=EE-vuhn such=SUCH because=bee-KAWZ turn=TURN here=HEER why=WIGH ask=ASK went=WENT men=MEN read=REED need=NEED land=LAND different=DIF-ruhnt home=HOHM us=US move=MOOV try=TRIGH kind=KIGHND hand=HAND picture=PIK-chuhr again=uh-GEN change=CHAYNJ off=AWF play=PLAY spell=SPEL air=AIR away=uh-WAY animal=AN-ih-muhl house=HOWS point=POYNT page=PAYJ letter=LET-uhr mother=MUTH-uhr answer=AN-suhr found=FOWND study=STUD-ee still=STIL learn=LURN should=SHUUD world=WURLD high=HIGH every=EV-ree near=NEER add=AD food=FOOD between=bee-TWEEN own=OHN below=bee-LOH country=KUN-tree plant=PLANT last=LAST school=SKOOL father=FAH-thuhr keep=KEEP tree=TREE never=NEV-uhr start=START city=SIT-ee earth=URTH eye=IGH light=LIGHT thought=THAWT head=HED under=UN-duhr story=STOR-ee saw=SAW left=LEFT dont=DOHNT few=FYOO while=WIGHL along=uh-LONG might=MIGHT close=KLOHZ something=SUM-thing seem=SEEM next=NEKST hard=HARD open=OH-puhn example=ig-ZAM-puhl begin=bee-GIN life=LIGHF always=AWL-wayz those=THOHZ both=BOHTH paper=PAY-puhr together=tuh-GETH-uhr got=GOT group=GROOP often=AW-fuhn run=RUN important=im-POR-tuhnt until=un-TIL children=CHIL-druhn side=SIGHD feet=FEET car=KAR mile=MIGHL night=NIGHT walk=WAWK white=WIGHT sea=SEE began=bee-GAN grow=GROH took=TUUK river=RIV-uhr four=FOR carry=KAR-ee state=STAYT once=WUNS book=BUUK hear=HEER stop=STOP without=with-OWT second=SEK-uhnd late=LAYT miss=MIS idea=igh-DEE enough=ee-NUF eat=EET face=FAYS watch=WOCH far=FAR real=REE-uhl almost=AWL-mohst let=LET above=uh-BUV girl=GURL sometimes=SUM-tighmz mountain=MOWN-tuhn cut=KUT young=YUNG talk=TAWK soon=SOON list=LIST song=SONG being=BEE-ing leave=LEEV family=FAM-uh-lee body=BOD-ee music=MYOO-zik color=KUL-uhr stand=STAND sun=SUN questions=KWES-chuhnz fish=FISH area=AIR-ee-uh mark=MARK horse=HORS birds=BURDZ problem=PROB-luhm complete=kuhm-PLEET room=ROOM knew=NOO since=SINS ever=EV-uhr piece=PEES told=TOHLD usually=YOO-zhoo-uh-lee friends=FRENDZ easy=EE-zee heard=HURD order=OR-duhr red=RED door=DOR sure=SHUUR become=bee-KUM top=TOP ship=SHIP across=uh-KRAWS today=tuh-DAY during=DUUR-ing short=SHORT better=BET-uhr best=BEST however=how-EV-uhr low=LOH hours=OWRZ black=BLAK products=PROD-uhkts happened=HAP-uhnd whole=HOHL measure=MEZH-uhr remember=ree-MEM-buhr early=UR-lee waves=WAYVZ reached=REECHT listen=LIS-uhn wind=WIND rock=ROK space=SPAYS covered=KUV-uhrd fast=FAST several=SEV-uhr hold=HOHLD himself=him-SELF toward=TOHRD five=FIGHV step=STEP morning=MOR-ning passed=PAST vowel=VOW-uhl true=TROO hundred=HUN-drid against=uh-GENST pattern=PAT-uhrn numeral=NOO-muhr-uhl table=TAY-buhl north=NORTH slowly=SLOH-lee money=MUN-ee map=MAP farm=FARM pulled=PUULD draw=DRAW voice=VOYS seen=SEEN cold=KOHLD cried=KRIGHD plan=PLAN notice=NOH-tihs south=SOWTH sing=SING war=WOR ground=GROWND fall=FAWL king=KING town=TOWN ill=IL unto=UN-too thou=THOW thee=THEE thy=THIGH thine=THIGHN hath=HATH doth=DUTH shalt=SHALT wilt=WILT ye=YEE art=ART saith=SETH hast=HAST dost=DUST didst=DIDST wast=WOST wert=WURT lo=LOH behold=bee-HOHLD whom=HOOM whose=HOOZ whosoever=hoo-soh-EV-uhr wherefore=WAIR-for therefore=THAIR-for thereof=thair-UV wherein=wair-IN herein=heer-IN thereby=thair-BIGH whence=WENS thence=THENS hence=HENS lest=LEST nay=NAY yea=YAY verily=VER-uh-lee amen=ay-MEN lord=LORD god=GOD jesus=JEE-zuhs christ=KRIGHST spirit=SPIR-iht holy=HOH-lee heaven=HEV-uhn heavens=HEV-uhnz glory=GLOR-ee faith=FAYTH grace=GRAYS love=LUV sin=SIN sins=SINZ blood=BLUD flesh=FLESH soul=SOHL heart=HART word=WURD truth=TROOTH righteousness=RIGH-chuhs-nihs righteous=RIGH-chuhs eternal=ee-TUR-nuhl everlasting=ev-uhr-LAS-ting salvation=sal-VAY-shuhn gospel=GOS-puhl kingdom=KING-duhm covenant=KUV-uh-nuhnt priest=PREEST priests=PREESTS temple=TEM-puhl altar=AWL-tuhr offering=AW-fuhr-ing sacrifice=SAK-ruh-fighs prophet=PROF-iht prophets=PROF-ihts people=PEE-puhl nations=NAY-shuhnz people=PEE-puhl wilderness=WIL-duhr-nihs mercy=MUR-see wrath=RATH iniquity=ih-NIK-wih-tee transgression=trans-GRESH-uhn commandment=kuh-MAND-muhnt commandments=kuh-MAND-muhnts sabbath=SAB-uhth angel=AYN-juhl angels=AYN-juhlz")
+  .split(" ").forEach(function (x) { var q = x.indexOf("="); if (q > 0) COMMON[x.slice(0, q)] = x.slice(q + 1); });
+  var SUFX = [["ness", "nihs", 0], ["less", "lihs", 0], ["ful", "fuhl", 0], ["est", "ihst", 1], ["ing", "ing", 1], ["ed", "", 2], ["ly", "lee", 0], ["er", "uhr", 1], ["es", "", 3], ["s", "", 3]];
+  function apR(r, t) { return (r === r.toUpperCase() && r.indexOf("-") < 0) ? r + t.toUpperCase() : r + t; }
+  function commonPron(word, deep) {
+    var k = engKey(word).split("'")[0], i, s, b, r, bs, e, dbl;
+    var look = function (x) { if (COMMON.hasOwnProperty(x)) return COMMON[x]; if (deep && x.length >= 3) { var z = rulePron(x, 1); return z && z.resp; } return null; };
+    if (!k) return null;
+    if (COMMON.hasOwnProperty(k)) return { resp: COMMON[k], ipa: "common word" };
+    for (i = 0; i < SUFX.length; i++) {
+      s = SUFX[i]; if (k.length <= s[0].length + 1 || k.slice(-s[0].length) !== s[0]) continue;
+      b = k.slice(0, -s[0].length); dbl = b.length > 2 && b.charAt(b.length - 1) === b.charAt(b.length - 2) && "aeioulsz".indexOf(b.slice(-1)) < 0;
+      bs = deep ? [dbl ? b.slice(0, -1) : b] : [b, b + "e", b.slice(0, -1)];
+      for (e = 0; e < bs.length; e++) if (look(bs[e]) && (deep || e < 2 || dbl)) {
+        r = look(bs[e]);
+        if (s[2] === 3) r = /(s|z|sh|ch|j|x)$/i.test(r) ? r + "-uhz" : /(k|p|t|f|th)$/i.test(r) ? apR(r, "s") : apR(r, "z");
+        else if (s[2] === 2) r = /[td]$/i.test(r) ? r + "-ihd" : /(k|p|f|s|sh|ch|th)$/i.test(r) ? apR(r, "t") : apR(r, "d");
+        else r = r + "-" + s[1];
+        return { resp: r, ipa: "common word" };
+      }
+    }
     return null;
+  }
+  var R_V = { ai: "ay", ay: "ay", ee: "ee", ea: "ee", ie: "ee", oa: "oh", oo: "oo", ou: "ow", ow: "oh", oi: "oy", oy: "oy", au: "aw", aw: "aw", eu: "oo", ew: "oo", ei: "ay", ey: "ay", ue: "oo", ui: "oo" };
+  var R_S = { a: ["a", "ay"], e: ["eh", "ee"], i: ["ih", "igh"], o: ["o", "oh"], u: ["uh", "oo"], y: ["ih", "igh"] };
+  var R_PRE = /^(a|be|de|re|con|com|ex|en|em|dis|pro|pre|for|per|sub|ad|ap|at|ab|ob|un|in)$/;
+  function rulePron(word, noSfx) {
+    var c = commonPron(word, !noSfx); if (c) return c;
+    var w = engKey(word).replace(/[^a-z]/g, ""), T = [], i = 0, m, s, n, silentE = false;
+    if (!w) return null;
+    var tail = "";
+    if ((m = w.match(/^(.{2,})(tion|sion)$/))) { w = m[1]; tail = (m[2] === "tion" ? "shuhn" : "zhuhn"); }
+    else if ((m = w.match(/^(.{3,})(ous)$/))) { w = m[1]; tail = "uhs"; }
+    else if ((m = w.match(/^(.{3,})(ment)$/))) { w = m[1]; tail = "muhnt"; }
+    if ((m = w.match(/^(.{2,}[^aeiou])le$/))) { w = m[1]; tail = tail || "uhl"; }
+    else if (w.length > 2 && /[^aeiouy]e$/.test(w) && /[aeiouy]/.test(w.slice(0, -1))) { w = w.slice(0, -1); silentE = true; }
+    var isV = function (ch) { return "aeiouy".indexOf(ch) >= 0; };
+    while (i < w.length) {
+      s = w.slice(i);
+      if ((m = s.match(/^(tch|ph|sh|ch|th|ck|ng|wh|qu|gh|dg)/))) { T.push({ c: { tch: "ch", ph: "f", sh: "sh", ch: "ch", th: "th", ck: "k", ng: "ng", wh: "w", qu: "kw", gh: "", dg: "j" }[m[1]] }); i += m[1].length; continue; }
+      if (i === 0 && (m = s.match(/^(kn|wr|gn)/))) { T.push({ c: m[1] === "wr" ? "r" : "n" }); i += 2; continue; }
+      if (!isV(s[0]) || (i === 0 && s[0] === "y")) {
+        var ch = s[0], nx = s[1] || "", o = ch;
+        if (ch === "c") o = "eiy".indexOf(nx) >= 0 && nx ? "s" : "k";
+        else if (ch === "g") o = "eiy".indexOf(nx) >= 0 && nx && s.slice(0, 3) !== "gie" ? "j" : "g";
+        else if (ch === "x") o = "ks";
+        else if (ch === "q") o = "k";
+        else if (ch === "s" && i > 0 && isV(w[i - 1]) && isV(nx || "x")) o = "z";
+        T.push({ c: o }); i += (nx === ch ? 2 : 1); continue;
+      }
+      if ((m = s.match(/^(ai|ay|ee|ea|ie|oa|oo|ou|ow|oi|oy|au|aw|eu|ew|ei|ey|ue|ui)/))) { T.push({ v: R_V[m[1]], g: 1 }); i += 2; continue; }
+      T.push({ v: s[0], r: (s[1] === "r" && "aeiou".indexOf(s[0]) >= 0) ? 1 : 0, g: 0 }); i += (s[1] === "r" && "aeiou".indexOf(s[0]) >= 0) ? 2 : 1;
+    }
+    var vi = [], j; T.forEach(function (t, q) { if (t.v !== undefined) vi.push(q); });
+    if (tail && tail !== "uhl") { /* stress last syllable of stem for -tion/-sion */ }
+    if (!vi.length) return { resp: w, ipa: "approximate" };
+    var N = vi.length + (tail ? 1 : 0), st = 0;
+    if (N > 1 && vi.length > 1 && R_PRE.test(T.slice(0, vi[1]).map(function (t) { return t.v !== undefined ? t.v : t.c; }).join("").replace(/ay|ee|oh|oo/g, function (x) { return x[0]; }))) st = 1;
+    if (tail === "shuhn" || tail === "zhuhn") st = vi.length - 1;
+    var syl = vi.map(function () { return { on: "", nu: "", co: "" }; });
+    var ci = function (a, b) { var o = ""; for (var q = a; q < b; q++) o += T[q].c; return o; };
+    syl[0].on = ci(0, vi[0]);
+    for (j = 0; j < vi.length - 1; j++) {
+      var cs = []; for (var q = vi[j] + 1; q < vi[j + 1]; q++) cs.push(T[q].c);
+      var k = cs.length === 0 ? 0 : cs.length === 1 ? 0 : 1; var sp = cs.length - (cs.length === 0 ? 0 : (cs.length === 1 ? 1 : cs.length - 1));
+      syl[j].co = cs.slice(0, cs.length - sp).join(""); syl[j + 1].on = cs.slice(cs.length - sp).join("");
+      T[vi[j]].open = cs.length === 1;
+    }
+    syl[vi.length - 1].co = ci(vi[vi.length - 1] + 1, T.length);
+    var out = syl.map(function (sy, q) {
+      var t = T[vi[q]], stressed = (q === st) || (vi.length === 1 && !tail), v;
+      var lastOpen = q === vi.length - 1 && !syl[q].co && !tail && !silentE;
+      if (t.g) v = t.v;
+      else if (t.r) v = { a: "ar", o: "or" }[t.v] || (stressed ? "ur" : "uhr");
+      else if (!stressed) v = (t.v === "y" && q === vi.length - 1 && !tail) ? "ee" : "uh";
+      else {
+        var lng = (silentE && q === vi.length - 1) || ((t.open || (tail && q === vi.length - 1 && !syl[q].co)) && "aou".indexOf(t.v) >= 0) || (t.v === "y" && lastOpen);
+        v = R_S[t.v][lng ? 1 : 0];
+      }
+      if (t.v === "y" && q === vi.length - 1 && vi.length > 1 && !silentE && !syl[q].co) v = "ee";
+      var txt = sy.on + v + sy.co; return stressed ? txt.toUpperCase() : txt;
+    });
+    if (tail) out.push(tail);
+    return { resp: out.join("-"), ipa: "approximate (spelling rules)" };
   }
 
   var engCache = {};
@@ -1403,7 +1724,7 @@
       .then(function (res) {
         engCache[k] = res;
         try { localStorage.setItem("lsm_eng_pron", JSON.stringify(engCache)); } catch (e) {}
-        return res;
+        return res || rulePron(word);
       });
   }
 
@@ -1443,7 +1764,7 @@
     } else if (/[A-Za-z]/.test(txt)) {
       var k = engKey(txt), loc = localPron(txt, pron.ref, w.getAttribute("data-cmp") === "1");
       if (loc || engCache.hasOwnProperty(k)) {
-        var c = loc || engCache[k];
+        var c = loc || engCache[k] || rulePron(txt);
         pronLines(c ? c.resp : txt, c ? c.ipa : "no pronunciation found");
       } else {
         pronLines("\u2026", "looking up\u2026");
@@ -1453,7 +1774,8 @@
           pronPlace();
         }, function () {
           if (!pron.on || pron.words[pron.idx] !== w) return;
-          pronLines("Can\u2019t reach the dictionary", "English pronunciations need an internet connection");
+          var rp = rulePron(txt);
+          pronLines(rp ? rp.resp : txt, rp ? rp.ipa : "");
           pronPlace();
         });
       }
@@ -1642,6 +1964,8 @@
     var all = verses(), i = all.indexOf(v), mod = e.ctrlKey || e.metaKey;
     var key = e.key, shift = e.shiftKey, lk = key.toLowerCase();
     if (!mod && !e.altKey && VIM.hasOwnProperty(lk)) { shift = shift || key !== lk; key = VIM[lk]; }   // h j k l (Shift = select)
+    if (!mod && !e.altKey && lk === "o") { e.preventDefault(); toggleChapter(v); return; }
+    if (!mod && !e.altKey && !shift && chapSaved && (lk === "b" || lk === "n")) { e.preventDefault(); chapterStep(lk === "n" ? 1 : -1); return; }
     if (!mod && !e.altKey && lk === "p") { e.preventDefault(); if (pronAlive()) pronOff(); else pronStart(v); return; }
     if (pronAlive() && pronKey(e, key)) return;
 
