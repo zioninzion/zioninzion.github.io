@@ -17,10 +17,27 @@
       color-scheme: dark;
     }
   }
+  /* themes chosen in the cog panel (Auto = follow the system, the rules above) */
+  :root[data-theme="light"] {
+    --bg: #faf8f4; --surface: #ffffff; --text: #231f1a; --muted: #6f675d;
+    --accent: #7a4b1e; --border: #e3ddd2; --error: #b3261e; color-scheme: light;
+  }
+  :root[data-theme="dark"] {
+    --bg: #1b1814; --surface: #25211c; --text: #efe9df; --muted: #a39a8c;
+    --accent: #d9a566; --border: #3a342c; --error: #ff8a80; color-scheme: dark;
+  }
+  :root[data-theme="bw"] {   /* black text on white */
+    --bg: #ffffff; --surface: #ffffff; --text: #000000; --muted: #333333;
+    --accent: #000000; --border: #777777; --error: #c00000; color-scheme: light;
+  }
+  :root[data-theme="wb"] {   /* white text on black */
+    --bg: #000000; --surface: #000000; --text: #ffffff; --muted: #cccccc;
+    --accent: #ffffff; --border: #888888; --error: #ff6b6b; color-scheme: dark;
+  }
   * { box-sizing: border-box; }
   html { -webkit-text-size-adjust: 100%; }
   body { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
-  body { margin: 0; background: var(--bg); color: var(--text); font: 17px/1.6 Georgia, "Times New Roman", serif; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 17px/1.6 var(--ff, Georgia, "Times New Roman", serif); }
   main { max-width: 720px; margin: 0 auto; padding: 28px max(18px, env(safe-area-inset-right)) 60px max(18px, env(safe-area-inset-left)); }
   form { display: flex; gap: 8px; }
   input[type=text] {
@@ -29,7 +46,7 @@
   }
   button {
     font: inherit; padding: 10px 18px; border: 0; border-radius: 8px;
-    background: var(--accent); color: var(--bg); cursor: pointer; font-weight: 600;
+    background: var(--accent); color: var(--on-accent, var(--bg)); cursor: pointer; font-weight: 600;
   }
   button.link { background: none; color: var(--accent); padding: 0; font-weight: 400; text-decoration: underline; font-size: .85rem; }
   #load {
@@ -65,6 +82,23 @@
   .verse.sel { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 14%, var(--surface)); }
   .verse { cursor: pointer; user-select: none; }
   .verse.copied .ref::after { content: " \00b7  Copied"; color: var(--muted); font-weight: 400; }
+  /* side-by-side comparison of every loaded version (S) */
+  #sbs { position: fixed; inset: 0; z-index: 120; background: var(--bg); color: var(--text); overflow: auto; padding: 3vmin 4vmin 5vmin; text-align: left; }
+  #sbs .sbshead { position: sticky; top: -3vmin; z-index: 1; display: flex; align-items: center; gap: 12px; background: var(--bg); padding: 1vmin 0 12px; margin-bottom: 6px; border-bottom: 1px solid var(--border); }
+  #sbs .sbstitle { flex: 1; min-width: 0; font-weight: 700; color: var(--accent); font-size: clamp(18px, 3vmin, 32px); }
+  #sbs .sbshint { color: var(--muted); font-size: .85rem; white-space: nowrap; }
+  #sbs .sbsgrid { display: block; margin-top: 4px; }
+  #sbs .sbscard { display: grid; grid-template-columns: minmax(130px, 22%) 1fr; gap: 4px 24px; align-items: baseline; padding: 14px 10px; border-bottom: 1px solid var(--border); border-left: 4px solid transparent; }
+  #sbs .sbscard:last-child { border-bottom: 0; }
+  #sbs .sbscard.cur { border-left-color: var(--accent); background: color-mix(in srgb, var(--accent) 10%, transparent); }
+  #sbs .sbslabel { min-width: 0; }
+  #sbs .sbsname { color: var(--accent); font-weight: 700; font-size: .95rem; }
+  #sbs .sbsref { color: var(--muted); font-size: .85rem; margin-top: 2px; }
+  @media (max-width: 560px) { #sbs .sbscard { grid-template-columns: 1fr; } }
+  #sbs .sbstext { line-height: 1.5; font-size: var(--sbs-fs, clamp(17px, 2.4vmin, 30px)); }
+  #sbs .sbssize { display: flex; gap: 6px; }
+  #sbs .sbssize button { min-width: 40px; }
+  #sbs .sbsnote { color: var(--muted); font-size: .9rem; margin-top: 12px; }
   #present {
     position: fixed; inset: 0; z-index: 100; background: var(--bg); color: var(--text);
     display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -90,10 +124,10 @@
   #scope { margin-top: 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); padding: 8px 12px; font-size: .9rem; }
   .scopetitle { color: var(--muted); font-weight: 700; }
   #scopeBtn { display: inline-flex; align-items: center; justify-content: center; padding: 10px 12px; }
-  #scopeBtn.active, #scopeBtn[aria-expanded="true"] { background: var(--accent); color: var(--bg); }
+  #scopeBtn.active, #scopeBtn[aria-expanded="true"] { background: var(--accent); color: var(--on-accent, var(--bg)); }
   .chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
   .chips button { padding: 4px 12px; min-height: 34px; font-size: .85rem; font-weight: 400; background: none; color: var(--accent); border: 1px solid var(--border); border-radius: 999px; }
-  .chips button.on { background: var(--accent); color: var(--bg); }
+  .chips button.on { background: var(--accent); color: var(--on-accent, var(--bg)); }
   .bkh { font-weight: 700; color: var(--muted); font-size: .8rem; margin: 10px 0 4px; }
   .bkgrid { display: flex; flex-wrap: wrap; gap: 2px 8px; }
   .bkgrid label { white-space: nowrap; font-size: .85rem; cursor: pointer; padding: 3px 6px; border-radius: 6px; }
@@ -103,19 +137,43 @@
   #scope .bkgrid input:focus { outline: none; }
   /* go-to picker (book / chapter / verse) */
   #gotoBtn { display: inline-flex; align-items: center; justify-content: center; padding: 10px 12px; }
-  #gotoBtn[aria-expanded="true"] { background: var(--accent); color: var(--bg); }
+  #gotoBtn[aria-expanded="true"] { background: var(--accent); color: var(--on-accent, var(--bg)); }
   #goto { margin-top: 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); padding: 10px 12px; font-size: .9rem; }
-  #goto .grow { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; }
-  #goto label { display: flex; flex-direction: column; gap: 3px; color: var(--muted); font-weight: 700; font-size: .8rem; }
-  #goto select { font: inherit; font-size: 16px; font-weight: 400; color: var(--text); background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 9px 10px; min-width: 120px; max-width: 100%; }
-  #goto select:disabled { opacity: .5; }
-  #goto select#gBook { min-width: 190px; }
+  #goto .gcrumbs { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; margin-bottom: 8px; }
+  #goto .gcrumbs button { padding: 4px 12px; min-height: 32px; font-size: .85rem; font-weight: 600; background: none; color: var(--accent); border: 1px solid var(--border); border-radius: 999px; }
+  #goto .gsep { color: var(--muted); }
+  #goto .ghead { color: var(--muted); font-weight: 700; font-size: .8rem; margin: 10px 0 4px; }
+  #goto .ghead:first-child { margin-top: 0; }
+  #goto button:focus { outline: 2px solid var(--accent); outline-offset: 2px; }
+  #goto .gscroll { max-height: 52vh; overflow: auto; }
+  #goto .ggrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(var(--gmin, 128px), 1fr)); gap: 6px; }
+  #goto .ggrid.nums { --gmin: 48px; }
+  #goto .ggrid button { padding: 8px 6px; min-height: 38px; font-size: .9rem; font-weight: 400; text-align: center; background: var(--bg); color: var(--text); border: 1px solid var(--border); border-radius: 8px; }
+  #goto .ggrid button.on { background: var(--accent); color: var(--on-accent, var(--bg)); border-color: var(--accent); }
   #goto .gnote { color: var(--muted); font-size: .8rem; margin: 8px 0 0; }
   #info .vgroup { display: inline-flex; margin: 2px 6px 2px 0; }
   #info .vchip { padding: 3px 12px; min-height: 30px; font-size: .85rem; font-weight: 400; background: none; color: var(--accent); border: 1px solid var(--border); border-radius: 999px 0 0 999px; }
-  #info .vchip.on { background: var(--accent); color: var(--bg); }
+  #info .vchip.on { background: var(--accent); color: var(--on-accent, var(--bg)); }
   #info .vx { padding: 3px 8px; min-height: 30px; min-width: 0; font-size: .85rem; font-weight: 400; background: none; color: var(--muted); border: 1px solid var(--border); border-left: 0; border-radius: 0 999px 999px 0; }
   #info .vchip:only-child { border-radius: 999px; }
+  .fonthead { font-weight: 700; color: var(--muted); margin-top: 12px; padding-top: 8px; border-top: 1px solid var(--border); }
+  #fontChips button { font-size: .95rem; }
+  .swatches { gap: 8px; align-items: center; }
+  .swatches button.sw { width: 30px; height: 30px; min-height: 30px; padding: 0; border-radius: 50%; border: 2px solid var(--border); }
+  .swatches button.sw.on { background: none; border-color: var(--text); box-shadow: inset 0 0 0 3px var(--bg); }
+  .swatches button.sw.on { background: var(--sw); }
+  .swatches .swlabel { color: var(--muted); font-size: .8rem; font-weight: 700; min-width: 5.2em; }
+  /* uploaded logo, bottom right of the window (and of true full screen, via the copy inside #present) */
+  .applogo { display: none; position: fixed; right: calc(14px + env(safe-area-inset-right)); bottom: calc(14px + env(safe-area-inset-bottom));
+             max-width: 18vw; max-height: 12vh; width: auto; height: auto; object-fit: contain; pointer-events: none; z-index: 125; }
+  .applogo.has { display: block; }
+  #present .applogo { z-index: 140; }
+  #presLogo.has { display: none; }
+  #present:fullscreen #presLogo.has { display: block; }
+  #present:-webkit-full-screen #presLogo.has { display: block; }
+  :fullscreen #bodyLogo { display: none; }
+  #logoNote { color: var(--muted); font-size: .85rem; margin: 6px 0 0; }
+  @media (pointer: coarse) { .applogo { bottom: calc(76px + env(safe-area-inset-bottom)); } }
   .scopehint { color: var(--muted); font-size: .8rem; margin: 6px 0 0; }
   /* action bar (touch screens) */
   #bar { display: none; position: fixed; left: 0; right: 0; bottom: 0; z-index: 50; gap: 8px; align-items: center;
@@ -146,6 +204,7 @@
   #present { height: 100dvh; }
   [hidden] { display: none !important; }
 </style>
+<script>try{var t=localStorage.getItem("lsm_theme");if(t&&t!=="auto")document.documentElement.setAttribute("data-theme",t);}catch(e){}</script>
 </head>
 <body>
 <main>
@@ -156,13 +215,9 @@
     <button type="button" id="helpBtn" title="How to use this page" aria-label="How to use this page">?</button>
   </form>
   <div id="goto" hidden>
-    <div class="grow">
-      <label>Book<select id="gBook"></select></label>
-      <label>Chapter<select id="gChap" disabled></select></label>
-      <label>Verse<select id="gVerse" disabled></select></label>
-      <button type="button" id="gGo">Go</button>
-    </div>
-    <p class="gnote" id="gNote">Pick a book for the whole book, add a chapter for that chapter, or add a verse for just that verse.</p>
+    <div class="gcrumbs" id="gCrumbs"></div>
+    <div class="gscroll" id="gGrid"></div>
+    <p class="gnote" id="gNote"></p>
   </div>
   <div id="scope" hidden>
     <div class="scopetitle" id="scopeSum">Word-search scope: All books</div>
@@ -170,6 +225,21 @@
     <div class="chips" id="scopeSections"></div>
     <div id="scopeBooks"></div>
     <p class="scopehint">Limits word searches only; references always work.</p>
+    <div class="fonthead">Font style</div>
+    <div class="chips" id="fontChips"></div>
+    <div class="fonthead">Theme</div>
+    <div class="chips" id="themeChips"></div>
+    <div class="fonthead">Colors</div>
+    <div class="chips swatches" id="primChips" role="group" aria-label="Primary color"></div>
+    <div class="chips swatches" id="secChips" role="group" aria-label="Secondary color"></div>
+    <p class="scopehint">Primary: buttons, references and highlights. Secondary: supporting text and outlines. Choosing either one recolors the whole scheme to match, keeping the theme&rsquo;s light or dark base.</p>
+    <div class="fonthead">Logo</div>
+    <div class="chips" id="logoChips">
+      <button type="button" id="logoUp">Upload logo&hellip;</button>
+      <button type="button" id="logoDel" hidden>Remove logo</button>
+    </div>
+    <input type="file" id="logoFile" accept="image/*" hidden>
+    <p id="logoNote" hidden></p>
   </div>
   <div id="info" hidden></div>
   <input type="file" id="addFile" accept=".txt,text/plain" multiple hidden>
@@ -183,14 +253,17 @@
   <div id="results"></div>
 </main>
 
-<div id="present" hidden><div class="pref" id="pref"></div><div class="ptext" id="ptext"><div id="pinner"></div></div><div class="pcount" id="pcount"></div>
+<div id="present" hidden><img class="applogo" id="presLogo" alt=""><div class="pref" id="pref"></div><div class="ptext" id="ptext"><div id="pinner"></div></div><div class="pcount" id="pcount"></div>
   <div class="pctl" id="pctl">
     <button type="button" data-a="prev" aria-label="Previous verse">&lsaquo;</button>
     <button type="button" data-a="next" aria-label="Next verse">&rsaquo;</button>
+    <button type="button" data-a="bprev" aria-label="Previous verse in the Bible">B</button>
+    <button type="button" data-a="bnext" aria-label="Next verse in the Bible">N</button>
     <button type="button" data-a="smaller" aria-label="Smaller text">A&minus;</button>
     <button type="button" data-a="larger" aria-label="Larger text">A+</button>
     <button type="button" data-a="fill" aria-label="Fill the screen">Fill</button>
     <button type="button" data-a="pron" aria-label="Pronunciation">P</button>
+    <button type="button" data-a="sbs" aria-label="Compare versions side by side">S</button>
     <button type="button" data-a="ver" id="pVer" aria-label="Next version" hidden>Ver</button>
     <button type="button" data-a="full" id="pFull" aria-label="True full screen">&#x26F6;</button>
     <button type="button" data-a="close" aria-label="Close">&times;</button>
@@ -207,7 +280,7 @@
   <p>Type a reference; verses appear as you type. Separate several references with <code>;</code></p>
   <ul>
     <li><code>Gen. 1:1</code> &nbsp; <code>Eph. 4:4-6</code> &nbsp; <code>Rev. 21:2, 9-10</code> &nbsp; <code>Rom. 6:3-5; 8:4</code></li>
-    <li><code>John 1</code> whole chapter &nbsp; <code>Gen. 1-2</code> whole chapters &nbsp; <code>Jude 9</code> single-chapter book</li>
+    <li><code>John</code> whole book &nbsp; <code>John 1</code> whole chapter &nbsp; <code>Gen. 1-2</code> whole chapters &nbsp; <code>Jude 9</code> single-chapter book</li>
     <li><code>Gen. 1:4-2:3</code> across chapters &nbsp; <code>Gen. 1-2:3</code> chapter 1 start through 2:3</li>
     <li><code>Gen. 1:5-2</code> (second number smaller) means 1:5 to the end of chapter 2</li>
     <li><code>Gen. 1:5-7</code> with a normal hyphen means verses 5 to 7; with an em dash (<code>&mdash;</code>) it means 1:5 through the end of chapter 7</li>
@@ -223,7 +296,7 @@
     <li>Put the word in quotes to force a word search, e.g. <code>"mark"</code> or <code>"job"</code>, since those are also book names</li>
   </ul>
 
-  <p>Click the <strong>cog icon</strong> beside the <strong>?</strong> button (or press <kbd>\</kbd>) to open the word-search scope panel and limit word searches to the Old Testament, the New Testament, a section (Law, Gospels, &hellip;) or any books you tick. Click a section again to remove it. Inside the panel, move with the arrow keys or <kbd>H</kbd> <kbd>J</kbd> <kbd>K</kbd> <kbd>L</kbd>, and press <kbd>Space</kbd> or <kbd>Enter</kbd> to choose. References are never limited by the scope.</p>
+  <p>Click the <strong>cog icon</strong> beside the <strong>?</strong> button (or press <kbd>\</kbd>) to open the word-search scope panel and limit word searches to the Old Testament, the New Testament, a section (Law, Gospels, &hellip;) or any books you tick. Click a section again to remove it. Inside the panel, move with the arrow keys or <kbd>H</kbd> <kbd>J</kbd> <kbd>K</kbd> <kbd>L</kbd>, and press <kbd>Space</kbd> or <kbd>Enter</kbd> to choose. Press <kbd>D</kbd> in the panel to reset the theme to Auto and both colors to default (again to undo), and <kbd>A</kbd> to choose All books (again to undo). References are never limited by the scope. The panel also has a <strong>Font style</strong> row to change the typeface and a <strong>Theme</strong> row (Auto, Light, Dark, Black on white, White on black) and <strong>Colors</strong> rows to pick a primary and a secondary color from a palette; and a <strong>Logo</strong> row to upload an image that is shown at the bottom right of the window; your choices are remembered.</p>
 
   <h3>Keys that are easy to remember</h3>
   <table>
@@ -237,6 +310,7 @@
   <h3>Keyboard shortcuts</h3>
   <table>
     <tr><td><kbd>/</kbd></td><td>Jump to the text box from anywhere</td></tr>
+    <tr><td><kbd>`</kbd></td><td>Open (or close) Browse by book: click or arrow to a book, then a chapter, then a verse; each choice is shown immediately and <kbd>Backspace</kbd> goes up a level</td></tr>
     <tr><td><kbd>\</kbd></td><td>Open / close the word-search scope panel (the cog)</td></tr>
     <tr><td><kbd>1</kbd>&ndash;<kbd>9</kbd></td><td>Switch version (on a verse or in presentation mode)</td></tr>
     <tr><td><kbd>?</kbd></td><td>Open this help, from anywhere (typing it in the empty text box works too)</td></tr>
@@ -253,23 +327,30 @@
     <tr><td><kbd>Ctrl/Cmd</kbd>+<kbd>A</kbd></td><td>Select all listed verses</td></tr>
     <tr><td><kbd>C</kbd></td><td>Copy the selected verses (or the current one) as plain text</td></tr>
     <tr><td><kbd>Ctrl/Cmd</kbd>+<kbd>C</kbd></td><td>Copy with formatting: reference in bold, in the page&rsquo;s font (pastes as rich text; plain text where that isn&rsquo;t supported)</td></tr>
+    <tr><td><kbd>Shift</kbd>+<kbd>C</kbd></td><td>Copy in a reading-friendly format: verses that follow one another become one flowing passage under a single heading (e.g. John 3:16&ndash;18) with small verse numbers inline; separate verses get their own heading</td></tr>
     <tr><td><kbd>O</kbd></td><td>Show the whole chapter of the selected verse, with that verse still selected; press <kbd>O</kbd> again to go back</td></tr>
     <tr><td><kbd>B</kbd> / <kbd>N</kbd></td><td>While the whole chapter is shown: previous / next chapter (after the last chapter of a book, N continues to the first chapter of the next book)</td></tr>
+    <tr><td><kbd>Shift</kbd>+<kbd>B</kbd> / <kbd>N</kbd></td><td>Add the previous / next verse (or, while the whole chapter is shown, the previous / next chapter) to the view instead of switching to it; press again to keep adding</td></tr>
+    <tr><td><kbd>S</kbd></td><td>Show the current verse in every loaded version, one per row; press <kbd>S</kbd> (or <kbd>Esc</kbd>) again to go back; <kbd>+</kbd> / <kbd>&minus;</kbd> change the text size (<kbd>0</kbd> resets)</td></tr>
     <tr><td><kbd>P</kbd></td><td>Show the pronunciation of each word: the first word is highlighted with a small box above or below it. Move between words with the arrow keys or <kbd>H</kbd> <kbd>J</kbd> <kbd>K</kbd> <kbd>L</kbd> (past the last word it continues into the next verse); <kbd>P</kbd> or <kbd>Esc</kbd> turns it off. The accented (stressed) syllable is in capitals. Greek is worked out on the page (approximate, Erasmian-style). Biblical names use the built-in pronunciation list (no internet needed). Other English words are looked up online at api.dictionaryapi.dev, so they need an internet connection and each word you look at is sent there; results are remembered in this browser</td></tr>
     <tr><td><kbd>Enter</kbd></td><td>Present the current verse, maximized in the window (<kbd>Shift</kbd>+<kbd>F</kbd> for true full screen). If two or more verses are selected, only those are cycled through</td></tr>
     <tr><td><kbd>Esc</kbd></td><td>Clear the selection; press again to return to the box</td></tr>
   </table>
   <p><strong>Presentation mode</strong></p>
   <table>
-    <tr><td><kbd>&rarr;</kbd> <kbd>&darr;</kbd> <kbd>Space</kbd> <kbd>Page Down</kbd></td><td>Next verse</td></tr>
-    <tr><td><kbd>&larr;</kbd> <kbd>&uarr;</kbd> <kbd>Page Up</kbd></td><td>Previous verse</td></tr>
+    <tr><td><kbd>&rarr;</kbd> <kbd>&darr;</kbd> <kbd>L</kbd> <kbd>J</kbd> <kbd>Space</kbd> <kbd>Page Down</kbd></td><td>Next searched verse</td></tr>
+    <tr><td><kbd>N</kbd> / <kbd>B</kbd></td><td>The next / previous verse in the Bible, even if it was not searched (the counter then says &ldquo;not in results&rdquo;); the arrow keys then continue with the searched verses</td></tr>
+    <tr><td><kbd>Shift</kbd>+<kbd>N</kbd> / <kbd>B</kbd></td><td>Add the next / previous verse to the screen instead of switching to it; press again to keep adding (<kbd>C</kbd> copies all the verses shown)</td></tr>
+    <tr><td><kbd>&larr;</kbd> <kbd>&uarr;</kbd> <kbd>H</kbd> <kbd>K</kbd> <kbd>Page Up</kbd></td><td>Previous searched verse</td></tr>
     <tr><td><kbd>Home</kbd> / <kbd>End</kbd></td><td>First / last verse listed</td></tr>
     <tr><td><kbd>+</kbd> / <kbd>&minus;</kbd></td><td>Make the text larger / smaller (your size is remembered next time)</td></tr>
     <tr><td><kbd>O</kbd></td><td>Show the whole chapter of the selected verse, with that verse still selected; press <kbd>O</kbd> again to go back</td></tr>
+    <tr><td><kbd>S</kbd></td><td>Compare the verse in every loaded version, one per row; <kbd>S</kbd> or <kbd>Esc</kbd> returns to the presentation</td></tr>
     <tr><td><kbd>P</kbd></td><td>Pronunciation of words, as above (arrows / <kbd>H</kbd> <kbd>J</kbd> <kbd>K</kbd> <kbd>L</kbd> move between words)</td></tr>
+    <tr><td><kbd>C</kbd></td><td>Copy the verse on screen as plain text; <kbd>Ctrl/Cmd</kbd>+<kbd>C</kbd> copies it with formatting (reference in bold, in the page&rsquo;s font); <kbd>Shift</kbd>+<kbd>C</kbd> copies in the reading-friendly format (all verses shown, as one passage under a single heading)</td></tr>
     <tr><td><kbd>F</kbd></td><td>Fill the presentation area with the verse (largest size that fits)</td></tr>
     <tr><td><kbd>Shift</kbd>+<kbd>F</kbd></td><td>Toggle true full screen (the browser&rsquo;s <kbd>Esc</kbd> leaves it but stays in presentation mode)</td></tr>
-    <tr><td><kbd>Enter</kbd> <kbd>Esc</kbd></td><td>Exit, returning to the verse you were on</td></tr>
+    <tr><td><kbd>Enter</kbd> <kbd>Esc</kbd></td><td>Exit, returning to the results with the cursor on the verse you were last viewing (if that verse is not in the results, on the last one from the results you viewed). A selection of several verses is kept as it was</td></tr>
   </table>
 
   <h3>Touch screens</h3>
@@ -289,6 +370,7 @@
 <div id="pron" hidden><div class="pr1" id="pr1"></div><div class="pr2" id="pr2"></div></div>
 
 <!--EMBED-->
+<img class="applogo" id="bodyLogo" alt="">
 <script>
 (function () {
   var $ = function (id) { return document.getElementById(id); };
@@ -498,7 +580,12 @@
         if (bi === null) { notes.push('Unknown book "' + m[1].trim() + '"'); curBook = null; return; }
         curBook = bi; bookSeen = true;
         rest = m[2] || "";
-        if (!rest) { notes.push("Add a chapter for " + BOOKS[bi][0]); return; }
+        if (!rest) {   // a book name alone: the whole book
+          var chs = Object.keys(data[bi] || {}).map(Number);
+          if (!chs.length) { notes.push(BOOKS[bi][0] + " is not in your text"); return; }
+          span(bi, Math.min.apply(null, chs), null, Math.max.apply(null, chs), null);
+          return;
+        }
       } else if (curBook === null) {
         notes.push('Can\u2019t read "' + s + '"'); return;
       }
@@ -526,6 +613,7 @@
 
   // ---- search scope ----
   var scopeSel = {}, scopeCount = 0;
+  var dUndo = null, aUndo = null;   // what "d" / "a" in the cog panel can undo
   function bookIdx(name) { for (var i = 0; i < BOOKS.length; i++) if (BOOKS[i][0] === name) return i; return -1; }
   function range(a, b) { var out = [], i; for (i = bookIdx(a); i <= bookIdx(b); i++) out.push(i); return out; }
   var QUICK = [["Old Testament", range("Genesis", "Malachi")], ["New Testament", range("Matthew", "Revelation")]];
@@ -556,6 +644,7 @@
     try { localStorage.setItem("lsm_scope", JSON.stringify(Object.keys(scopeSel).map(Number))); } catch (e) {}
   }
   function scopeChanged() {
+    aUndo = null;
     syncScope();
     var raw = $("q").value;
     if (raw.trim() && count) show(raw, true);
@@ -591,6 +680,181 @@
     try { setScope(JSON.parse(localStorage.getItem("lsm_scope") || "[]").filter(function (b) { return b >= 0 && b < BOOKS.length; }), true); } catch (e) {}
     syncScope();
   })();
+
+  // ---- font style (cog panel): applies to the whole page, presentation and copied text ----
+  var FONTS = [
+    ["Georgia", 'Georgia, "Times New Roman", serif'],
+    ["Times", '"Times New Roman", Times, serif'],
+    ["Palatino", '"Palatino Linotype", Palatino, "Book Antiqua", serif'],
+    ["Garamond", 'Garamond, "EB Garamond", "Palatino Linotype", serif'],
+    ["Sans-serif", 'system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif'],
+    ["Verdana", "Verdana, Geneva, sans-serif"],
+    ["Monospace", "ui-monospace, Menlo, Consolas, monospace"]
+  ];
+  var fontIdx = 0, fontBtns = [];
+  function applyFont(i, save) {
+    fontIdx = i;
+    document.documentElement.style.setProperty("--ff", FONTS[i][1]);
+    fontBtns.forEach(function (b, k) { b.classList.toggle("on", k === i); b.setAttribute("aria-pressed", k === i ? "true" : "false"); });
+    if (save) { try { localStorage.setItem("lsm_font", String(i)); } catch (e) {} }
+  }
+  FONTS.forEach(function (f, i) {
+    var b = document.createElement("button");
+    b.type = "button"; b.textContent = f[0]; b.style.fontFamily = f[1];
+    b.onclick = function () { applyFont(i, true); };
+    $("fontChips").appendChild(b); fontBtns.push(b);
+  });
+  try { var fs = parseInt(localStorage.getItem("lsm_font"), 10); applyFont(fs >= 0 && fs < FONTS.length ? fs : 0, false); } catch (e) { applyFont(0, false); }
+
+  // ---- theme (cog panel) ----
+  var THEMES = [["Auto", "auto"], ["Light", "light"], ["Dark", "dark"], ["Black on white", "bw"], ["White on black", "wb"]];
+  var themeBtns = [];
+  function applyTheme(t, save) {
+    if (t === "auto") document.documentElement.removeAttribute("data-theme");
+    else document.documentElement.setAttribute("data-theme", t);
+    if (typeof colorSel !== "undefined" && colorSel && (colorSel.prim || colorSel.sec)) applyColors(false);
+    themeBtns.forEach(function (b) { var on = b.dataset.t === t; b.classList.toggle("on", on); b.setAttribute("aria-pressed", on ? "true" : "false"); });
+    if (save) { try { localStorage.setItem("lsm_theme", t); } catch (e) {} }
+  }
+  THEMES.forEach(function (t) {
+    var b = document.createElement("button");
+    b.type = "button"; b.textContent = t[0]; b.dataset.t = t[1];
+    b.onclick = function () { dUndo = null; applyTheme(t[1], true); };
+    $("themeChips").appendChild(b); themeBtns.push(b);
+  });
+  (function () {
+    var t = "auto";
+    try { t = localStorage.getItem("lsm_theme") || "auto"; } catch (e) {}
+    if (!THEMES.some(function (x) { return x[1] === t; })) t = "auto";
+    applyTheme(t, false);
+  })();
+
+  // ---- primary / secondary colors (cog panel) ----
+  // primary -> accent (buttons, references, highlights); secondary -> supporting text and outlines
+  var PALETTE = [
+    ["Brown", "#7a4b1e"], ["Red", "#b3261e"], ["Orange", "#d35400"], ["Gold", "#d9a566"], ["Green", "#2e7d32"],
+    ["Teal", "#00897b"], ["Blue", "#1565c0"], ["Sky", "#4aa3df"], ["Purple", "#5e35b1"], ["Pink", "#ad1457"],
+    ["Slate", "#607d8b"], ["Gray", "#9e9e9e"], ["Black", "#000000"], ["White", "#ffffff"]
+  ];
+  var colorSel = { prim: "", sec: "" }, colorBtns = { prim: [], sec: [] };
+  function readableOn(hex) {   // black or white text, whichever reads better on this color
+    var n = parseInt(hex.slice(1), 16), c = [n >> 16 & 255, n >> 8 & 255, n & 255].map(function (v) {
+      v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+    });
+    return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2] > 0.4 ? "#000000" : "#ffffff";
+  }
+  function hexRgb(h) { var n = parseInt(h.slice(1), 16); return [n >> 16 & 255, n >> 8 & 255, n & 255]; }
+  function rgbHex(c) { return "#" + c.map(function (v) { v = Math.max(0, Math.min(255, Math.round(v))); return (v < 16 ? "0" : "") + v.toString(16); }).join(""); }
+  function rgbHsl(c) {
+    var r = c[0] / 255, g = c[1] / 255, b = c[2] / 255, mx = Math.max(r, g, b), mn = Math.min(r, g, b), l = (mx + mn) / 2, h = 0, sat = 0, d = mx - mn;
+    if (d) {
+      sat = l > 0.5 ? d / (2 - mx - mn) : d / (mx + mn);
+      h = mx === r ? (g - b) / d + (g < b ? 6 : 0) : mx === g ? (b - r) / d + 2 : (r - g) / d + 4;
+      h *= 60;
+    }
+    return [h, sat, l];
+  }
+  function hslHex(h, sat, l) {
+    var a = sat * Math.min(l, 1 - l);
+    function f(n) { var k = (n + h / 30) % 12; return 255 * (l - a * Math.max(-1, Math.min(k - 3, 9 - k, 1))); }
+    return rgbHex([f(0), f(8), f(4)]);
+  }
+  function mixHex(a, b, t) {   // t of a, the rest of b
+    var x = hexRgb(a), y = hexRgb(b);
+    return rgbHex([0, 1, 2].map(function (i) { return x[i] * t + y[i] * (1 - t); }));
+  }
+  var COLOR_PROPS = ["--accent", "--on-accent", "--muted", "--border", "--bg", "--surface", "--text"];
+  // Chosen colors recolor the whole scheme: the page keeps the current theme's light or dark polarity,
+  // but its background, surface, text, supporting text and outlines are all derived from the chosen hues.
+  function applyColors(save) {
+    var st = document.documentElement.style, prim = colorSel.prim, sec = colorSel.sec;
+    COLOR_PROPS.forEach(function (n) { st.removeProperty(n); });
+    if (prim || sec) {
+      var baseBg = getComputedStyle(document.documentElement).getPropertyValue("--bg").trim();
+      var dark = /^#[0-9a-f]{6}$/i.test(baseBg) ? rgbHsl(hexRgb(baseBg))[2] < 0.4 : false;
+      var hp = rgbHsl(hexRgb(prim || sec)), hs = rgbHsl(hexRgb(sec || prim));
+      var tint = function (hsl, k) { return Math.min(hsl[1], 0.7) * k; };
+      var bg = hslHex(hp[0], tint(hp, dark ? 0.45 : 0.55), dark ? 0.09 : 0.95);
+      var surface = hslHex(hs[0], tint(hs, dark ? 0.4 : 0.35), dark ? 0.14 : 0.99);
+      var text = hslHex(hp[0], tint(hp, 0.35), dark ? 0.92 : 0.12);
+      var muted = sec || hslHex(hp[0], tint(hp, 0.3), dark ? 0.68 : 0.38);
+      st.setProperty("--bg", bg); st.setProperty("--surface", surface); st.setProperty("--text", text);
+      st.setProperty("--muted", muted); st.setProperty("--border", mixHex(muted, bg, 0.4));
+      if (prim) { st.setProperty("--accent", prim); st.setProperty("--on-accent", readableOn(prim)); }
+      else st.setProperty("--accent", hslHex(hs[0], Math.max(hs[1], 0.45), dark ? 0.68 : 0.32));
+    }
+    ["prim", "sec"].forEach(function (w) {
+      colorBtns[w].forEach(function (b) { var on = b.dataset.c === colorSel[w]; b.classList.toggle("on", on); b.setAttribute("aria-pressed", on ? "true" : "false"); });
+    });
+    if (save) { try { localStorage.setItem("lsm_colors", JSON.stringify(colorSel)); } catch (e) {} }
+  }
+  function buildSwatches(host, which, label) {
+    var l = document.createElement("span"); l.className = "swlabel"; l.textContent = label; host.appendChild(l);
+    var d = document.createElement("button"); d.type = "button"; d.textContent = "Default"; d.dataset.c = "";
+    d.onclick = function () { dUndo = null; colorSel[which] = ""; applyColors(true); };
+    host.appendChild(d); colorBtns[which].push(d);
+    PALETTE.forEach(function (p) {
+      var b = document.createElement("button"); b.type = "button"; b.className = "sw";
+      b.style.setProperty("--sw", p[1]); b.style.background = p[1];
+      b.title = p[0]; b.setAttribute("aria-label", label + " " + p[0]); b.dataset.c = p[1];
+      b.onclick = function () { dUndo = null; colorSel[which] = p[1]; applyColors(true); };
+      host.appendChild(b); colorBtns[which].push(b);
+    });
+  }
+  buildSwatches($("primChips"), "prim", "Primary");
+  buildSwatches($("secChips"), "sec", "Secondary");
+  try {
+    var cs0 = JSON.parse(localStorage.getItem("lsm_colors") || "{}") || {};
+    var okc = function (v) { return typeof v === "string" && /^#[0-9a-f]{6}$/i.test(v) ? v.toLowerCase() : ""; };
+    colorSel.prim = okc(cs0.prim); colorSel.sec = okc(cs0.sec);
+  } catch (e) {}
+  applyColors(false);
+  try { window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", function () { applyColors(false); }); } catch (e) {}
+
+  // ---- logo upload (cog panel): shown bottom right, remembered between visits ----
+  var logoData = "";
+  function showLogo(src) {
+    logoData = src || "";
+    ["bodyLogo", "presLogo"].forEach(function (id) {
+      var im = $(id);
+      if (src) { im.src = src; im.classList.add("has"); } else { im.removeAttribute("src"); im.classList.remove("has"); }
+    });
+    $("logoDel").hidden = !src;
+    $("logoUp").textContent = src ? "Replace logo\u2026" : "Upload logo\u2026";
+  }
+  function logoNote(msg) { var n = $("logoNote"); n.textContent = msg || ""; n.hidden = !msg; }
+  function saveLogo() {
+    try { if (logoData) localStorage.setItem("lsm_logo", logoData); else localStorage.removeItem("lsm_logo"); logoNote(""); }
+    catch (e) { logoNote("The logo is too large to remember, so it will be gone next visit."); }
+  }
+  $("logoUp").onclick = function () { $("logoFile").click(); };
+  $("logoDel").onclick = function () { showLogo(""); saveLogo(); logoNote(""); };
+  $("logoFile").onchange = function () {
+    var f = this.files && this.files[0]; this.value = "";
+    if (!f) return;
+    if (!/^image\//.test(f.type)) { logoNote("That file is not an image."); return; }
+    var r = new FileReader();
+    r.onerror = function () { logoNote("Could not read that file."); };
+    r.onload = function () {
+      var url = String(r.result);
+      if (f.type === "image/svg+xml") { showLogo(url); saveLogo(); return; }
+      var img = new Image();   // shrink big pictures so they can be remembered
+      img.onerror = function () { logoNote("Could not open that image."); };
+      img.onload = function () {
+        var sc = Math.min(1, 512 / Math.max(img.naturalWidth, img.naturalHeight, 1)), out = url;
+        if (sc < 1) {
+          var c = document.createElement("canvas");
+          c.width = Math.max(1, Math.round(img.naturalWidth * sc)); c.height = Math.max(1, Math.round(img.naturalHeight * sc));
+          c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+          try { out = c.toDataURL("image/png"); } catch (e) {}
+        }
+        showLogo(out); saveLogo();
+      };
+      img.src = url;
+    };
+    r.readAsDataURL(f);
+  };
+  try { var lg = localStorage.getItem("lsm_logo"); if (lg && /^data:image\//.test(lg)) showLogo(lg); } catch (e) {}
 
   var scopeReturn = null;   // where the cursor was before the panel opened
   var scopeInside = false;  // is the cursor currently within the scope panel?
@@ -643,6 +907,35 @@
   $("scope").addEventListener("keydown", function (e) {
     if (e.ctrlKey || e.metaKey || e.altKey) return;
     var k = e.key, lk = k.toLowerCase(), t = e.target;
+    if (lk === "d" && !e.repeat) {          // d: theme Auto + default colors; d again undoes
+      e.preventDefault(); e.stopPropagation();
+      if (dUndo) {
+        var u = dUndo; dUndo = null;
+        colorSel.prim = u.prim; colorSel.sec = u.sec;
+        applyTheme(u.theme, true); applyColors(true);
+      } else {
+        var curTheme = document.documentElement.getAttribute("data-theme") || "auto";
+        if (curTheme !== "auto" || colorSel.prim || colorSel.sec) {
+          dUndo = { theme: curTheme, prim: colorSel.prim, sec: colorSel.sec };
+          colorSel.prim = ""; colorSel.sec = "";
+          applyTheme("auto", true); applyColors(true);
+        }
+      }
+      return;
+    }
+    if (lk === "a" && !e.repeat) {          // a: All books scope; a again undoes
+      e.preventDefault(); e.stopPropagation();
+      if (aUndo) {
+        var saved = aUndo;
+        scopeSel = {}; scopeCount = 0; setScope(saved, true);
+        scopeChanged(); aUndo = null;
+      } else if (scopeCount) {
+        var before = Object.keys(scopeSel).map(Number);
+        scopeSel = {}; scopeCount = 0;
+        scopeChanged(); aUndo = before;
+      }
+      return;
+    }
     if (VIM.hasOwnProperty(lk)) k = VIM[lk];
     var arrow = /^Arrow(Left|Right|Up|Down)$/.test(k);
     if (!arrow && k !== "Home" && k !== "End" && !(k === "Enter" && t.type === "checkbox")) return;
@@ -756,6 +1049,11 @@
     var last = Math.max.apply(null, Object.keys(data[prev.bi][prev.ch]).map(Number));
     return prev.v === last;
   }
+  // label for a run of verses that may cross chapters or even books; a and b are {bi, ch, v}
+  function rangeAny(a, b) {
+    if (a.bi === b.bi) return rangeLabel(a.bi, a.ch, a.v, b.ch, b.v);
+    return refOf(a) + "\u2013" + refOf(b);
+  }
   function rangeLabel(bi, c1, v1, c2, v2) {
     var l = labels[bi] || BOOKS[bi][1];
     if (noChap[bi]) return l + " " + v1 + "\u2013" + v2;
@@ -838,52 +1136,94 @@
     st.className = r.out.length && !r.notes.length ? "" : (r.out.length ? "" : "error");
   }
 
-  // ---- go-to picker: book / chapter / verse ----
+  // ---- browse picker: tables of books, then chapters, then verses; every click shows that section at once ----
   (function () {
-    var gBook = $("gBook"), gChap = $("gChap"), gVerse = $("gVerse");
-    function opt(sel, val, text) { var o = document.createElement("option"); o.value = val; o.textContent = text; sel.appendChild(o); }
+    var host = $("gGrid"), crumbs = $("gCrumbs"), st = { bi: null, ch: null, v: null };
     function nums(o) { return Object.keys(o || {}).map(Number).sort(function (a, b) { return a - b; }); }
-    function fillBooks() {
-      var keep = gBook.value, have = nums(data), i;
-      gBook.innerHTML = ""; opt(gBook, "", "Select a book\u2026");
-      [["Old Testament", 0, 38], ["New Testament", 39, 65]].forEach(function (g) {
-        var og = document.createElement("optgroup"); og.label = g[0];
-        for (i = g[1]; i <= g[2]; i++) if (!count || data[i]) opt(og, i, BOOKS[i][0]);
-        if (og.children.length) gBook.appendChild(og);
-      });
-      gBook.value = keep; if (gBook.value !== keep) gBook.value = "";
-      if (!gBook.value) fillChaps();
-      $("gNote").textContent = count ? "Pick a book for the whole book, add a chapter for that chapter, or add a verse for just that verse."
-                                     : "Load your text file first, then you can browse it here.";
+    function single(bi) { return !!(SINGLE[BOOKS[bi][0]] || noChap[bi]); }
+    function mk(label, cls, fn) {
+      var b = document.createElement("button"); b.type = "button"; b.textContent = label;
+      if (cls) b.className = cls;
+      b.addEventListener("click", fn); return b;
     }
-    function fillChaps() {
-      var bi = gBook.value === "" ? null : +gBook.value;
-      gChap.innerHTML = ""; gVerse.innerHTML = "";
-      gVerse.disabled = true;
-      if (bi === null || !data[bi]) { gChap.disabled = true; return; }
-      if (SINGLE[BOOKS[bi][0]] || noChap[bi]) {   // one-chapter books: go straight to verses
-        gChap.disabled = true; opt(gChap, "", "\u2014");
-        fillVerses(); return;
+    function run(q) {   // pull the section up right away, leaving focus in the picker
+      $("q").value = q;
+      clearTimeout(liveTimer); liveTimer = null;
+      show(q);
+    }
+    function bookName() { return BOOKS[st.bi][0]; }
+    function level() {   // 0 books, 1 chapters, 2 verses
+      if (st.bi === null || !data[st.bi]) return 0;
+      if (single(st.bi) || st.ch !== null) return 2;
+      return 1;
+    }
+    function focusGrid() {
+      var t = host.querySelector("button.on") || host.querySelector("button");
+      if (t) t.focus();
+    }
+    function render(focus) {
+      if (st.bi !== null && !data[st.bi]) st = { bi: null, ch: null, v: null };
+      host.innerHTML = ""; crumbs.innerHTML = "";
+      var lv = level(), g;
+      $("gNote").textContent = count
+        ? "Click a book, then a chapter, then a verse; each click shows it right away. Backspace goes up a level."
+        : "Load your text file first, then you can browse it here.";
+      if (!count) return;
+      // breadcrumbs
+      function crumb(label, fn) {
+        if (crumbs.children.length) { var sp = document.createElement("span"); sp.className = "gsep"; sp.textContent = "\u203a"; crumbs.appendChild(sp); }
+        crumbs.appendChild(mk(label, "", fn));
       }
-      gChap.disabled = false; opt(gChap, "", "Whole book");
-      nums(data[bi]).forEach(function (c) { opt(gChap, c, c); });
+      crumb("Books", function () { st = { bi: null, ch: null, v: null }; render(true); });
+      if (lv >= 1) crumb(bookName(), function () {
+        st.ch = null; st.v = null;
+        if (single(st.bi)) st.ch = nums(data[st.bi])[0];
+        run(bookName()); render(true);
+      });
+      if (lv === 2 && !single(st.bi)) crumb("Chapter " + st.ch, function () { st.v = null; run(bookName() + " " + st.ch); render(true); });
+      // tables
+      if (lv === 0) {
+        [["Old Testament", 0, 38], ["New Testament", 39, 65]].forEach(function (grp) {
+          var items = [];
+          for (var i = grp[1]; i <= grp[2]; i++) if (data[i]) items.push(i);
+          if (!items.length) return;
+          var h = document.createElement("div"); h.className = "ghead"; h.textContent = grp[0]; host.appendChild(h);
+          g = document.createElement("div"); g.className = "ggrid"; host.appendChild(g);
+          items.forEach(function (i) {
+            g.appendChild(mk(BOOKS[i][0], i === st.bi ? "on" : "", function () {
+              st = { bi: i, ch: null, v: null };
+              if (single(i)) st.ch = nums(data[i])[0];
+              run(BOOKS[i][0]); render(true);
+            }));
+          });
+        });
+      } else if (lv === 1) {
+        g = document.createElement("div"); g.className = "ggrid nums"; host.appendChild(g);
+        nums(data[st.bi]).forEach(function (c) {
+          g.appendChild(mk(String(c), "", function () { st.ch = c; st.v = null; run(bookName() + " " + c); render(true); }));
+        });
+      } else {
+        g = document.createElement("div"); g.className = "ggrid nums"; host.appendChild(g);
+        nums(data[st.bi][st.ch]).forEach(function (v) {
+          g.appendChild(mk(String(v), v === st.v ? "on" : "", function () {
+            st.v = v;
+            run(single(st.bi) ? bookName() + " " + v : bookName() + " " + st.ch + ":" + v);
+            [].forEach.call(g.children, function (b) { b.classList.toggle("on", b.textContent === String(v)); });
+          }));
+        });
+      }
+      if (focus) focusGrid();
     }
-    function fillVerses() {
-      var bi = gBook.value === "" ? null : +gBook.value, single = bi !== null && (SINGLE[BOOKS[bi][0]] || noChap[bi]);
-      var ch = single ? nums(data[bi])[0] : (gChap.value === "" ? null : +gChap.value);
-      gVerse.innerHTML = "";
-      if (bi === null || ch === null || !data[bi] || !data[bi][ch]) { gVerse.disabled = true; return; }
-      gVerse.disabled = false; opt(gVerse, "", single ? "Whole book" : "Whole chapter");
-      nums(data[bi][ch]).forEach(function (v) { opt(gVerse, v, v); });
+    function up() {   // one level back, showing that wider section
+      var lv = level();
+      if (lv === 2 && !single(st.bi)) { st.ch = null; st.v = null; run(bookName()); render(true); }
+      else if (lv >= 1) { st = { bi: null, ch: null, v: null }; render(true); }
     }
-    gBook.addEventListener("change", fillChaps);
-    gChap.addEventListener("change", fillVerses);
 
     function openGoto() {
       if (!$("scope").hidden) closeScope();
-      fillBooks();
       $("goto").hidden = false; $("gotoBtn").setAttribute("aria-expanded", "true");
-      gBook.focus();
+      render(true);
     }
     function closeGoto(refocus) {
       $("goto").hidden = true; $("gotoBtn").setAttribute("aria-expanded", "false");
@@ -891,38 +1231,53 @@
     }
     $("gotoBtn").addEventListener("click", function () { if ($("goto").hidden) openGoto(); else closeGoto(true); });
 
+    // ` opens (or closes) "Browse by book..." from anywhere, even from the text box
+    document.addEventListener("keydown", function (e) {
+      if (e.key !== "`" || e.ctrlKey || e.metaKey || e.altKey || e.repeat) return;
+      e.preventDefault();
+      if ($("goto").hidden) openGoto(); else closeGoto(true);
+    });
+
     // opening the scope panel closes this one
     $("scopeBtn").addEventListener("click", function () { if (!$("goto").hidden) closeGoto(false); }, true);
 
-    function go() {
-      if (!count) { $("status").textContent = "Load your text file first."; $("status").className = "error"; return; }
-      if (gBook.value === "") { $("status").textContent = "Choose a book first."; $("status").className = "error"; gBook.focus(); return; }
-      var bi = +gBook.value, name = BOOKS[bi][0], single = SINGLE[BOOKS[bi][0]] || noChap[bi], q;
-      if (single) {
-        var vs = nums(data[bi][nums(data[bi])[0]]);
-        q = gVerse.value !== "" ? name + " " + gVerse.value : name + " " + vs[0] + "-" + vs[vs.length - 1];
-      } else if (gChap.value === "") {
-        var cs = nums(data[bi]);
-        q = name + " " + cs[0] + (cs.length > 1 ? "-" + cs[cs.length - 1] : "");
-      } else if (gVerse.value === "") {
-        q = name + " " + gChap.value;
-      } else {
-        q = name + " " + gChap.value + ":" + gVerse.value;
+    // arrow keys (or h j k l) move around the table; Backspace goes up a level; Esc closes
+    function move(from, key) {
+      var all = [].slice.call(host.querySelectorAll("button")), i = all.indexOf(from);
+      if (i < 0) return null;
+      if (key === "ArrowLeft") return all[Math.max(0, i - 1)];
+      if (key === "ArrowRight") return all[Math.min(all.length - 1, i + 1)];
+      var r = from.getBoundingClientRect(), dir = key === "ArrowDown" ? 1 : -1, best = null, bestTop = null;
+      if (!r.width) {   // no layout information: assume a fixed width
+        var step = from.parentNode.classList.contains("nums") ? 8 : 4;
+        return all[Math.max(0, Math.min(all.length - 1, i + dir * step))];
       }
-      $("q").value = q;
-      clearTimeout(liveTimer); liveTimer = null;
-      show(q);
-      closeGoto(false);
-      var vl = verses();
-      if (isCoarse()) $("q").blur(); else if (vl.length) focusVerse(vl[0]);
-      window.scrollTo(0, 0);
+      all.forEach(function (b) {
+        var br = b.getBoundingClientRect();
+        if (dir > 0 ? br.top > r.top + 4 : br.top < r.top - 4) {
+          if (bestTop === null || (dir > 0 ? br.top < bestTop - 4 : br.top > bestTop + 4)) { bestTop = br.top; best = []; }
+          if (Math.abs(br.top - bestTop) <= 4) best.push(b);
+        }
+      });
+      if (!best) return null;
+      var cx = r.left + r.width / 2, pick = null, dist = 1e9;
+      best.forEach(function (b) { var br = b.getBoundingClientRect(), d = Math.abs(br.left + br.width / 2 - cx); if (d < dist) { dist = d; pick = b; } });
+      return pick;
     }
-    $("gGo").addEventListener("click", go);
+    var GVIM = { h: "ArrowLeft", j: "ArrowDown", k: "ArrowUp", l: "ArrowRight" };
     $("goto").addEventListener("keydown", function (e) {
-      if (e.key === "Enter" && e.target.tagName === "SELECT") { e.preventDefault(); go(); }
-      else if (e.key === "Escape") { e.preventDefault(); e.stopPropagation(); closeGoto(true); }
+      if (e.ctrlKey || e.metaKey || e.altKey) return;
+      if (e.key === "Escape") { e.preventDefault(); e.stopPropagation(); closeGoto(true); return; }
+      if (!host.contains(e.target)) return;
+      var k = GVIM.hasOwnProperty(e.key.toLowerCase()) ? GVIM[e.key.toLowerCase()] : e.key;
+      if (k === "Backspace") { e.preventDefault(); up(); return; }
+      if (/^Arrow(Left|Right|Up|Down)$/.test(k)) {
+        e.preventDefault();
+        var t = move(e.target, k);
+        if (t) t.focus();
+      }
     });
-    fillBooks();
+    render(false);
   })();
 
   // ---- storage of the loaded file (this browser only) ----
@@ -1010,7 +1365,8 @@
       if (lastTerms && e) highlight(p, txt, lastTerms); else p.textContent = txt;
     });
     Array.prototype.forEach.call($("results").querySelectorAll(".phead"), function (h) {
-      h.textContent = rangeLabel(+h.dataset.bi, +h.dataset.c1, +h.dataset.v1, +h.dataset.c2, +h.dataset.v2);
+      h.textContent = rangeAny({ bi: +h.dataset.bi, ch: +h.dataset.c1, v: +h.dataset.v1 },
+        { bi: h.dataset.bi2 !== undefined ? +h.dataset.bi2 : +h.dataset.bi, ch: +h.dataset.c2, v: +h.dataset.v2 });
     });
     if (presenting) renderPresent();
   }
@@ -1187,6 +1543,38 @@
     chapSaved = { html: box.innerHTML, compareMode: compareMode, cmp: cmp, lastTerms: lastTerms, status: st.textContent, cls: st.className, bi: v.dataset.bi, ch: v.dataset.ch, v: v.dataset.v };
     renderChapter(bi, ch, vs, true);
   }
+  // one verse as it appears inside a flowing passage (superscript number)
+  function makePassageVerse(bi, ch, n, text) {
+    var d = document.createElement("div"); d.className = "verse"; d.tabIndex = -1;
+    var ref = refOf({ bi: bi, ch: ch, v: n });
+    d.dataset.copy = ref + " " + text; d.dataset.ref = ref; d.dataset.text = text;
+    d.dataset.bi = bi; d.dataset.ch = ch; d.dataset.v = n; d.dataset.vnum = String(n);
+    var a = document.createElement("div"); a.className = "ref"; a.textContent = String(n);
+    var p = document.createElement("p"); p.className = "text";
+    if (lastTerms) highlight(p, text, lastTerms); else p.textContent = text;
+    d.appendChild(a); d.appendChild(p);
+    return d;
+  }
+  // after verses were added to a passage: redo the superscript numbers (chapter / book changes get c:v or a full
+  // reference) and the heading that shows the range
+  function relabelPassage(body) {
+    var vs = Array.prototype.slice.call(body.querySelectorAll(".verse")), prev = null;
+    vs.forEach(function (d) {
+      var bi = +d.dataset.bi, ch = +d.dataset.ch, n = +d.dataset.v, vn;
+      if (!prev) vn = String(n);
+      else if (+prev.dataset.bi !== bi) vn = refOf({ bi: bi, ch: ch, v: n });
+      else if (+prev.dataset.ch !== ch && !noChap[bi]) vn = ch + ":" + n;
+      else vn = String(n);
+      d.dataset.vnum = vn; d.querySelector(".ref").textContent = vn;
+      prev = d;
+    });
+    var head = body.parentNode && body.parentNode.querySelector(".phead");
+    if (!head || !vs.length) return;
+    var f = vs[0].dataset, l = vs[vs.length - 1].dataset;
+    head.dataset.bi = f.bi; head.dataset.c1 = f.ch; head.dataset.v1 = f.v;
+    head.dataset.bi2 = l.bi; head.dataset.c2 = l.ch; head.dataset.v2 = l.v;
+    head.textContent = rangeAny({ bi: +f.bi, ch: +f.ch, v: +f.v }, { bi: +l.bi, ch: +l.ch, v: +l.v });
+  }
   // draw one whole chapter; vs = verse to select (falls back to the first verse)
   function renderChapter(bi, ch, vs, centre) {
     var box = $("results"), st = $("status"), e;
@@ -1202,40 +1590,99 @@
     pas.appendChild(head); pas.appendChild(body); box.appendChild(pas);
     var target = null;
     nums.forEach(function (n) {
-      e = chap[n];
-      var d = document.createElement("div"); d.className = "verse"; d.tabIndex = -1;
-      var ref = refOf({ bi: bi, ch: ch, v: n });
-      d.dataset.copy = ref + " " + e.text; d.dataset.ref = ref; d.dataset.text = e.text;
-      d.dataset.bi = bi; d.dataset.ch = ch; d.dataset.v = n; d.dataset.vnum = String(n);
-      var a = document.createElement("div"); a.className = "ref"; a.textContent = String(n);
-      var p = document.createElement("p"); p.className = "text"; p.textContent = e.text;
-      d.appendChild(a); d.appendChild(p); body.appendChild(d); body.appendChild(document.createTextNode(" "));
-      if (n === vs) target = d;
+      var d = makePassageVerse(bi, ch, n, chap[n].text);
+      body.appendChild(d); body.appendChild(document.createTextNode(" "));
+      if (n === vs || (vs === "last" && n === nums[nums.length - 1])) target = d;
     });
     target = target || verses()[0];
-    chapCur = { bi: bi, ch: ch };
-    st.textContent = "Whole chapter \u00b7 B previous \u00b7 N next \u00b7 O to go back"; st.className = "";
+    chapCur = { bi: bi, ch: ch }; chapLo = chapCur; chapHi = chapCur;
+    head.dataset.bi2 = bi;
+    st.textContent = "Whole chapter \u00b7 B previous \u00b7 N next \u00b7 Shift+B / Shift+N add one \u00b7 O to go back"; st.className = "";
     target.classList.add("sel"); anchor = verses().indexOf(target);
     moveFocus(target);
     if (centre) target.scrollIntoView({ block: "center" }); else window.scrollTo(0, 0);
   }
-  // B / N: previous / next chapter (crossing into the neighbouring book at either end)
-  var chapCur = null;
+  // B / N: previous / next chapter (crossing into the neighbouring book at either end).
+  // After Shift+B / Shift+N have added chapters, B / N continue from the edge of what is shown.
+  var chapCur = null, chapLo = null, chapHi = null;
+  function chapNumsOf(b) { return Object.keys(data[b] || {}).map(Number).sort(function (x, y) { return x - y; }); }
+  function chapNeighbour(p, dir) {
+    var list = chapNumsOf(p.bi), k = list.indexOf(p.ch);
+    if (k + dir >= 0 && k + dir < list.length) return { bi: p.bi, ch: list[k + dir] };
+    for (var nb = p.bi + dir; nb >= 0 && nb < BOOKS.length; nb += dir) {
+      var l2 = chapNumsOf(nb);
+      if (l2.length) return { bi: nb, ch: dir > 0 ? l2[0] : l2[l2.length - 1] };
+    }
+    return null;
+  }
   function chapterStep(dir) {
     if (!chapSaved || !chapCur) return;
     pronOff();
-    var bi = chapCur.bi, ch = chapCur.ch;
-    var nums = function (b) { return Object.keys(data[b] || {}).map(Number).sort(function (x, y) { return x - y; }); };
-    var list = nums(bi), k = list.indexOf(ch), nb = bi, nc = null;
-    if (k + dir >= 0 && k + dir < list.length) nc = list[k + dir];
-    else {
-      for (nb = bi + dir; nb >= 0 && nb < BOOKS.length; nb += dir) {
-        var l2 = nums(nb);
-        if (l2.length) { nc = dir > 0 ? l2[0] : l2[l2.length - 1]; break; }
-      }
+    var np = chapNeighbour(dir > 0 ? (chapHi || chapCur) : (chapLo || chapCur), dir);
+    if (!np) { $("status").textContent = dir > 0 ? "This is the last chapter" : "This is the first chapter"; return; }
+    renderChapter(np.bi, np.ch, dir > 0 ? null : "last", dir < 0);   // B lands on the last verse, N on the first
+  }
+  // Shift+B / Shift+N: add the previous / next chapter to the view instead of switching to it
+  function chapterExtend(dir) {
+    if (!chapSaved || !chapCur) return;
+    pronOff();
+    var np = chapNeighbour(dir > 0 ? (chapHi || chapCur) : (chapLo || chapCur), dir);
+    if (!np) { $("status").textContent = dir > 0 ? "This is the last chapter" : "This is the first chapter"; return; }
+    var body = $("results").querySelector(".pbody");
+    if (!body) return;
+    var af = document.activeElement, top0 = af && af.getBoundingClientRect ? af.getBoundingClientRect().top : 0;
+    var chap = data[np.bi][np.ch], frag = document.createDocumentFragment();
+    Object.keys(chap).map(Number).sort(function (a, b) { return a - b; }).forEach(function (n) {
+      frag.appendChild(makePassageVerse(np.bi, np.ch, n, chap[n].text));
+      frag.appendChild(document.createTextNode(" "));
+    });
+    if (dir > 0) body.appendChild(frag); else body.insertBefore(frag, body.firstChild);
+    if (dir > 0) chapHi = np; else chapLo = np;
+    relabelPassage(body);
+    $("status").textContent = "Whole chapter \u00b7 B previous \u00b7 N next \u00b7 Shift+B / Shift+N add one \u00b7 O to go back";
+    $("status").className = "";
+    if (af && af.classList && af.classList.contains("verse")) {
+      window.scrollBy(0, af.getBoundingClientRect().top - top0);   // keep the verse you are on where it was
+      anchor = verses().indexOf(af);
     }
-    if (nc === null) { $("status").textContent = dir > 0 ? "This is the last chapter" : "This is the first chapter"; return; }
-    renderChapter(nb, nc, dir > 0 ? null : null, false);
+  }
+
+  // Shift+B / Shift+N in the verse list: add the previous / next verse in the Bible next to the current one
+  function verseExtend(v, dir) {
+    if (compareMode) return;
+    pronOff();
+    var el = v, np, nx, all, i;
+    for (;;) {   // skip over neighbours that are already shown right there
+      all = verses(); i = all.indexOf(el); nx = all[i + dir];
+      np = bibleStep({ bi: +el.dataset.bi, ch: +el.dataset.ch, v: +el.dataset.v }, dir);
+      if (!np) { $("status").textContent = dir > 0 ? "This is the last verse" : "This is the first verse"; return; }
+      if (nx && +nx.dataset.bi === np.bi && +nx.dataset.ch === np.ch && +nx.dataset.v === np.v) { el = nx; continue; }
+      break;
+    }
+    var e = data[np.bi][np.ch][np.v], host = el.parentNode, inGroup = host.classList.contains("pbody");
+    var d = inGroup ? makePassageVerse(np.bi, np.ch, np.v, e.text) : (function () {
+      var x = document.createElement("div"); x.className = "verse"; x.tabIndex = -1;
+      var ref = refOf(np);
+      x.dataset.copy = ref + " " + e.text; x.dataset.ref = ref; x.dataset.text = e.text;
+      x.dataset.bi = np.bi; x.dataset.ch = np.ch; x.dataset.v = np.v;
+      var a = document.createElement("div"); a.className = "ref"; a.textContent = ref;
+      var p = document.createElement("p"); p.className = "text";
+      if (lastTerms) highlight(p, e.text, lastTerms); else p.textContent = e.text;
+      x.appendChild(a); x.appendChild(p);
+      return x;
+    })();
+    var sp = inGroup ? document.createTextNode(" ") : null;
+    if (dir > 0) {
+      var after = el.nextSibling;
+      host.insertBefore(d, after);
+      if (sp) host.insertBefore(sp, after);
+    } else {
+      host.insertBefore(d, el);
+      if (sp) host.insertBefore(sp, el);
+    }
+    if (inGroup) relabelPassage(host);
+    anchor = verses().indexOf(v);
+    d.scrollIntoView({ block: "nearest" });
   }
 
   function clearSel() { verses().forEach(function (v) { v.classList.remove("sel"); }); }
@@ -1283,12 +1730,46 @@
     return Promise.resolve();
   }
 
-  // rich = true: formatted copy (Ctrl/Cmd+C); false: plain text only (C)
-  function copySelected(current, rich) {
+  // Reading-friendly copy (Shift+C): verses that run on in sequence become one flowing passage under a single
+  // heading (e.g. "John 3:16\u201318"), with small verse numbers inline; separate verses get their own heading.
+  // items: [{bi, ch, v, ref, text}] in reading order; el: the element whose font the pasted text should use.
+  function readingCopy(items, el) {
+    var runs = [];
+    items.forEach(function (it) {
+      var r = runs[runs.length - 1], prev = r && r[r.length - 1];
+      if (prev && follows(prev, it)) r.push(it); else runs.push([it]);
+    });
+    var plain = [], html = [];
+    runs.forEach(function (r) {
+      var head = r.length > 1 ? rangeAny(r[0], r[r.length - 1]) : r[0].ref, ph = [], hh = [];
+      r.forEach(function (it, k) {
+        var p = r[k - 1], n = !p ? it.v : (p.ch !== it.ch && !noChap[it.bi] ? it.ch + ":" + it.v : it.v);
+        ph.push((r.length > 1 ? supNum(n) + " " : "") + it.text);
+        hh.push((r.length > 1 ? "<sup>" + esc(n) + "</sup>&nbsp;" : "") + esc(it.text));
+      });
+      plain.push(head + "\n" + ph.join(" "));
+      html.push('<p style="margin:0 0 2pt 0"><b>' + esc(head) + '</b></p><p style="margin:0 0 10pt 0">' + hh.join(" ") + "</p>");
+    });
+    var cs = window.getComputedStyle(el || document.body);
+    var font = String(cs.fontFamily).replace(/"/g, "'");
+    return {
+      plain: plain.join("\n\n"),
+      html: '<div style="font-family:' + font + ';font-size:' + cs.fontSize + ';line-height:1.5">' + html.join("") + "</div>"
+    };
+  }
+
+  // rich = true: formatted copy (Ctrl/Cmd+C); false: plain text only (C); reading = true: reading-friendly (Shift+C)
+  function copySelected(current, rich, reading) {
     var sel = verses().filter(function (v) { return v.classList.contains("sel"); });
     if (!sel.length) sel = [current];
-    var plain = sel.map(function (v) { return v.dataset.copy; }).join("\n");
-    return (rich ? copyRich(richHtml(sel), plain) : copyText(plain)).then(function () {
+    var plain = sel.map(function (v) { return v.dataset.copy; }).join("\n"), job;
+    if (reading) {
+      var rc = readingCopy(sel.map(function (v) {
+        return { bi: +v.dataset.bi, ch: +v.dataset.ch, v: +v.dataset.v, ref: v.dataset.ref, text: v.dataset.text };
+      }), sel[0].querySelector(".text"));
+      job = copyRich(rc.html, rc.plain);
+    } else job = rich ? copyRich(richHtml(sel), plain) : copyText(plain);
+    return job.then(function () {
       current.focus();
       sel.forEach(function (v) { v.classList.add("copied"); });
       setTimeout(function () { sel.forEach(function (v) { v.classList.remove("copied"); }); }, 1200);
@@ -1332,12 +1813,60 @@
     }
     fitPresent();
   }
+  // presStray: while N / B have stepped to a verse that is not among the searched ones, its {bi, ch, v}; otherwise null.
+  // pi stays on the last searched verse, so the arrow keys keep moving between searched verses.
+  var presStray = null;
+  // presExt: while Shift+N / Shift+B have added neighbouring verses to the screen, {lo, hi} (each {bi, ch, v}); otherwise null
+  var presExt = null;
+  function supNum(t) { return String(t).replace(/[0-9]/g, function (c) { return "\u2070\u00b9\u00b2\u00b3\u2074\u2075\u2076\u2077\u2078\u2079".charAt(+c); }); }
+  function presExtItems() {   // every verse from lo to hi
+    var out = [], p = presExt.lo, hiK = posKey(presExt.hi.bi, presExt.hi.ch, presExt.hi.v), g = 0;
+    while (p && g++ < 400) {
+      var e = data[p.bi] && data[p.bi][p.ch] && data[p.bi][p.ch][p.v];
+      out.push({ bi: p.bi, ch: p.ch, v: p.v, ref: refOf(p), text: e ? e.text : "(not in this version)" });
+      if (posKey(p.bi, p.ch, p.v) >= hiK) break;
+      p = bibleStep(p, 1);
+    }
+    return out;
+  }
+  function presVerse() {   // the verse on screen: a searched verse element, or a stand-in for a neighbouring verse
+    if (!presStray) return presList()[pi];
+    var bi = presStray.bi, ch = presStray.ch, vs = presStray.v;
+    var e = data[bi] && data[bi][ch] && data[bi][ch][vs];
+    var ref = refOf({ bi: bi, ch: ch, v: vs }), txt = e ? e.text : "(not in this version)";
+    return { dataset: { bi: String(bi), ch: String(ch), v: String(vs), ref: ref, text: txt, copy: ref + " " + txt } };
+  }
+  // presCursor: position (in the verse list) of the last verse shown that is among the searched results.
+  // Closing the presentation puts the cursor here, so a verse reached with N / B outside the results
+  // leaves the cursor on the last in-results verse that was shown.
+  var presCursor = 0;
+  function trackPresCursor() {
+    if (!presStray) { if (presIdx[pi] !== undefined) presCursor = presIdx[pi]; return; }
+    var all = verses();
+    for (var k = 0; k < all.length; k++) {
+      var d = all[k].dataset;
+      if (+d.bi === presStray.bi && +d.ch === presStray.ch && +d.v === presStray.v) { presCursor = k; return; }
+    }
+    // not in the results at all: presCursor stays on the last in-results verse shown
+  }
   function renderPresent() {
     pronOff();
-    var all = presList(), v = all[pi];
-    $("pref").textContent = v.dataset.ref + (v.dataset.ver ? "  \u00b7  " + v.dataset.ver : "");
-    $("pinner").textContent = v.dataset.text;
-    $("pcount").textContent = (pi + 1) + " / " + all.length + (versions.length > 1 && !v.dataset.ver ? "  \u00b7  " + (cur + 1) + ": " + versions[cur].name.replace(/\.[^.]+$/, "") : "");
+    trackPresCursor();
+    var all = presList(), v = presVerse();
+    var items = presExt ? presExtItems() : null;
+    if (items && items.length > 1) {
+      var f = items[0], l = items[items.length - 1], prevI = null;
+      $("pref").textContent = rangeAny(f, l) + (v.dataset.ver ? "  \u00b7  " + v.dataset.ver : "");
+      $("pinner").textContent = items.map(function (it) {
+        var n = !prevI ? it.v : (prevI.bi !== it.bi ? it.ref : (prevI.ch !== it.ch && !noChap[it.bi] ? it.ch + ":" + it.v : it.v));
+        prevI = it;
+        return supNum(n) + " " + it.text;
+      }).join(" ");
+    } else {
+      $("pref").textContent = v.dataset.ref + (v.dataset.ver ? "  \u00b7  " + v.dataset.ver : "");
+      $("pinner").textContent = v.dataset.text;
+    }
+    $("pcount").textContent = (items && items.length > 1 ? items.length + " verses  \u00b7  " : "") + (presStray ? "not in results" : (pi + 1) + " / " + all.length) + (versions.length > 1 && !v.dataset.ver ? "  \u00b7  " + (cur + 1) + ": " + versions[cur].name.replace(/\.[^.]+$/, "") : "");
     fitPresent();
   }
   function openPresent(i) {
@@ -1347,32 +1876,251 @@
     var sel = [];
     list.forEach(function (v, k) { if (v.classList.contains("sel")) sel.push(k); });
     presSubset = sel.length > 1;
+    // remember exactly where the cursor, selection and scroll were, so closing can put everything back
+    var af = document.activeElement, fi = list.indexOf(af);
+    presSaved = {
+      focusIdx: fi >= 0 ? fi : i,
+      inBox: fi < 0 && af === $("q"),
+      sel: sel, anchor: anchor, moved: false,
+      scrollX: window.scrollX, scrollY: window.scrollY
+    };
     presIdx = presSubset ? sel : list.map(function (v, k) { return k; });
     pi = Math.max(0, presIdx.indexOf(i));
+    presStray = null; presExt = null;
     presenting = true;
     var p = $("present");
     p.hidden = false;
     renderPresent();
   }
+  var presSaved = null, presRestore = false;
+  // put the cursor, selection and scroll back exactly as they were before presenting
+  function restorePresState() {
+    var st = presSaved;
+    if (!st || presenting) return;
+    var moved = null;
+    if (st.inBox) {
+      $("q").focus();
+    } else {
+      var all = verses();
+      if (!all.length) return;
+      var fi = Math.max(0, Math.min(all.length - 1, st.focusIdx));
+      clearSel();
+      st.sel.forEach(function (k) { if (all[k]) all[k].classList.add("sel"); });
+      anchor = Math.max(0, Math.min(all.length - 1, st.anchor));
+      all.forEach(function (v) { v.tabIndex = -1; });
+      all[fi].tabIndex = 0;
+      try { all[fi].focus({ preventScroll: true }); } catch (e) { all[fi].focus(); }
+      if (st.moved) moved = all[fi];
+    }
+    window.scrollTo(st.scrollX, st.scrollY);
+    if (moved) {   // the cursor moved while presenting: make sure it is on screen
+      var r = moved.getBoundingClientRect();
+      if (r.top < 0 || r.bottom > window.innerHeight) moved.scrollIntoView({ block: "center" });
+    }
+  }
   function closePresent() {
     if (!presenting) return;
     pronOff();
+    sbsClose(false);
+    // the cursor follows the presentation: it lands on the verse last shown (or, if that one is not
+    // among the searched results, on the last in-results verse that was shown)
+    if (presSaved && !presSaved.inBox && presCursor !== presSaved.focusIdx) {
+      presSaved.focusIdx = presCursor;
+      presSaved.moved = true;   // so the page scrolls to it if it is off screen
+      if (!presSubset) {   // a multi-verse selection stays as it was; a single one follows the cursor
+        presSaved.sel = presSaved.sel.length ? [presCursor] : [];
+        presSaved.anchor = presCursor;
+      }
+    }
+    presStray = null; presExt = null;
     presenting = false;
     $("present").hidden = true;
-    if (document.fullscreenElement && document.exitFullscreen) document.exitFullscreen().catch(function () {});
-    var v = presList()[pi];
-    if (!v) return;
-    if (presSubset) { anchor = verses().indexOf(v); moveFocus(v); }   // keep the selection you chose
-    else focusVerse(v);
+    var wasFull = !!document.fullscreenElement;
+    if (wasFull && document.exitFullscreen) document.exitFullscreen().catch(function () {});
+    restorePresState();
+    // leaving true full screen is asynchronous and makes the browser drop focus: restore again once it has finished
+    presRestore = true;
+    requestAnimationFrame(restorePresState);
+    setTimeout(function () { restorePresState(); presRestore = false; }, wasFull ? 400 : 60);
   }
   function toggleFullscreen() {
     if (document.fullscreenElement) { if (document.exitFullscreen) document.exitFullscreen().catch(function () {}); }
     else { var p = $("present"); if (p.requestFullscreen) p.requestFullscreen().catch(function () {}); }
   }
-  function goPresent(n) {
+  function goPresent(n) {   // jump to a searched verse by position
     var t = Math.max(0, Math.min(presList().length - 1, n));
-    if (t !== pi) { pi = t; renderPresent(); }
+    if (t !== pi || presStray || presExt) { pi = t; presStray = null; presExt = null; renderPresent(); }
   }
+  function posKey(bi, ch, v) { return bi * 1e9 + ch * 1e5 + v; }
+  // arrows / H J K L: the next or previous searched verse (from the verse on screen if it is a stray neighbour)
+  function stepSearched(dir) {
+    if (!presStray) { goPresent(pi + dir); return; }
+    var list = presList(), here = posKey(presStray.bi, presStray.ch, presStray.v), best = -1, bk = null;
+    list.forEach(function (el, i) {
+      var k = posKey(+el.dataset.bi, +el.dataset.ch, +el.dataset.v);
+      if (dir > 0 ? k > here : k < here) {
+        if (bk === null || (dir > 0 ? k < bk : k > bk)) { bk = k; best = i; }
+      }
+    });
+    if (best >= 0) goPresent(best);
+  }
+  function pkeys(o) { return Object.keys(o || {}).map(Number).sort(function (a, b) { return a - b; }); }
+  // the verse right after (dir 1) or before (dir -1) this one in the Bible, across chapters and books; null at the ends
+  function bibleStep(p, dir) {
+    var vs = pkeys(data[p.bi] && data[p.bi][p.ch]).filter(function (x) { return dir > 0 ? x > p.v : x < p.v; });
+    if (vs.length) return { bi: p.bi, ch: p.ch, v: dir > 0 ? vs[0] : vs[vs.length - 1] };
+    var chs = pkeys(data[p.bi]).filter(function (x) { return dir > 0 ? x > p.ch : x < p.ch; });
+    if (chs.length) {
+      var c = dir > 0 ? chs[0] : chs[chs.length - 1], cv = pkeys(data[p.bi][c]);
+      if (cv.length) return { bi: p.bi, ch: c, v: dir > 0 ? cv[0] : cv[cv.length - 1] };
+    }
+    for (var b = p.bi + dir; b >= 0 && b < BOOKS.length; b += dir) {
+      if (!data[b]) continue;
+      var cs = pkeys(data[b]);
+      for (var j = dir > 0 ? 0 : cs.length - 1; j >= 0 && j < cs.length; j += dir) {
+        var bv = pkeys(data[b][cs[j]]);
+        if (bv.length) return { bi: b, ch: cs[j], v: dir > 0 ? bv[0] : bv[bv.length - 1] };
+      }
+    }
+    return null;
+  }
+  // N / B: the adjacent verse in the Bible, whether or not it was searched
+  function stepBible(dir) {
+    var d = presVerse().dataset, from = { bi: +d.bi, ch: +d.ch, v: +d.v };
+    if (presExt) from = dir > 0 ? presExt.hi : presExt.lo;   // continue from the edge of what is shown
+    var np = bibleStep(from, dir);
+    if (!np) return;
+    presExt = null;
+    var list = presList(), hit = -1;
+    for (var i = 0; i < list.length; i++) {
+      var x = list[i].dataset;
+      if (+x.bi === np.bi && +x.ch === np.ch && +x.v === np.v) { hit = i; break; }
+    }
+    if (hit >= 0) { pi = hit; presStray = null; } else presStray = np;
+    renderPresent();
+  }
+
+  // Shift+N / Shift+B: add the next / previous verse to the screen instead of switching to it
+  function extendBible(dir) {
+    var d = presVerse().dataset, base = { bi: +d.bi, ch: +d.ch, v: +d.v };
+    if (!presExt) presExt = { lo: base, hi: base };
+    var np = bibleStep(dir > 0 ? presExt.hi : presExt.lo, dir);
+    if (!np) return;
+    if (dir > 0) presExt.hi = np; else presExt.lo = np;
+    renderPresent();
+  }
+
+  // ---- S: every loaded version of a verse side by side; S (or Esc) again goes back ----
+  var sbsEl = null, sbsPrev = null, sbsFs = 0;   // sbsFs: chosen text size in px, 0 = automatic
+  try { sbsFs = parseFloat(localStorage.getItem("lsm_sbsfs")) || 0; } catch (e) {}
+  function sbsApplySize() {
+    if (!sbsEl) return;
+    if (sbsFs) sbsEl.style.setProperty("--sbs-fs", sbsFs + "px"); else sbsEl.style.removeProperty("--sbs-fs");
+  }
+  function sbsResize(dir) {   // dir: 1 bigger, -1 smaller, 0 back to automatic
+    if (!sbsEl) return;
+    if (!dir) sbsFs = 0;
+    else {
+      var t = sbsEl.querySelector(".sbstext"), cur = sbsFs || (t ? parseFloat(getComputedStyle(t).fontSize) : 20);
+      if (!cur || isNaN(cur)) cur = 20;
+      sbsFs = Math.max(10, Math.min(120, Math.round(cur * (dir > 0 ? 1.12 : 1 / 1.12) * 10) / 10));
+    }
+    sbsApplySize();
+    try { if (sbsFs) localStorage.setItem("lsm_sbsfs", String(sbsFs)); else localStorage.removeItem("lsm_sbsfs"); } catch (e) {}
+  }
+  function sbsClose(refocus) {
+    if (!sbsEl) return;
+    if (sbsEl.parentNode) sbsEl.parentNode.removeChild(sbsEl);
+    sbsEl = null;
+    if (refocus && !presenting && sbsPrev && document.contains(sbsPrev)) {
+      try { sbsPrev.focus({ preventScroll: true }); } catch (e) { sbsPrev.focus(); }
+    }
+    sbsPrev = null;
+  }
+  function sbsToggle(v) {
+    if (sbsEl) { sbsClose(true); return; }
+    if (!v || v.dataset.bi === undefined) return;
+    pronOff();
+    var bi = +v.dataset.bi, ch = +v.dataset.ch, vs = +v.dataset.v;
+    sbsPrev = document.activeElement;
+    var el = document.createElement("div");
+    el.id = "sbs"; el.setAttribute("role", "dialog"); el.setAttribute("aria-label", "Versions side by side");
+    var head = document.createElement("div"); head.className = "sbshead";
+    var title = document.createElement("div"); title.className = "sbstitle"; title.textContent = refOf({ bi: bi, ch: ch, v: vs });
+    var hint = document.createElement("div"); hint.className = "sbshint"; hint.textContent = "+ / \u2212 size \u00b7 S or Esc to go back";
+    var sz = document.createElement("div"); sz.className = "sbssize";
+    [["\u2212", -1, "Smaller text"], ["+", 1, "Larger text"]].forEach(function (b) {
+      var btn = document.createElement("button"); btn.type = "button"; btn.textContent = b[0]; btn.setAttribute("aria-label", b[2]);
+      btn.addEventListener("click", function () { sbsResize(b[1]); });
+      sz.appendChild(btn);
+    });
+    var x = document.createElement("button"); x.type = "button"; x.textContent = "\u00d7"; x.setAttribute("aria-label", "Close comparison");
+    x.addEventListener("click", function () { sbsClose(true); });
+    head.appendChild(title); head.appendChild(hint); head.appendChild(sz); head.appendChild(x);
+    var grid = document.createElement("div"); grid.className = "sbsgrid";
+    versions.forEach(function (ver, i) {
+      var e = ver.data[bi] && ver.data[bi][ch] && ver.data[bi][ch][vs];
+      var card = document.createElement("div"); card.className = "sbscard" + (i === cur ? " cur" : "");
+      var n = document.createElement("div"); n.className = "sbsname"; n.textContent = (i + 1) + ": " + ver.name.replace(/\.[^.]+$/, "");
+      var r = document.createElement("div"); r.className = "sbsref"; r.textContent = refOfV(ver, bi, ch, vs);
+      var t = document.createElement("div"); t.className = "sbstext"; t.textContent = e ? e.text : "(not in this version)";
+      var lab = document.createElement("div"); lab.className = "sbslabel"; lab.appendChild(n); lab.appendChild(r);
+      card.appendChild(lab); card.appendChild(t); grid.appendChild(card);
+    });
+    el.appendChild(head); el.appendChild(grid);
+    if (versions.length < 2) {
+      var note = document.createElement("div"); note.className = "sbsnote";
+      note.textContent = "Only one version is loaded. Add more versions to compare them here.";
+      el.appendChild(note);
+    }
+    (presenting ? $("present") : document.body).appendChild(el);   // true full screen only shows the presentation's own contents
+    sbsEl = el;
+    sbsApplySize();
+  }
+  // while the comparison is open it owns the keyboard
+  document.addEventListener("keydown", function (e) {
+    if (!sbsEl) return;
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    e.preventDefault(); e.stopImmediatePropagation();
+    var k = e.key, lk = k.toLowerCase();
+    if (lk === "s" || k === "Escape") { if (!e.repeat) sbsClose(true); return; }
+    if (k === "+" || k === "=") { sbsResize(1); return; }
+    if (k === "-" || k === "_") { sbsResize(-1); return; }
+    if (k === "0") { sbsResize(0); return; }
+    var step = { ArrowDown: 60, ArrowUp: -60, PageDown: sbsEl.clientHeight * 0.9, PageUp: -sbsEl.clientHeight * 0.9, " ": sbsEl.clientHeight * 0.9 };
+    if (lk === "j") step.j = 60; if (lk === "k") step.k = -60;
+    if (step.hasOwnProperty(k)) sbsEl.scrollTop += step[k];
+    else if (step.hasOwnProperty(lk) && (lk === "j" || lk === "k")) sbsEl.scrollTop += step[lk];
+    else if (k === "Home") sbsEl.scrollTop = 0;
+    else if (k === "End") sbsEl.scrollTop = sbsEl.scrollHeight;
+  }, true);
+
+  // copy the verse on screen in presentation mode: C = plain text, Ctrl/Cmd+C = formatted
+  function copyPresent(rich, reading) {
+    var v = presVerse();
+    if (!v) return;
+    var items = presExt ? presExtItems() : [{ bi: +v.dataset.bi, ch: +v.dataset.ch, v: +v.dataset.v, ref: v.dataset.ref, text: v.dataset.text }];
+    var plain = items.map(function (it) { return it.ref + " " + it.text; }).join("\n");
+    var font = String(getComputedStyle($("pinner")).fontFamily).replace(/"/g, "'");
+    var html = '<div style="font-family:' + font + ';font-size:' + getComputedStyle(document.body).fontSize + '">' +
+      items.map(function (it) {
+        return '<p style="margin:0 0 6pt 0"><b>' + esc(it.ref) + "</b> " + esc(it.text) + "</p>";
+      }).join("") + "</div>";
+    var job;
+    if (reading) { var rc = readingCopy(items, $("pinner")); job = copyRich(rc.html, rc.plain); }
+    else job = rich ? copyRich(html, plain) : copyText(plain);
+    job.then(function () {
+      var pc = $("pcount"), old = pc.textContent;
+      pc.textContent = "Copied";
+      setTimeout(function () { if (presenting && pc.textContent === "Copied") pc.textContent = old; }, 1200);
+    });
+  }
+  document.addEventListener("keydown", function (e) {
+    if (!presenting || e.altKey) return;
+    if (e.key !== "c" && e.key !== "C") return;
+    e.preventDefault(); e.stopPropagation();
+    if (!e.repeat) copyPresent(e.ctrlKey || e.metaKey, e.shiftKey && !(e.ctrlKey || e.metaKey));
+  }, true);
 
   document.addEventListener("keydown", function (e) {
     if (!presenting) return;
@@ -1380,11 +2128,14 @@
     e.preventDefault(); e.stopPropagation();
     var k = e.key;
     if (VIM.hasOwnProperty(k.toLowerCase())) k = VIM[k.toLowerCase()];
+    if (k === "s" || k === "S") { if (!e.repeat) sbsToggle(presVerse()); return; }
+    if (k === "n" || k === "N") { if (e.shiftKey) extendBible(1); else stepBible(1); return; }
+    if (k === "b" || k === "B") { if (e.shiftKey) extendBible(-1); else stepBible(-1); return; }
     if (k === "p" || k === "P") { if (pronAlive()) pronOff(); else pronStart(); return; }
     if (pronAlive() && pronKey(e, k)) return;
     if (k === "Enter" || k === "Escape") { if (!e.repeat) closePresent(); }
-    else if (k === "ArrowRight" || k === "ArrowDown" || k === "PageDown" || k === " ") goPresent(pi + 1);
-    else if (k === "ArrowLeft" || k === "ArrowUp" || k === "PageUp") goPresent(pi - 1);
+    else if (k === "ArrowRight" || k === "ArrowDown" || k === "PageDown" || k === " ") stepSearched(1);
+    else if (k === "ArrowLeft" || k === "ArrowUp" || k === "PageUp") stepSearched(-1);
     else if (k === "+" || k === "=") resizePresent(1);
     else if (k === "-" || k === "_") resizePresent(-1);
     else if (k === "F") toggleFullscreen();
@@ -1395,6 +2146,7 @@
   }, true);
 
   document.addEventListener("fullscreenchange", function () {
+    if (!presenting && presRestore) { restorePresState(); setTimeout(restorePresState, 50); }
     if (presenting) fitPresent();   // leaving real full screen (e.g. Esc) keeps the window-sized presentation
   });
   window.addEventListener("resize", function () { if (presenting) fitPresent(); });
@@ -1433,12 +2185,15 @@
     var b = e.target.closest ? e.target.closest("button") : null;
     if (!b) return;
     switch (b.dataset.a) {
-      case "prev": goPresent(pi - 1); break;
-      case "next": goPresent(pi + 1); break;
+      case "prev": stepSearched(-1); break;
+      case "next": stepSearched(1); break;
+      case "bprev": stepBible(-1); break;
+      case "bnext": stepBible(1); break;
       case "smaller": resizePresent(-1); break;
       case "larger": resizePresent(1); break;
       case "fill": setPresSize(null); fitPresent(); break;
       case "pron": if (pronAlive()) pronOff(); else pronStart(); break;
+      case "sbs": sbsToggle(presVerse()); break;
       case "ver": setVersion((cur + 1) % versions.length); break;
       case "full": toggleFullscreen(); break;
       case "close": closePresent(); break;
@@ -1453,7 +2208,7 @@
   $("present").addEventListener("touchend", function (e) {
     if (!presenting || !e.changedTouches.length) return;
     var dx = e.changedTouches[0].clientX - tx, dy = e.changedTouches[0].clientY - ty;
-    if (Math.abs(dx) > 50 && Math.abs(dx) > 1.5 * Math.abs(dy)) goPresent(pi + (dx < 0 ? 1 : -1));
+    if (Math.abs(dx) > 50 && Math.abs(dx) > 1.5 * Math.abs(dy)) stepSearched(dx < 0 ? 1 : -1);
   }, { passive: true });
 
   // ---- Greek pronunciation (approximate, Erasmian-style respelling) ----
@@ -1813,7 +2568,7 @@
     }
     if (last < text.length) container.appendChild(document.createTextNode(text.slice(last)));
     if (!words.length) { container.innerHTML = saved; return false; }
-    pron.ref = verseEl ? verseEl.dataset.ref : (presenting && presList()[pi] ? presList()[pi].dataset.ref : "");
+    pron.ref = verseEl ? verseEl.dataset.ref : (presenting && presVerse() ? presVerse().dataset.ref : "");
     pron.on = true; pron.host = container; pron.saved = saved; pron.verse = verseEl; pron.words = words;
     pron.idx = startAt < 0 ? words.length - 1 : startAt;
     pronShow();
@@ -1965,7 +2720,13 @@
     var key = e.key, shift = e.shiftKey, lk = key.toLowerCase();
     if (!mod && !e.altKey && VIM.hasOwnProperty(lk)) { shift = shift || key !== lk; key = VIM[lk]; }   // h j k l (Shift = select)
     if (!mod && !e.altKey && lk === "o") { e.preventDefault(); toggleChapter(v); return; }
+    if (!mod && !e.altKey && e.shiftKey && (lk === "b" || lk === "n")) {   // Shift+B / Shift+N: add, don't switch
+      e.preventDefault();
+      if (chapSaved) chapterExtend(lk === "n" ? 1 : -1); else verseExtend(v, lk === "n" ? 1 : -1);
+      return;
+    }
     if (!mod && !e.altKey && !shift && chapSaved && (lk === "b" || lk === "n")) { e.preventDefault(); chapterStep(lk === "n" ? 1 : -1); return; }
+    if (!mod && !e.altKey && lk === "s") { e.preventDefault(); if (!e.repeat) sbsToggle(v); return; }
     if (!mod && !e.altKey && lk === "p") { e.preventDefault(); if (pronAlive()) pronOff(); else pronStart(v); return; }
     if (pronAlive() && pronKey(e, key)) return;
 
@@ -1994,7 +2755,7 @@
       openPresent(i);
     } else if (!e.altKey && key.toLowerCase() === "c" && !(mod && String(window.getSelection()))) {
       e.preventDefault();
-      copySelected(v, mod);
+      copySelected(v, mod, e.shiftKey && !mod);
     }
   });
 
