@@ -1,0 +1,194 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Big Numbers</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@900&family=IBM+Plex+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+/* Layout: a single canvas fills the window; typed digits scale to the largest size that fits. */
+:root {
+  --bg: #e9edef;
+  --fg: #0c1317;
+  --hint: #56646c;
+  --font-display: "Big Shoulders Display", "Arial Narrow", Impact, sans-serif;
+  --font-utility: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0a0e11;
+    --fg: #e8f0f4;
+    --hint: #87969f;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0a0e11;
+  --fg: #e8f0f4;
+  --hint: #87969f;
+  color-scheme: dark;
+}
+
+html, body { height: 100%; }
+* { cursor: none !important; }
+body {
+  box-sizing: border-box;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--fg);
+  padding-block: 16px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  -webkit-user-select: none;
+  user-select: none;
+}
+#stage { position: relative; width: 100%; height: 100%; }
+#c { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+#hint {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-family: var(--font-utility);
+  font-size: 13px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--hint);
+  pointer-events: none;
+}
+#entry {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  border: 0;
+  opacity: 0;
+  font-size: 16px;
+  outline: none;
+}
+.sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+</style>
+
+<main id="stage">
+  <canvas id="c" aria-hidden="true"></canvas>
+  <p id="hint">Click, then type numbers. Backspace deletes.</p>
+  <div id="live" class="sr" role="status" aria-live="polite"></div>
+  <input id="entry" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Number to display">
+</main>
+
+<script>
+(function () {
+  var canvas = document.getElementById('c');
+  var ctx = canvas.getContext('2d');
+  var stage = document.getElementById('stage');
+  var input = document.getElementById('entry');
+  var hint = document.getElementById('hint');
+  var live = document.getElementById('live');
+  var FAMILY = '"Big Shoulders Display", "Arial Narrow", Impact, sans-serif';
+  var MAX = 60;
+  var value = '';
+  var dpr = 1, W = 1, H = 1;
+
+  function draw() {
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, W, H);
+    hint.hidden = value.length > 0;
+    if (!value) return;
+
+    ctx.fillStyle = getComputedStyle(document.body).color;
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'alphabetic';
+
+    // Measure at a reference size, then scale so the ink fills the window.
+    ctx.font = '900 100px ' + FAMILY;
+    var m = ctx.measureText(value);
+    var z = ctx.measureText('0');
+    var w0 = m.actualBoundingBoxLeft + m.actualBoundingBoxRight;
+    var h0 = z.actualBoundingBoxAscent + z.actualBoundingBoxDescent;
+    if (!w0 || !h0) return;
+    var size = 100 * Math.min(W / w0, H / h0);
+
+    // Measure again at the final size and centre the ink in the window.
+    ctx.font = '900 ' + size + 'px ' + FAMILY;
+    m = ctx.measureText(value);
+    z = ctx.measureText('0');
+    var l = m.actualBoundingBoxLeft;
+    var inkW = l + m.actualBoundingBoxRight;
+    var asc = z.actualBoundingBoxAscent;
+    var inkH = asc + z.actualBoundingBoxDescent;
+    ctx.fillText(value, (W - inkW) / 2 + l, (H - inkH) / 2 + asc);
+  }
+
+  function resize() {
+    dpr = window.devicePixelRatio || 1;
+    var r = stage.getBoundingClientRect();
+    W = Math.max(1, r.width);
+    H = Math.max(1, r.height);
+    canvas.width = Math.round(W * dpr);
+    canvas.height = Math.round(H * dpr);
+    draw();
+  }
+
+  function setValue(v) {
+    value = String(v).replace(/\D/g, '').slice(0, MAX);
+    if (input.value !== value) input.value = value;
+    live.textContent = value;
+    draw();
+  }
+
+  function focusInput() {
+    try { input.focus({ preventScroll: true }); } catch (e) {}
+  }
+
+  document.addEventListener('keydown', function (e) {
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    if (/^[0-9]$/.test(e.key)) {
+      e.preventDefault();
+      setValue(value + e.key);
+    } else if (e.key === 'Backspace') {
+      e.preventDefault();
+      setValue(value.slice(0, -1));
+    }
+  });
+
+  // Touch keyboards often skip keydown, so the hidden field catches their input.
+  input.addEventListener('input', function () { setValue(input.value); });
+
+  document.addEventListener('pointerdown', focusInput);
+  window.addEventListener('focus', focusInput);
+  focusInput();
+
+  if (window.ResizeObserver) {
+    new ResizeObserver(resize).observe(stage);
+  } else {
+    window.addEventListener('resize', resize);
+  }
+
+  // Redraw when the theme changes so the digit colour follows it.
+  try {
+    var mq = window.matchMedia('(prefers-color-scheme: dark)');
+    if (mq.addEventListener) mq.addEventListener('change', draw);
+  } catch (e) {}
+  new MutationObserver(draw).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+
+  // Redraw once the display face has loaded.
+  if (document.fonts && document.fonts.load) {
+    document.fonts.load('900 100px "Big Shoulders Display"').then(draw, function () {});
+    document.fonts.ready.then(draw);
+  }
+
+  resize();
+})();
+</script>
+
+</body></html>
