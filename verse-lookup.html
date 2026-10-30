@@ -107,6 +107,7 @@
   #present .pref { color: var(--accent); font-weight: 700; font-size: clamp(20px, 4vmin, 44px); margin-bottom: 2vmin; flex: none; }
   #present .ptext { flex: 1; min-height: 0; width: 100%; display: flex; align-items: center; justify-content: center; overflow: hidden; }
   #present #pinner { width: 100%; line-height: 1.35; }
+  #present #pinner .pv { font-size: .6em; line-height: 0; vertical-align: super; font-weight: 700; color: var(--accent); }
   #present .pcount { position: absolute; top: 1.5vmin; right: 3vmin; color: var(--muted); font-size: 14px; }
   #help { position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,.55); display: flex; align-items: center; justify-content: center; padding: 16px; }
   #help .panel { background: var(--surface); color: var(--text); border: 1px solid var(--border); border-radius: 12px; width: 100%; max-width: 680px; max-height: 88vh; overflow: auto; padding: 8px 24px 24px; font-size: .95rem; line-height: 1.5; }
@@ -330,8 +331,8 @@
     <tr><td><kbd>Shift</kbd>+<kbd>C</kbd></td><td>Copy in a reading-friendly format: verses that follow one another become one flowing passage under a single heading (e.g. John 3:16&ndash;18) with small verse numbers inline; separate verses get their own heading</td></tr>
     <tr><td><kbd>O</kbd></td><td>Show the whole chapter of the selected verse, with that verse still selected; press <kbd>O</kbd> again to go back</td></tr>
     <tr><td><kbd>B</kbd> / <kbd>N</kbd></td><td>While the whole chapter is shown: previous / next chapter (after the last chapter of a book, N continues to the first chapter of the next book)</td></tr>
-    <tr><td><kbd>Shift</kbd>+<kbd>B</kbd> / <kbd>N</kbd></td><td>Add the previous / next verse (or, while the whole chapter is shown, the previous / next chapter) to the view instead of switching to it; press again to keep adding</td></tr>
-    <tr><td><kbd>S</kbd></td><td>Show the current verse in every loaded version, one per row; press <kbd>S</kbd> (or <kbd>Esc</kbd>) again to go back; <kbd>+</kbd> / <kbd>&minus;</kbd> change the text size (<kbd>0</kbd> resets)</td></tr>
+    <tr><td><kbd>Shift</kbd>+<kbd>B</kbd> / <kbd>N</kbd></td><td>Add the previous / next verse (or, while the whole chapter is shown, the previous / next chapter) to the view instead of switching to it; press again to keep adding. A lone verse (or one listed beside others) becomes a flowing passage; with several versions loaded, every version expands into its own passage</td></tr>
+    <tr><td><kbd>S</kbd></td><td>Show the current verse in every loaded version, one per row; press <kbd>S</kbd> (or <kbd>Esc</kbd>) again to go back; <kbd>B</kbd> / <kbd>N</kbd> show the previous / next verse in the Bible, <kbd>&larr;</kbd><kbd>&darr;</kbd><kbd>&uarr;</kbd><kbd>&rarr;</kbd> or <kbd>H</kbd><kbd>J</kbd><kbd>K</kbd><kbd>L</kbd> move between the searched verses (<kbd>PgUp</kbd> / <kbd>PgDn</kbd> scroll); <kbd>+</kbd> / <kbd>&minus;</kbd> change the text size (<kbd>0</kbd> resets)</td></tr>
     <tr><td><kbd>P</kbd></td><td>Show the pronunciation of each word: the first word is highlighted with a small box above or below it. Move between words with the arrow keys or <kbd>H</kbd> <kbd>J</kbd> <kbd>K</kbd> <kbd>L</kbd> (past the last word it continues into the next verse); <kbd>P</kbd> or <kbd>Esc</kbd> turns it off. The accented (stressed) syllable is in capitals. Greek is worked out on the page (approximate, Erasmian-style). Biblical names use the built-in pronunciation list (no internet needed). Other English words are looked up online at api.dictionaryapi.dev, so they need an internet connection and each word you look at is sent there; results are remembered in this browser</td></tr>
     <tr><td><kbd>Enter</kbd></td><td>Present the current verse, maximized in the window (<kbd>Shift</kbd>+<kbd>F</kbd> for true full screen). If two or more verses are selected, only those are cycled through</td></tr>
     <tr><td><kbd>Esc</kbd></td><td>Clear the selection; press again to return to the box</td></tr>
@@ -1087,7 +1088,7 @@
     box.innerHTML = "";
     lastTerms = r.textMode ? r.terms : null;
     var single = r.out.length === 1 && versions.length > 1;
-    compareMode = false;
+    compareMode = false; cmp = null;
     // Reference lookups: verses that run on in sequence are shown as one flowing passage
     var list = single ? [] : r.out, groups = [];
     list.forEach(function (e) {
@@ -1320,24 +1321,69 @@
   }
   function updateVersionUI() { $("pVer").hidden = versions.length < 2; }
 
-  // one verse: current version on top, the other versions below
+  // label for a run of verses in one particular version
+  function rangeV(ver, a, b) {
+    if (a.bi !== b.bi) return refOfV(ver, a.bi, a.ch, a.v) + "\u2013" + refOfV(ver, b.bi, b.ch, b.v);
+    var l = ver.labels[a.bi] || BOOKS[a.bi][1];
+    if (ver.noChap[a.bi]) return l + " " + a.v + "\u2013" + b.v;
+    if (a.ch === b.ch) return l + " " + a.ch + ":" + a.v + "\u2013" + b.v;
+    return l + " " + a.ch + ":" + a.v + "\u2013" + b.ch + ":" + b.v;
+  }
+  function cmpItems(lo, hi) {   // every verse from lo to hi
+    var out = [], p = lo, g = 0, hk = posKey(hi.bi, hi.ch, hi.v);
+    while (p && g++ < 400) {
+      out.push(p);
+      if (posKey(p.bi, p.ch, p.v) >= hk) break;
+      p = bibleStep(p, 1);
+    }
+    return out;
+  }
+  // one verse: current version on top, the other versions below.
+  // After Shift+N / Shift+B (cmp.lo / cmp.hi) every version shows the whole run as a flowing passage instead.
   function renderSingle(bi, ch, v) {
     var box = $("results");
     pronOff();
     box.innerHTML = "";
+    var keep = cmp && cmp.lo && cmp.bi === bi && cmp.ch === ch && cmp.v === v ? { lo: cmp.lo, hi: cmp.hi } : null;
     compareMode = true; cmp = { bi: bi, ch: ch, v: v };
+    if (keep) { cmp.lo = keep.lo; cmp.hi = keep.hi; }
+    var items = cmp.lo ? cmpItems(cmp.lo, cmp.hi) : [{ bi: bi, ch: ch, v: v }];
     var order = [cur];
     versions.forEach(function (x, i) { if (i !== cur) order.push(i); });
     order.forEach(function (vi, k) {
-      var ver = versions[vi], e = ver.data[bi] && ver.data[bi][ch] && ver.data[bi][ch][v];
+      var ver = versions[vi], vname = ver.name.replace(/\.[^.]+$/, ""), tag = "  \u00b7  " + (vi + 1) + ": " + vname;
+      if (items.length > 1) {
+        var pas = document.createElement("div"); pas.className = "passage";
+        var head = document.createElement("div"); head.className = "phead";
+        head.textContent = rangeV(ver, items[0], items[items.length - 1]) + tag;
+        var body = document.createElement("div"); body.className = "pbody";
+        pas.appendChild(head); pas.appendChild(body); box.appendChild(pas);
+        items.forEach(function (it, j) {
+          var e = ver.data[it.bi] && ver.data[it.bi][it.ch] && ver.data[it.bi][it.ch][it.v];
+          var ref = refOfV(ver, it.bi, it.ch, it.v), txt = e ? e.text : "(not in this version)", pv = items[j - 1], vn;
+          if (!pv) vn = String(it.v);
+          else if (pv.bi !== it.bi) vn = ref;
+          else if (pv.ch !== it.ch && !ver.noChap[it.bi]) vn = it.ch + ":" + it.v;
+          else vn = String(it.v);
+          var d = document.createElement("div"); d.className = "verse";
+          d.tabIndex = (k === 0 && j === 0) ? 0 : -1;
+          d.dataset.copy = ref + " " + txt; d.dataset.ref = ref; d.dataset.text = txt; d.dataset.ver = vname;
+          d.dataset.bi = it.bi; d.dataset.ch = it.ch; d.dataset.v = it.v; d.dataset.vnum = vn;
+          var a = document.createElement("div"); a.className = "ref"; a.textContent = vn;
+          var p = document.createElement("p"); p.className = "text";
+          if (lastTerms && e) highlight(p, txt, lastTerms); else p.textContent = txt;
+          d.appendChild(a); d.appendChild(p); body.appendChild(d); body.appendChild(document.createTextNode(" "));
+        });
+        return;
+      }
+      var e = ver.data[bi] && ver.data[bi][ch] && ver.data[bi][ch][v];
       var ref = refOfV(ver, bi, ch, v), txt = e ? e.text : "(not in this version)";
-      var vname = ver.name.replace(/\.[^.]+$/, "");
       var d = document.createElement("div");
       d.className = "verse" + (k ? " other" : "");
       d.tabIndex = k === 0 ? 0 : -1;
       d.dataset.copy = ref + " " + txt; d.dataset.ref = ref; d.dataset.text = txt; d.dataset.ver = vname;
       d.dataset.bi = bi; d.dataset.ch = ch; d.dataset.v = v;
-      var a = document.createElement("div"); a.className = "ref"; a.textContent = ref + "  \u00b7  " + (vi + 1) + ": " + vname;
+      var a = document.createElement("div"); a.className = "ref"; a.textContent = ref + tag;
       var p = document.createElement("p"); p.className = "text";
       if (lastTerms && e) highlight(p, txt, lastTerms); else p.textContent = txt;
       d.appendChild(a); d.appendChild(p); box.appendChild(d);
@@ -1580,7 +1626,7 @@
     var box = $("results"), st = $("status"), e;
     var chap = data[bi][ch];
     var nums = Object.keys(chap).map(Number).sort(function (a, b) { return a - b; });
-    compareMode = false; lastTerms = null;
+    compareMode = false; cmp = null; lastTerms = null;
     box.innerHTML = "";
     var pas = document.createElement("div"); pas.className = "passage";
     var head = document.createElement("div"); head.className = "phead";
@@ -1648,8 +1694,22 @@
   }
 
   // Shift+B / Shift+N in the verse list: add the previous / next verse in the Bible next to the current one
+  // compare mode (several versions, one verse): add the neighbouring verse to every version's passage
+  function cmpExtend(v, dir) {
+    if (!cmp) return;
+    pronOff();
+    var lo = cmp.lo || { bi: cmp.bi, ch: cmp.ch, v: cmp.v }, hi = cmp.hi || lo;
+    var np = bibleStep(dir > 0 ? hi : lo, dir);
+    if (!np) { $("status").textContent = dir > 0 ? "This is the last verse" : "This is the first verse"; return; }
+    if (dir > 0) hi = np; else lo = np;
+    cmp.lo = lo; cmp.hi = hi;
+    var ver = v.dataset.ver, bi = v.dataset.bi, ch = v.dataset.ch, vs = v.dataset.v;
+    renderSingle(cmp.bi, cmp.ch, cmp.v);
+    var back = verses().filter(function (x) { return x.dataset.ver === ver && x.dataset.bi === bi && x.dataset.ch === ch && x.dataset.v === vs; })[0];
+    if (back) focusVerse(back);   // the cursor stays on the verse it was on
+  }
   function verseExtend(v, dir) {
-    if (compareMode) return;
+    if (compareMode) { cmpExtend(v, dir); return; }
     pronOff();
     var el = v, np, nx, all, i;
     for (;;) {   // skip over neighbours that are already shown right there
@@ -1660,6 +1720,23 @@
       break;
     }
     var e = data[np.bi][np.ch][np.v], host = el.parentNode, inGroup = host.classList.contains("pbody");
+    if (!inGroup) {
+      // a verse listed on its own (alone, or beside other results like Gen 3:4-5, 8): turn it into a flowing
+      // passage (reading format) instead of adding a separate listing
+      var a0 = all.indexOf(v), a1 = all.indexOf(el), chain = [];
+      for (var q = Math.min(a0, a1); q <= Math.max(a0, a1); q++) {
+        if (all[q].parentNode !== host) { chain = []; break; }
+        chain.push(all[q]);
+      }
+      if (!chain.length) chain = [el];
+      var pas = document.createElement("div"); pas.className = "passage";
+      var phd = document.createElement("div"); phd.className = "phead";
+      var pbd = document.createElement("div"); pbd.className = "pbody";
+      pas.appendChild(phd); pas.appendChild(pbd);
+      host.insertBefore(pas, chain[0]);
+      chain.forEach(function (x) { pbd.appendChild(x); pbd.appendChild(document.createTextNode(" ")); });
+      host = pbd; inGroup = true;
+    }
     var d = inGroup ? makePassageVerse(np.bi, np.ch, np.v, e.text) : (function () {
       var x = document.createElement("div"); x.className = "verse"; x.tabIndex = -1;
       var ref = refOf(np);
@@ -1682,6 +1759,10 @@
     }
     if (inGroup) relabelPassage(host);
     anchor = verses().indexOf(v);
+    if (document.activeElement !== v) {   // moving the verse into a passage drops focus: put the cursor back on it
+      verses().forEach(function (x) { x.tabIndex = -1; });
+      v.tabIndex = 0; v.focus({ preventScroll: true });
+    }
     d.scrollIntoView({ block: "nearest" });
   }
 
@@ -1857,11 +1938,15 @@
     if (items && items.length > 1) {
       var f = items[0], l = items[items.length - 1], prevI = null;
       $("pref").textContent = rangeAny(f, l) + (v.dataset.ver ? "  \u00b7  " + v.dataset.ver : "");
-      $("pinner").textContent = items.map(function (it) {
+      var pin = $("pinner");
+      pin.textContent = "";
+      items.forEach(function (it, k) {
         var n = !prevI ? it.v : (prevI.bi !== it.bi ? it.ref : (prevI.ch !== it.ch && !noChap[it.bi] ? it.ch + ":" + it.v : it.v));
         prevI = it;
-        return supNum(n) + " " + it.text;
-      }).join(" ");
+        var sp = document.createElement("sup"); sp.className = "pv"; sp.textContent = String(n);   // whole label (digits and colon) superscript
+        pin.appendChild(sp);
+        pin.appendChild(document.createTextNode("\u00a0" + it.text + (k < items.length - 1 ? " " : "")));
+      });
     } else {
       $("pref").textContent = v.dataset.ref + (v.dataset.ver ? "  \u00b7  " + v.dataset.ver : "");
       $("pinner").textContent = v.dataset.text;
@@ -2011,7 +2096,7 @@
   }
 
   // ---- S: every loaded version of a verse side by side; S (or Esc) again goes back ----
-  var sbsEl = null, sbsPrev = null, sbsFs = 0;   // sbsFs: chosen text size in px, 0 = automatic
+  var sbsEl = null, sbsPrev = null, sbsFs = 0, sbsSrc = null, sbsStray = null, sbsTitle = null, sbsGrid = null;   // sbsFs: chosen text size in px, 0 = automatic
   try { sbsFs = parseFloat(localStorage.getItem("lsm_sbsfs")) || 0; } catch (e) {}
   function sbsApplySize() {
     if (!sbsEl) return;
@@ -2035,19 +2120,64 @@
     if (refocus && !presenting && sbsPrev && document.contains(sbsPrev)) {
       try { sbsPrev.focus({ preventScroll: true }); } catch (e) { sbsPrev.focus(); }
     }
-    sbsPrev = null;
+    sbsPrev = null; sbsSrc = null; sbsStray = null; sbsTitle = null; sbsGrid = null;
+  }
+  // (re)draw the comparison for one verse: one row per loaded version
+  function sbsFill(bi, ch, vs) {
+    sbsTitle.textContent = refOf({ bi: bi, ch: ch, v: vs });
+    sbsGrid.innerHTML = "";
+    versions.forEach(function (ver, i) {
+      var e = ver.data[bi] && ver.data[bi][ch] && ver.data[bi][ch][vs];
+      var card = document.createElement("div"); card.className = "sbscard" + (i === cur ? " cur" : "");
+      var n = document.createElement("div"); n.className = "sbsname"; n.textContent = (i + 1) + ": " + ver.name.replace(/\.[^.]+$/, "");
+      var r = document.createElement("div"); r.className = "sbsref"; r.textContent = refOfV(ver, bi, ch, vs);
+      var t = document.createElement("div"); t.className = "sbstext"; t.textContent = e ? e.text : "(not in this version)";
+      var lab = document.createElement("div"); lab.className = "sbslabel"; lab.appendChild(n); lab.appendChild(r);
+      card.appendChild(lab); card.appendChild(t); sbsGrid.appendChild(card);
+    });
+    if (sbsEl) sbsEl.scrollTop = 0;
+  }
+  // the verse the comparison currently shows
+  function sbsCoords() {
+    if (presenting) { var d = presVerse().dataset; return { bi: +d.bi, ch: +d.ch, v: +d.v }; }
+    if (sbsStray) return sbsStray;
+    return { bi: +sbsSrc.dataset.bi, ch: +sbsSrc.dataset.ch, v: +sbsSrc.dataset.v };
+  }
+  function sbsRefresh() { var c = sbsCoords(); sbsFill(c.bi, c.ch, c.v); }
+  // arrows / h j k l: previous / next searched verse
+  function sbsSearched(dir) {
+    if (presenting) stepSearched(dir);
+    else {
+      var all = verses(), i = all.indexOf(sbsSrc), n = i + dir;
+      if (i < 0) return;
+      while (n >= 0 && n < all.length && all[n].dataset.bi === undefined) n += dir;
+      if (n < 0 || n >= all.length) return;
+      sbsSrc = all[n]; sbsStray = null; sbsPrev = all[n];
+      focusVerse(all[n]);
+    }
+    sbsRefresh();
+  }
+  // B / N: the adjacent verse in the Bible, whether or not it was searched
+  function sbsBible(dir) {
+    if (presenting) stepBible(dir);
+    else {
+      var np = bibleStep(sbsCoords(), dir);
+      if (!np) return;
+      sbsStray = np;
+    }
+    sbsRefresh();
   }
   function sbsToggle(v) {
     if (sbsEl) { sbsClose(true); return; }
     if (!v || v.dataset.bi === undefined) return;
     pronOff();
     var bi = +v.dataset.bi, ch = +v.dataset.ch, vs = +v.dataset.v;
-    sbsPrev = document.activeElement;
+    sbsPrev = document.activeElement; sbsSrc = v; sbsStray = null;
     var el = document.createElement("div");
     el.id = "sbs"; el.setAttribute("role", "dialog"); el.setAttribute("aria-label", "Versions side by side");
     var head = document.createElement("div"); head.className = "sbshead";
     var title = document.createElement("div"); title.className = "sbstitle"; title.textContent = refOf({ bi: bi, ch: ch, v: vs });
-    var hint = document.createElement("div"); hint.className = "sbshint"; hint.textContent = "+ / \u2212 size \u00b7 S or Esc to go back";
+    var hint = document.createElement("div"); hint.className = "sbshint"; hint.textContent = "B / N Bible \u00b7 arrows searched \u00b7 + / \u2212 size \u00b7 S or Esc to go back";
     var sz = document.createElement("div"); sz.className = "sbssize";
     [["\u2212", -1, "Smaller text"], ["+", 1, "Larger text"]].forEach(function (b) {
       var btn = document.createElement("button"); btn.type = "button"; btn.textContent = b[0]; btn.setAttribute("aria-label", b[2]);
@@ -2058,15 +2188,8 @@
     x.addEventListener("click", function () { sbsClose(true); });
     head.appendChild(title); head.appendChild(hint); head.appendChild(sz); head.appendChild(x);
     var grid = document.createElement("div"); grid.className = "sbsgrid";
-    versions.forEach(function (ver, i) {
-      var e = ver.data[bi] && ver.data[bi][ch] && ver.data[bi][ch][vs];
-      var card = document.createElement("div"); card.className = "sbscard" + (i === cur ? " cur" : "");
-      var n = document.createElement("div"); n.className = "sbsname"; n.textContent = (i + 1) + ": " + ver.name.replace(/\.[^.]+$/, "");
-      var r = document.createElement("div"); r.className = "sbsref"; r.textContent = refOfV(ver, bi, ch, vs);
-      var t = document.createElement("div"); t.className = "sbstext"; t.textContent = e ? e.text : "(not in this version)";
-      var lab = document.createElement("div"); lab.className = "sbslabel"; lab.appendChild(n); lab.appendChild(r);
-      card.appendChild(lab); card.appendChild(t); grid.appendChild(card);
-    });
+    sbsTitle = title; sbsGrid = grid; sbsEl = el;
+    sbsFill(bi, ch, vs);
     el.appendChild(head); el.appendChild(grid);
     if (versions.length < 2) {
       var note = document.createElement("div"); note.className = "sbsnote";
@@ -2087,10 +2210,12 @@
     if (k === "+" || k === "=") { sbsResize(1); return; }
     if (k === "-" || k === "_") { sbsResize(-1); return; }
     if (k === "0") { sbsResize(0); return; }
-    var step = { ArrowDown: 60, ArrowUp: -60, PageDown: sbsEl.clientHeight * 0.9, PageUp: -sbsEl.clientHeight * 0.9, " ": sbsEl.clientHeight * 0.9 };
-    if (lk === "j") step.j = 60; if (lk === "k") step.k = -60;
+    if (lk === "n" || lk === "b") { sbsBible(lk === "n" ? 1 : -1); return; }
+    var mv = VIM.hasOwnProperty(lk) ? VIM[lk] : k;
+    if (mv === "ArrowRight" || mv === "ArrowDown") { sbsSearched(1); return; }
+    if (mv === "ArrowLeft" || mv === "ArrowUp") { sbsSearched(-1); return; }
+    var step = { PageDown: sbsEl.clientHeight * 0.9, PageUp: -sbsEl.clientHeight * 0.9, " ": sbsEl.clientHeight * 0.9 };
     if (step.hasOwnProperty(k)) sbsEl.scrollTop += step[k];
-    else if (step.hasOwnProperty(lk) && (lk === "j" || lk === "k")) sbsEl.scrollTop += step[lk];
     else if (k === "Home") sbsEl.scrollTop = 0;
     else if (k === "End") sbsEl.scrollTop = sbsEl.scrollHeight;
   }, true);
@@ -2554,19 +2679,27 @@
   }
   // wrap the words of `container` in spans and highlight word startAt (-1 = last)
   function pronBegin(container, verseEl, startAt) {
-    var text = container.textContent, re = /[\p{L}\p{M}]+(?:['\u2019][\p{L}\p{M}]+)*/gu, m, last = 0, words = [], saved = container.innerHTML;
-    // hyphenated compounds containing a capital (Abel-beth-maacah): every part counts as a name, whatever its case
-    var chains = [], cre = /[\p{L}\p{M}]+(?:['\u2019][\p{L}\p{M}]+)*(?:[-\u2010\u2011][\p{L}\p{M}]+(?:['\u2019][\p{L}\p{M}]+)*)+/gu, cm;
-    while ((cm = cre.exec(text))) if (/\p{Lu}/u.test(cm[0])) chains.push([cm.index, cm.index + cm[0].length]);
-    container.textContent = "";
-    while ((m = re.exec(text))) {
-      if (!/\p{L}/u.test(m[0])) continue;   // stray marks
-      if (m.index > last) container.appendChild(document.createTextNode(text.slice(last, m.index)));
-      var sp = document.createElement("span"); sp.className = "pw"; sp.textContent = m[0];
-      for (var ci = 0; ci < chains.length; ci++) if (m.index >= chains[ci][0] && m.index < chains[ci][1]) { sp.setAttribute("data-cmp", "1"); break; }
-      container.appendChild(sp); words.push(sp); last = m.index + m[0].length;
-    }
-    if (last < text.length) container.appendChild(document.createTextNode(text.slice(last)));
+    var re = /[\p{L}\p{M}]+(?:['\u2019][\p{L}\p{M}]+)*/gu, words = [], saved = container.innerHTML;
+    // collect text nodes, skipping the superscript verse labels
+    var tn = [], tw = document.createTreeWalker(container, NodeFilter.SHOW_TEXT, null), nd;
+    while ((nd = tw.nextNode())) if (!(nd.parentNode && nd.parentNode.classList && nd.parentNode.classList.contains("pv"))) tn.push(nd);
+    tn.forEach(function (node) {
+      var text = node.nodeValue, m, last = 0, frag = document.createDocumentFragment(), got = false;
+      // hyphenated compounds containing a capital (Abel-beth-maacah): every part counts as a name, whatever its case
+      var chains = [], cre = /[\p{L}\p{M}]+(?:['\u2019][\p{L}\p{M}]+)*(?:[-\u2010\u2011][\p{L}\p{M}]+(?:['\u2019][\p{L}\p{M}]+)*)+/gu, cm;
+      while ((cm = cre.exec(text))) if (/\p{Lu}/u.test(cm[0])) chains.push([cm.index, cm.index + cm[0].length]);
+      re.lastIndex = 0;
+      while ((m = re.exec(text))) {
+        if (!/\p{L}/u.test(m[0])) continue;   // stray marks
+        if (m.index > last) frag.appendChild(document.createTextNode(text.slice(last, m.index)));
+        var sp = document.createElement("span"); sp.className = "pw"; sp.textContent = m[0];
+        for (var ci = 0; ci < chains.length; ci++) if (m.index >= chains[ci][0] && m.index < chains[ci][1]) { sp.setAttribute("data-cmp", "1"); break; }
+        frag.appendChild(sp); words.push(sp); last = m.index + m[0].length; got = true;
+      }
+      if (!got) return;
+      if (last < text.length) frag.appendChild(document.createTextNode(text.slice(last)));
+      node.parentNode.replaceChild(frag, node);
+    });
     if (!words.length) { container.innerHTML = saved; return false; }
     pron.ref = verseEl ? verseEl.dataset.ref : (presenting && presVerse() ? presVerse().dataset.ref : "");
     pron.on = true; pron.host = container; pron.saved = saved; pron.verse = verseEl; pron.words = words;
