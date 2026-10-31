@@ -1910,7 +1910,9 @@
     el.style.fontSize = (presSize === null ? lo : Math.min(presSize, lo)) + "px";
     if (pron.on) pronPlace();
   }
+  var presBeforeFill = null;   // the size in use before "f" filled the screen
   function resizePresent(dir) {
+    presBeforeFill = null;
     var cur = parseFloat($("pinner").style.fontSize) || presMax, n;
     if (dir > 0) {
       n = Math.max(cur + 2, Math.round(cur * 1.12));
@@ -2705,7 +2707,11 @@
     else if (k === "+" || k === "=") resizePresent(1);
     else if (k === "-" || k === "_") resizePresent(-1);
     else if (k === "F") toggleFullscreen();
-    else if (k === "f") { setPresSize(null); fitPresent(); }
+    else if (k === "f") {   // fill the screen; pressing f again goes back to the size it had before
+      if (presSize === null) { if (presBeforeFill) { setPresSize(presBeforeFill); presBeforeFill = null; } }
+      else { presBeforeFill = presSize; setPresSize(null); }
+      fitPresent();
+    }
     else if (/^[1-9]$/.test(k)) setVersion(+k - 1);
     else if (k === "Home") goPresent(0);
     else if (k === "End") goPresent(presList().length - 1);
