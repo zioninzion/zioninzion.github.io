@@ -213,6 +213,11 @@
   [hidden] { display: none !important; }
 </style>
 <script>try{var t=localStorage.getItem("lsm_theme");if(t&&t!=="auto")document.documentElement.setAttribute("data-theme",t);}catch(e){}</script>
+<meta name="theme-color" content="#7a4b1e">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Verse Lookup">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='12' fill='%237a4b1e'/><path d='M8 20l23 6v24L8 44zM56 20l-23 6v24l23-6z' fill='%23faf8f4'/></svg>">
 </head>
 <body>
 <main>
@@ -340,6 +345,7 @@
     <tr><td><kbd>B</kbd> / <kbd>N</kbd></td><td>While the whole chapter is shown: previous / next chapter (after the last chapter of a book, N continues to the first chapter of the next book)</td></tr>
     <tr><td><kbd>Shift</kbd>+<kbd>B</kbd> / <kbd>N</kbd></td><td>Add the previous / next verse (or, while the whole chapter is shown, the previous / next chapter) to the view instead of switching to it; press again to keep adding. A lone verse (or one listed beside others) becomes a flowing passage; with several versions loaded, every version expands into its own passage</td></tr>
     <tr><td><kbd>Ctrl</kbd>/<kbd>&#8984;</kbd>+<kbd>S</kbd></td><td>In slides (parts separated by <kbd>|</kbd>), download every slide as a 16:9 PDF with real, selectable text (underlines, highlights and covers as shown; a slide in Greek or other text the PDF fonts cannot hold is saved as a picture)</td></tr>
+    <tr><td><kbd>Ctrl</kbd>/<kbd>&#8984;</kbd>+<kbd>/</kbd></td><td>Jump to the text box and clear it, from anywhere (presentation, full screen, side by side, help ...); <kbd>Ctrl</kbd>/<kbd>&#8984;</kbd>+<kbd>Z</kbd> in the empty box brings the cleared text back</td></tr>
     <tr><td><kbd>U</kbd> <kbd>Y</kbd> <kbd>I</kbd></td><td>In presentation mode, underline (<kbd>U</kbd>), highlight (<kbd>Y</kbd>) or make invisible (<kbd>I</kbd>: the words are covered, and clicking a cover reveals that word) the words you have selected with the mouse, or the word under the pronunciation cursor (<kbd>P</kbd>); press the same key again to take it off. Marks stay while you move between slides and come back when you return to them</td></tr>
     <tr><td><kbd>|</kbd></td><td>Separate parts with a vertical bar, e.g. <kbd>eph 1:9-10; gen 1:26 | rev 4:11 | rev 22:1</kbd>, and press <kbd>Enter</kbd> to present one slide per part; arrows or <kbd>H</kbd><kbd>J</kbd><kbd>K</kbd><kbd>L</kbd> move between slides, and a slide of one verse or one run of verses can be extended with <kbd>Shift</kbd>+<kbd>N</kbd> / <kbd>B</kbd></td></tr>
     <tr><td><kbd>S</kbd></td><td>Show the current verse in every loaded version, one per row; press <kbd>S</kbd> (or <kbd>Esc</kbd>) again to go back; <kbd>B</kbd> / <kbd>N</kbd> show the previous / next verse in the Bible, <kbd>&larr;</kbd><kbd>&darr;</kbd><kbd>&uarr;</kbd><kbd>&rarr;</kbd> or <kbd>H</kbd><kbd>J</kbd><kbd>K</kbd><kbd>L</kbd> move between the searched verses (<kbd>PgUp</kbd> / <kbd>PgDn</kbd> scroll); <kbd>+</kbd> / <kbd>&minus;</kbd> change the text size (<kbd>0</kbd> resets)</td></tr>
@@ -1010,17 +1016,39 @@
   }
   function termLabel(t) { return (t.start ? " " : "") + t.s + (t.end ? " " : ""); }
 
+  function countMatches(re, str) {
+    var n = 0, m;
+    re.lastIndex = 0;
+    while ((m = re.exec(str))) { n++; if (!m[0].length) re.lastIndex++; }
+    return n;
+  }
+  // A word typed twice or more ("holy holy") asks for verses that have it that many times: those are listed first,
+  // then the other verses that contain the words. Besides verses, every instance of the words is counted.
   function textSearch(terms) {
-    var out = [], total = 0, LIMIT = 300;
-    var res = terms.map(function (t) { return new RegExp(termSrc(t), "u"); });
+    var LIMIT = 7000, seen = {}, dt = [];
+    terms.forEach(function (t) {
+      var k = termLabel(t);
+      if (seen[k]) seen[k].n++; else { seen[k] = { s: t.s, start: t.start, end: t.end, n: 1 }; dt.push(seen[k]); }
+    });
+    var res = dt.map(function (t) { return new RegExp(termSrc(t), "u"); });
+    var cnt = dt.map(function (t) { return new RegExp(termSrc(t), "gu"); });
+    var all = new RegExp(dt.map(termSrc).join("|"), "gu");
+    var multi = dt.some(function (t) { return t.n > 1; });
+    var top = [], rest = [], total = 0, instances = 0;
     flat.forEach(function (e) {
       if (scopeCount && !scopeSel[e.bi]) return;
       for (var i = 0; i < res.length; i++) if (!res[i].test(e.lc)) return;
       total++;
-      if (out.length < LIMIT) out.push(e);
+      instances += countMatches(all, e.lc);
+      if (multi && !dt.every(function (t, i) { return countMatches(cnt[i], e.lc) >= t.n; })) rest.push(e); else top.push(e);
     });
-    return { out: out, notes: total > LIMIT ? ["Showing the first " + LIMIT + " of " + total.toLocaleString()] : [],
-             terms: terms, total: total, textMode: true };
+    var out = top.concat(rest).slice(0, LIMIT), notes = [];
+    if (multi && top.length && rest.length) {
+      notes.push(top.length.toLocaleString() + " with " + dt.filter(function (t) { return t.n > 1; })
+        .map(function (t) { return "\u201c" + t.s + "\u201d \u00d7" + t.n; }).join(", ") + " or more listed first");
+    }
+    if (total > LIMIT) notes.push("Showing the first " + LIMIT.toLocaleString() + " of " + total.toLocaleString());
+    return { out: out, notes: notes, terms: dt, total: total, instances: instances, textMode: true };
   }
   // Match on the normalised text, then map back to the original characters so accents are kept on screen
   function highlight(el, text, terms) {
@@ -1031,7 +1059,8 @@
       for (k = 0; k < n.length; k++) { st.push(pos); en.push(pos + c.length); }
       norm += n; pos += c.length;
     }
-    var re = new RegExp(terms.map(termSrc).join("|"), "gu"), m, last = 0;
+    var re = terms._re || (terms._re = new RegExp(terms.map(termSrc).join("|"), "gu")), m, last = 0;
+    re.lastIndex = 0;
     while ((m = re.exec(norm)) && m[0].length) {
       var a = st[m.index], b = en[m.index + m[0].length - 1];
       if (a < last) continue;
@@ -1154,7 +1183,7 @@
     if (single) renderSingle(r.out[0].bi, r.out[0].ch, r.out[0].v);
     var st = $("status");
     if (r.textMode) {
-      st.textContent = r.total.toLocaleString() + " verse" + (r.total === 1 ? "" : "s") + " containing \u201c" +
+      st.textContent = r.total.toLocaleString() + " verse" + (r.total === 1 ? "" : "s") + " (" + r.instances.toLocaleString() + " instance" + (r.instances === 1 ? "" : "s") + ") containing \u201c" +
         r.terms.map(termLabel).join("\u201d and \u201c") + "\u201d" + (scopeCount ? " in " + scopeLabel() : "") + (r.translit ? " (typed in Latin letters)" : "") + (r.notes.length ? " \u00b7 " + r.notes[0] : "");
       st.className = "";
       return;
@@ -3018,6 +3047,7 @@
   try { engCache = JSON.parse(localStorage.getItem("lsm_eng_pron") || "{}") || {}; } catch (e) { engCache = {}; }
   function engKey(w) { return w.toLowerCase().replace(/\u2019/g, "'"); }
   function engLookup(w) {
+    if (typeof navigator !== "undefined" && navigator.onLine === false) return Promise.reject(new Error("offline"));
     var ctl = window.AbortController ? new AbortController() : null, t = ctl ? setTimeout(function () { ctl.abort(); }, 7000) : 0;
     return fetch("https://api.dictionaryapi.dev/api/v2/entries/en/" + encodeURIComponent(w), ctl ? { signal: ctl.signal } : {})
       .then(function (r) {
@@ -3286,6 +3316,28 @@
     liveTimer = setTimeout(liveRun, 100);
   });
 
+  // Cmd/Ctrl+/ : jump to the text box and clear it; Cmd/Ctrl+Z (in the empty box) brings the cleared text back
+  var clearedText = null;
+  $("q").addEventListener("input", function (e) { if (e.isTrusted && $("q").value) clearedText = null; });   // typing something new forgets it
+  // (registered on window, in the capture phase, so it runs before any other key handler: it works from anywhere)
+  window.addEventListener("keydown", function (e) {
+    if (e.altKey || e.shiftKey || !(e.ctrlKey || e.metaKey) || e.isComposing) return;
+    var q = $("q");
+    if (e.key === "/") {
+      e.preventDefault(); e.stopPropagation();
+      if (presenting) { if (presSaved) presSaved.inBox = true; closePresent(); }   // also leaves full screen and side by side
+      else sbsClose(false);
+      if (helpOpen) closeHelp();
+      if (!$("scope").hidden) closeScope();
+      if (q.value) { clearedText = q.value; q.value = ""; q.dispatchEvent(new Event("input", { bubbles: true })); }
+      q.focus();
+    } else if ((e.key === "z" || e.key === "Z") && document.activeElement === q && q.value === "" && clearedText !== null) {
+      e.preventDefault();
+      q.value = clearedText; clearedText = null;
+      q.focus(); q.setSelectionRange(q.value.length, q.value.length);
+      q.dispatchEvent(new Event("input", { bubbles: true }));
+    }
+  }, true);
   $("q").addEventListener("keydown", function (e) {
     if (e.key === "Enter" && !e.isComposing && !e.shiftKey && !e.ctrlKey && !e.metaKey && !e.altKey) {
       var raw = $("q").value;
