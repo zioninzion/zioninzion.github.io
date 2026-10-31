@@ -1026,14 +1026,14 @@ const A4MIN = 400, A4MAX = 480;
 const rulers = [];
 function updateReset(){ document.querySelectorAll('.a4reset').forEach(b => { b.disabled = A4 === 440; }); }
 let progUntil = 0;
-const rulerW = r => { const i = r.firstChild.firstChild; return i ? i.offsetWidth : 0; };
+const rulerW = r => { const i = r.firstChild.firstChild; return i ? i.getBoundingClientRect().width : 0; };   // fractional: 1.1rem isn't a whole number of px
 function syncRulers(except, smooth){
   rulers.forEach(r => {
     if (r === except) return;
     const w = rulerW(r); if (!w) return;
     const left = (A4 - A4MIN) * w;
     if (Math.abs(r.scrollLeft - left) < 1) return;
-    progUntil = Date.now() + (smooth ? 450 : 120);
+    progUntil = Date.now() + (smooth ? 600 : 120);
     r.scrollTo({left, behavior: smooth ? 'smooth' : 'auto'});
   });
 }
@@ -1085,7 +1085,18 @@ function setA4(v, save, src, smooth){
   updateReset();
   const sc = wrap.firstChild;
   rulers.push(sc);
+  let settleT = null, down = false;
+  const realign = () => {                              // once motion stops, make the ruler sit exactly on the value
+    if (down) return;
+    const w = rulerW(sc); if (!w) return;
+    const left = (A4 - A4MIN) * w;
+    if (Math.abs(sc.scrollLeft - left) > 1){ progUntil = Date.now() + 120; sc.scrollTo({left, behavior:'auto'}); }
+  };
+  sc.addEventListener('pointerdown', () => { down = true; progUntil = 0; });
+  ['pointerup', 'pointercancel'].forEach(ev => sc.addEventListener(ev, () => { down = false; clearTimeout(settleT); settleT = setTimeout(realign, 180); }));
+  sc.addEventListener('wheel', () => { progUntil = 0; }, {passive:true});
   sc.addEventListener('scroll', () => {
+    clearTimeout(settleT); settleT = setTimeout(realign, 180);
     if (Date.now() < progUntil) return;               // ignore scrolls we triggered ourselves
     const w = rulerW(sc); if (!w) return;
     const v = A4MIN + Math.round(sc.scrollLeft / w);
@@ -1094,7 +1105,7 @@ function setA4(v, save, src, smooth){
   sc.addEventListener('click', e => {
     const it = e.target.closest('.a4i'); if (!it) return;
     setA4(+it.dataset.v, true, null, true);
-    const w = rulerW(sc); progUntil = Date.now() + 450;
+    const w = rulerW(sc); progUntil = Date.now() + 600;
     sc.scrollTo({left: (+it.dataset.v - A4MIN) * w, behavior: 'smooth'});
   });
   sc.addEventListener('wheel', e => {
