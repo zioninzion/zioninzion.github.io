@@ -181,17 +181,35 @@ footer{flex:none}
 .a4ctl input:focus-visible{outline:none;border-bottom-color:var(--ok)}
 
 /* ---------- A4 scroll ruler ---------- */
-.a4ruler{position:relative;width:min(100%,18rem);margin:.5rem auto 0}
+.a4ruler{--tw:1.1rem;position:relative;width:min(100%,18rem);margin:.5rem auto 0}
 .a4scroll{overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;
   -webkit-mask-image:linear-gradient(90deg,transparent,#000 22%,#000 78%,transparent);mask-image:linear-gradient(90deg,transparent,#000 22%,#000 78%,transparent)}
 .a4scroll::-webkit-scrollbar{display:none}
-.a4track{display:flex;width:max-content;padding:0 calc(50% - 1.6rem)}
-.a4i{flex:none;width:3.2rem;height:3rem;scroll-snap-align:center;scroll-snap-stop:always;display:flex;flex-direction:column;align-items:center;justify-content:space-between;
+.a4track{display:flex;width:max-content;padding:0 calc(50% - var(--tw) / 2)}
+.a4i{flex:none;width:var(--tw);height:3rem;scroll-snap-align:center;display:flex;flex-direction:column;align-items:center;justify-content:space-between;
   padding:.2rem 0;box-sizing:border-box;cursor:pointer;color:var(--muted);font-size:.8rem;font-variant-numeric:tabular-nums}
 .a4i i{display:block;width:1px;height:.5rem;background:var(--muted);opacity:.6}
 .a4i.m i{height:.9rem;opacity:1}
-.a4i b{font-weight:400;min-height:1em;line-height:1}
+.a4i b{font-weight:400;min-height:1em;line-height:1;white-space:nowrap}
 .a4mark{position:absolute;left:50%;top:0;bottom:0;width:2px;margin-left:-1px;background:var(--ok);border-radius:1px;pointer-events:none}
+
+.a4row{flex-wrap:wrap;justify-content:flex-start}
+.a4row>span:first-child{flex:1 0 100%}
+.tuner .a4row{justify-content:center}
+.tuner .a4row>span:first-child{text-align:center}
+.a4reset:disabled{opacity:.35;cursor:default}
+
+/* ---------- key & chords ---------- */
+#chords{order:5}
+.ckey{font-size:1.6rem;font-weight:600;min-height:1.3em}
+.csub{color:var(--muted);font-size:.95rem;min-height:1.4em}
+.cchord{font-size:clamp(4rem,20vw,6.5rem);font-weight:600;line-height:1.05;margin-top:.5rem}
+.cbars{display:flex;gap:.3rem;height:4.5rem;margin:1rem 0 .3rem}
+.cbar{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;font-size:.7rem;color:var(--muted)}
+.cbt{flex:1;min-height:0;width:100%;display:flex;align-items:flex-end}
+.cbar i{display:block;width:100%;height:0;min-height:2px;background:var(--track);border-radius:3px;transition:height .1s}
+.cbar.on{color:var(--fg)}
+.cbar.on i{background:var(--ok)}
 </style>
 </head>
 <body>
@@ -314,6 +332,25 @@ footer{flex:none}
       </div>
     </div>
   </section>
+  <section class='view tones-view' id='chords' aria-label='Key and chord detector'>
+    <div class='tp'>
+      <h2>Key &amp; chords</h2>
+      <div style='text-align:center'>
+        <div class='ckey' id='cKey'>–</div>
+        <div class='csub' id='cKeySub'>Allow the microphone, then play a song</div>
+        <div class='cchord' id='cChord'>–</div>
+        <div class='csub' id='cNotes'></div>
+      </div>
+      <div class='cbars' id='cBars' aria-hidden='true'></div>
+      <div class='trow' style='justify-content:center;margin:.8rem 0 1rem'>
+        <button class='small' id='cPause' aria-pressed='false'>Pause</button>
+        <button class='small' id='cReset'>Reset</button>
+      </div>
+      <div class='bfield'>Chords so far (newest first)</div>
+      <div class='chips' id='cHist'><span style='color:var(--muted)'>None yet.</span></div>
+      <div class='bfield'>Works best when the music is clear and fairly loud. The key firms up after 10 to 20 seconds, and Reset starts it over for a new song.</div>
+    </div>
+  </section>
 </div>
 <div id="mFlash" style="position:fixed;inset:0;pointer-events:none;opacity:0;z-index:5"></div>
 <footer>
@@ -323,6 +360,7 @@ footer{flex:none}
     <button aria-label="Graph" title="Graph" data-i="2"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20v-7"/><path d="M9 20V6"/><path d="M14 20v-10"/><path d="M19 20v-5"/></svg></button>
     <button aria-label="Metronome" title="Metronome" data-i="3"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 21l2-17h4l2 17z"/><path d="M12 17l4-9"/></svg></button>
     <button aria-label="Tones" title="Tones" data-i="4"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12c2.5-8 5-8 7.5 0s5 8 7.5 0 3-4 5-4"/></svg></button>
+    <button aria-label="Key and chords" title="Key and chords" data-i="5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V5l11-2v13"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="17.5" cy="16" r="2.5"/></svg></button>
   </div>
   <button id="wake" class="small" aria-pressed="true">Keeping screen on</button>
   <button id="btn" hidden>Enable microphone</button>
@@ -330,7 +368,7 @@ footer{flex:none}
 </footer>
 <script>
 const NAMES = ["C","C♯","D","D♯","E","F","F♯","G","G♯","A","A♯","B"];
-const VIEWS = ["tuner","instruments","graph","metronome","tones"];
+const VIEWS = ["tuner","instruments","graph","metronome","tones","chords"];
 let A4 = 440;
 const $ = id => document.getElementById(id);
 let ctx, analyser, buf, spec, stream, running = false, frame = 0, recent = [], lastF = -1, cur = 0;
@@ -560,7 +598,9 @@ async function start(){
   analyser.smoothingTimeConstant = 0.6;
   buf = new Float32Array(analyser.fftSize);
   spec = new Float32Array(analyser.frequencyBinCount);
-  ctx.createMediaStreamSource(stream).connect(analyser);
+  const micSrc = ctx.createMediaStreamSource(stream);
+  micSrc.connect(analyser);
+  window.chordHook && window.chordHook(ctx, micSrc);
   running = true;
   $("btn").hidden = true;
   $("hz").textContent = "Listening…";
@@ -961,6 +1001,7 @@ I('istrings').addEventListener('click', e => {
 try { const v = +localStorage.getItem('pitch.a4'); if (v >= 400 && v <= 480) A4 = v; } catch (e) {}
 const A4MIN = 400, A4MAX = 480;
 const rulers = [];
+function updateReset(){ document.querySelectorAll('.a4reset').forEach(b => { b.disabled = A4 === 440; }); }
 let progUntil = 0;
 const rulerW = r => { const i = r.firstChild.firstChild; return i ? i.offsetWidth : 0; };
 function syncRulers(except, smooth){
@@ -977,7 +1018,7 @@ function setA4(v, save, src, smooth){
   v = Math.max(A4MIN, Math.min(A4MAX, Math.round(v)));
   A4 = v;
   ['a4', 'a4t'].forEach(o => { if (document.activeElement !== I(o) || save) I(o).value = v; });
-  syncRulers(src, smooth);
+  syncRulers(src, smooth); updateReset();
   if (save){ try { localStorage.setItem('pitch.a4', v); } catch (e) {} }
 }
 ['a4', 'a4t'].forEach(id => {
@@ -985,7 +1026,7 @@ function setA4(v, save, src, smooth){
   inp.value = Math.round(A4);
   inp.addEventListener('input', () => {              // live update while typing a valid value
     const v = parseFloat(inp.value);
-    if (v >= A4MIN && v <= A4MAX){ A4 = Math.round(v); I(id === 'a4' ? 'a4t' : 'a4').value = A4; syncRulers(null, true); try { localStorage.setItem('pitch.a4', A4); } catch (e) {} }
+    if (v >= A4MIN && v <= A4MAX){ A4 = Math.round(v); I(id === 'a4' ? 'a4t' : 'a4').value = A4; syncRulers(null, true); updateReset(); try { localStorage.setItem('pitch.a4', A4); } catch (e) {} }
   });
   inp.addEventListener('change', () => { const v = parseFloat(inp.value); setA4(isNaN(v) ? A4 : v, true); inp.value = A4; });
   inp.addEventListener('keydown', e => { if (e.key === 'Enter') inp.blur(); });
@@ -1013,6 +1054,12 @@ function setA4(v, save, src, smooth){
   wrap.className = 'a4ruler';
   wrap.innerHTML = `<div class="a4scroll" aria-hidden="true"><div class="a4track">${items}</div></div><div class="a4mark"></div>`;
   inp.closest('.a4row').after(wrap);
+  const rb = document.createElement('button');
+  rb.type = 'button'; rb.className = 'small a4reset'; rb.textContent = 'Reset';
+  rb.setAttribute('aria-label', 'Reset reference pitch to 440 Hz');
+  rb.addEventListener('click', () => setA4(440, true, null, true));
+  inp.closest('.a4row').appendChild(rb);
+  updateReset();
   const sc = wrap.firstChild;
   rulers.push(sc);
   sc.addEventListener('scroll', () => {
@@ -1037,6 +1084,129 @@ I('bnote').innerHTML = NAMES.map(n => `<option>${n}</option>`).join('');
 I('boct').innerHTML = [0,1,2,3,4,5,6,7,8].map(o => `<option>${o}</option>`).join('');
 I('bnote').value = 'E'; I('boct').value = '4';
 renderChips(); renderMain();
+})();
+
+/* ---------- key & chord detector ---------- */
+(function(){
+const C = id => document.getElementById(id);
+const MAJ = [6.35,2.23,3.48,2.33,4.38,4.09,2.52,5.19,2.39,3.66,2.29,2.88];
+const MIN = [6.33,2.68,3.52,5.38,2.60,3.53,2.54,4.75,3.98,2.69,3.34,3.17];
+const TYPES = [
+  {s:'',     iv:[0,4,7],    w:[1,.85,.85],    p:1},
+  {s:'m',    iv:[0,3,7],    w:[1,.85,.85],    p:1},
+  {s:'7',    iv:[0,4,7,10], w:[1,.8,.8,.6],   p:.93},
+  {s:'maj7', iv:[0,4,7,11], w:[1,.8,.8,.6],   p:.93},
+  {s:'m7',   iv:[0,3,7,10], w:[1,.8,.8,.6],   p:.93},
+  {s:'sus4', iv:[0,5,7],    w:[1,.8,.8],      p:.9},
+  {s:'dim',  iv:[0,3,6],    w:[1,.8,.8],      p:.9}
+];
+const TPL = [];
+for (let r = 0; r < 12; r++) for (const t of TYPES){
+  const v = new Array(12).fill(0); t.iv.forEach((d, k) => v[(r + d) % 12] = t.w[k]);
+  const n = Math.hypot(...v); TPL.push({r, t, v: v.map(x => x / n)});
+}
+let an = null, sp = null, ac = null, ready = false, paused = false;
+let cs = new Array(12).fill(0), keyAcc = new Array(12).fill(0), keyN = 0;
+let cand = '', candN = 0, curChord = '', hist = [], idleN = 0;
+
+C('cBars').innerHTML = NAMES.map(n => `<div class="cbar"><div class="cbt"><i></i></div><span>${n}</span></div>`).join('');
+const bars = [...C('cBars').children];
+
+window.chordHook = (c, src) => {
+  ac = c; an = c.createAnalyser(); an.fftSize = 16384; an.smoothingTimeConstant = .3;
+  sp = new Float32Array(an.frequencyBinCount); src.connect(an); ready = true;
+  C('cKeySub').textContent = 'Listening… play a song';
+};
+
+function chromaFrame(){
+  an.getFloatFrequencyData(sp);
+  const binHz = ac.sampleRate / an.fftSize, lo = Math.max(1, Math.ceil(65 / binHz)), hi = Math.min(sp.length - 2, Math.floor(2100 / binHz));
+  let mx = -Infinity;
+  for (let b = lo; b <= hi; b++) if (sp[b] > mx) mx = sp[b];
+  if (mx < -75) return null;
+  const ch = new Array(12).fill(0);
+  for (let b = lo; b <= hi; b++){
+    const m = sp[b];
+    if (m < mx - 40 || m < sp[b-1] || m <= sp[b+1]) continue;
+    const a = sp[b-1], c = sp[b+1], den = a - 2*m + c;
+    const off = den ? Math.max(-.5, Math.min(.5, .5 * (a - c) / den)) : 0;
+    const midi = 69 + 12 * Math.log2((b + off) * binHz / A4), n = Math.round(midi);
+    ch[((n % 12) + 12) % 12] += Math.pow(10, (m - mx) / 20) * Math.max(0, 1 - Math.abs(midi - n) * 2);
+  }
+  return ch;
+}
+function classify(v){
+  const n = Math.hypot(...v) || 1; let best = null, bs = 0;
+  for (const t of TPL){
+    let d = 0; for (let i = 0; i < 12; i++) d += t.v[i] * v[i];
+    d = d / n * t.t.p; if (d > bs){ bs = d; best = t; }
+  }
+  return bs > .6 ? best : null;
+}
+function corr(x, y){
+  const mx = x.reduce((a, b) => a + b, 0) / 12, my = y.reduce((a, b) => a + b, 0) / 12;
+  let sxy = 0, sxx = 0, syy = 0;
+  for (let i = 0; i < 12; i++){ const a = x[i] - mx, b = y[i] - my; sxy += a*b; sxx += a*a; syy += b*b; }
+  return sxy / (Math.sqrt(sxx * syy) || 1);
+}
+function showKey(){
+  if (keyN < 6) return;
+  const r = [];
+  for (let k = 0; k < 12; k++){
+    r.push({n: NAMES[k] + ' major', c: corr(keyAcc, MAJ.map((_, i) => MAJ[(i - k + 12) % 12]))});
+    r.push({n: NAMES[k] + ' minor', c: corr(keyAcc, MIN.map((_, i) => MIN[(i - k + 12) % 12]))});
+  }
+  r.sort((a, b) => b.c - a.c);
+  C('cKey').textContent = r[0].n;
+  C('cKeySub').textContent = 'Fit ' + Math.max(0, Math.round(r[0].c * 100)) + '%' + (r[0].c - r[1].c < .05 ? ' · or ' + r[1].n : '');
+}
+function showBars(on){
+  const mx = Math.max(...cs, .001);
+  bars.forEach((b, i) => { b.firstChild.firstChild.style.height = (cs[i] / mx * 100) + '%'; b.classList.toggle('on', on.includes(i)); });
+}
+function renderHist(){
+  C('cHist').innerHTML = hist.length
+    ? hist.slice().reverse().map((n, i) => `<span class="chip${i === 0 ? ' active' : ''}">${n}</span>`).join('')
+    : '<span style="color:var(--muted)">None yet.</span>';
+}
+function tick(){
+  if (!ready || paused || cur !== 5) return;
+  const raw = chromaFrame(), s = raw ? raw.reduce((a, b) => a + b, 0) : 0;
+  if (!(s > 0)){
+    if (++idleN > 6 && curChord){ curChord = ''; cand = ''; candN = 0; C('cChord').textContent = '–'; C('cNotes').textContent = ''; }
+    cs = cs.map(x => x * .7); showBars([]); return;
+  }
+  idleN = 0;
+  const nz = raw.map(x => x / s);
+  for (let i = 0; i < 12; i++){ cs[i] = .5 * cs[i] + .5 * nz[i]; keyAcc[i] = keyAcc[i] * .997 + nz[i]; }
+  keyN = keyN * .997 + 1;
+  showKey();
+  const best = classify(cs);
+  let on = [];
+  if (best){
+    on = best.t.iv.map(d => (best.r + d) % 12);
+    const name = NAMES[best.r] + best.t.s;
+    if (name === cand) candN++; else { cand = name; candN = 1; }
+    if (candN >= 2 && name !== curChord){
+      curChord = name;
+      C('cChord').textContent = name;
+      C('cNotes').textContent = on.map(i => NAMES[i]).join('  ');
+      if (hist[hist.length - 1] !== name){ hist.push(name); if (hist.length > 20) hist.shift(); renderHist(); }
+    }
+    if (name === curChord) on = best.t.iv.map(d => (best.r + d) % 12);
+  }
+  showBars(on);
+}
+setInterval(tick, 125);
+C('cPause').addEventListener('click', () => {
+  paused = !paused; C('cPause').setAttribute('aria-pressed', paused); C('cPause').textContent = paused ? 'Resume' : 'Pause';
+});
+C('cReset').addEventListener('click', () => {
+  cs.fill(0); keyAcc.fill(0); keyN = 0; cand = ''; candN = 0; curChord = ''; hist = []; idleN = 0;
+  C('cKey').textContent = '–'; C('cChord').textContent = '–'; C('cNotes').textContent = '';
+  C('cKeySub').textContent = ready ? 'Listening… play a song' : 'Allow the microphone, then play a song';
+  showBars([]); renderHist();
+});
 })();
 
 /* ---------- keep screen awake ---------- */
