@@ -209,6 +209,64 @@
     #help td { display: block; width: auto; border-bottom: 0; padding: 2px 0; }
     #help tr { display: block; border-bottom: 1px solid var(--border); padding: 4px 0; }
   }
+  /* ---- external display: the phone becomes the control panel ---- */
+  body.extp #present { visibility: hidden; pointer-events: none; }
+  #ctl { position: fixed; inset: 0; z-index: 110; display: flex; flex-direction: column; height: 100vh; height: 100dvh;
+         background: var(--bg); color: var(--text); font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+  #ctl .cbar { display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--border); background: var(--surface);
+               padding: max(8px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) 8px max(12px, env(safe-area-inset-left)); }
+  #ctl .cdot { width: 10px; height: 10px; border-radius: 50%; background: var(--muted); flex: none; }
+  #ctl .cdot.on { background: #2e9e4f; box-shadow: 0 0 0 3px color-mix(in srgb, #2e9e4f 28%, transparent); }
+  #ctl .cstat { flex: 1; min-width: 0; font-size: .9rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  #ctl .cbody { flex: 1; min-height: 0; overflow: auto; -webkit-overflow-scrolling: touch; display: flex; flex-direction: column; gap: 12px;
+                padding: 12px max(12px, env(safe-area-inset-right)) calc(14px + env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left)); }
+  #ctl .cleft { display: flex; flex-direction: column; align-items: center; gap: 8px; min-width: 0; position: sticky; top: -12px; z-index: 3; background: var(--bg); padding: 12px 0 6px; margin: -12px 0 0; }
+  #ctl .cprev { position: relative; overflow: hidden; border: 1px solid var(--border); border-radius: 8px; background: #000; flex: none; }
+  #ctl .cprev iframe { position: absolute; left: 0; top: 0; border: 0; transform-origin: 0 0; pointer-events: none; background: var(--bg); }
+  #ctl .cshield { position: absolute; inset: 0; z-index: 2; touch-action: pan-y; }
+  #ctl .cinfo { width: 100%; display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+  #ctl .cref { font-family: var(--ff, Georgia, serif); font-weight: 700; color: var(--accent); font-size: 1.15rem; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  #ctl .ccount { color: var(--muted); font-size: .85rem; white-space: nowrap; }
+  #ctl .cright { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+  #ctl .crow { display: grid; gap: 8px; }
+  #ctl .r2 { grid-template-columns: repeat(2, 1fr); }
+  #ctl .r3 { grid-template-columns: repeat(3, 1fr); }
+  #ctl .r4 { grid-template-columns: repeat(4, 1fr); }
+  #ctl .cb { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; min-width: 0; min-height: 52px;
+             padding: 6px 4px; font: inherit; font-size: 1.05rem; font-weight: 600; line-height: 1.15; text-align: center;
+             background: var(--surface); color: var(--text); border: 1px solid var(--border); border-radius: 12px; touch-action: manipulation; }
+  #ctl .cb small { font-size: .68rem; font-weight: 400; color: var(--muted); }
+  #ctl .cb:active { background: color-mix(in srgb, var(--accent) 18%, var(--surface)); }
+  #ctl .cb.pri { min-height: 76px; font-size: 1.35rem; background: var(--accent); color: var(--on-accent, var(--bg)); border-color: var(--accent); }
+  #ctl .cb.pri:active { opacity: .85; }
+  #ctl .cb.pri small { color: inherit; opacity: .9; font-size: .8rem; }
+  #ctl .cb.on { background: color-mix(in srgb, var(--accent) 24%, var(--surface)); border-color: var(--accent); }
+  #ctl .cb.warn.on { background: #000; color: #fff; border-color: #000; }
+  #ctl .cb.warn.on small { color: #bbb; }
+  #ctl .chead { font-size: .72rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin: 2px 2px -2px; }
+  #ctl .cchips { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 2px; }
+  #ctl .cchips .cb { flex: none; min-width: 52px; padding: 6px 12px; }
+  #ctl .cpronbox { border: 1px solid var(--accent); border-radius: 12px; padding: 10px; display: flex; flex-direction: column; gap: 8px; background: color-mix(in srgb, var(--accent) 8%, var(--surface)); }
+  #ctl .cpr1 { font-weight: 700; font-size: 1.2rem; text-align: center; }
+  #ctl .cpr2 { color: var(--muted); font-style: italic; text-align: center; min-height: 1.2em; }
+  #ctl .chint { color: var(--muted); font-size: .82rem; margin: 0 2px; }
+  #ctl .ctoast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(18px + env(safe-area-inset-bottom)); z-index: 5; max-width: 90vw;
+                 background: var(--text); color: var(--bg); border-radius: 10px; padding: 9px 14px; font-size: .9rem; box-shadow: 0 6px 20px rgba(0,0,0,.35); }
+  @media (orientation: landscape) and (min-width: 640px) {
+    #ctl .cbody { flex-direction: row; align-items: flex-start; }
+    #ctl .cleft { flex: 1 1 46%; position: sticky; top: 0; }
+    #ctl .cright { flex: 1 1 54%; }
+  }
+  #cSheet { position: fixed; inset: 0; z-index: 220; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(0,0,0,.55); }
+  #cSheet .csp { width: 100%; max-width: 460px; max-height: 88vh; overflow: auto; background: var(--surface); color: var(--text); border: 1px solid var(--border);
+                 border-radius: 14px; padding: 16px; display: flex; flex-direction: column; gap: 10px;
+                 font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+  #cSheet h3 { margin: 0; font-size: 1.1rem; color: var(--accent); }
+  #cSheet .csstat { font-size: .9rem; color: var(--muted); }
+  #cSheet .csopt { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; text-align: left; padding: 10px 14px; font: inherit; font-weight: 600;
+                   background: var(--bg); color: var(--text); border: 1px solid var(--border); border-radius: 12px; }
+  #cSheet .csopt small { font-weight: 400; color: var(--muted); font-size: .8rem; }
+  #cSheet .csnote { font-size: .8rem; color: var(--muted); margin: 0; }
   #present { height: 100dvh; }
   [hidden] { display: none !important; }
 </style>
@@ -256,6 +314,10 @@
     </div>
     <input type="file" id="logoFile" accept="image/*" hidden>
     <p id="logoNote" hidden></p>
+    <div class="fonthead">Presenting</div>
+    <div class="chips" id="extModeChips" role="group" aria-label="Where to present"></div>
+    <div class="chips"><button type="button" id="extConnect">Connect a display&hellip;</button><button type="button" id="extClearBtn">Clear display</button></div>
+    <p class="scopehint"><span id="extStat">No display connected</span>. <strong>Auto</strong> uses the control panel whenever a display is connected (and, on a phone or tablet, when one can be seen): the verses fill the other screen and this one shows the controls.</p>
   </div>
   <div id="info" hidden></div>
   <input type="file" id="addFile" accept=".txt,text/plain" multiple hidden>
@@ -285,6 +347,86 @@
     <button type="button" data-a="close" aria-label="Close">&times;</button>
   </div>
 </div>
+
+<div id="ctl" hidden role="region" aria-label="Presentation control panel">
+  <div class="cbar">
+    <span class="cdot" id="cDot"></span><span class="cstat" id="cStat">No display connected</span>
+    <button type="button" class="ghost" id="cConn">Display&hellip;</button>
+    <button type="button" class="ghost" id="cClose" aria-label="Back to search (the display keeps showing the verse)" title="Back to search (the display keeps showing the verse)">&times;</button>
+  </div>
+  <div class="cbody">
+    <div class="cleft" id="cLeft">
+      <div class="cprev" id="cPrev"><iframe id="cFrame" title="What the display shows" tabindex="-1" src="about:blank"></iframe><div class="cshield" id="cShield"></div></div>
+      <div class="cinfo"><span class="cref" id="cRef"></span><span class="ccount" id="cCount"></span></div>
+    </div>
+    <div class="cright" id="cRight">
+      <div class="crow r2">
+        <button type="button" class="cb pri" data-x="prev" aria-label="Previous verse">&lsaquo;<small>Previous</small></button>
+        <button type="button" class="cb pri" data-x="next" aria-label="Next verse">&rsaquo;<small>Next</small></button>
+      </div>
+      <div id="cRowBible">
+        <div class="chead">In the Bible</div>
+        <div class="crow r4">
+          <button type="button" class="cb" data-x="bprev" aria-label="Verse before in the Bible">&lsaquo;<small>before</small></button>
+          <button type="button" class="cb" data-x="bnext" aria-label="Verse after in the Bible">&rsaquo;<small>after</small></button>
+          <button type="button" class="cb" data-x="eprev" aria-label="Add the verse before to the screen">+&lsaquo;<small>add before</small></button>
+          <button type="button" class="cb" data-x="enext" aria-label="Add the verse after to the screen">&rsaquo;+<small>add after</small></button>
+        </div>
+      </div>
+      <div class="crow r2" id="cRowEnds">
+        <button type="button" class="cb" data-x="first">&#x23EE;<small>First</small></button>
+        <button type="button" class="cb" data-x="last">&#x23ED;<small>Last</small></button>
+      </div>
+      <div class="crow r2" id="cRowScroll" hidden>
+        <button type="button" class="cb" data-x="sup" aria-label="Scroll the display up">&uarr;<small>Scroll up</small></button>
+        <button type="button" class="cb" data-x="sdown" aria-label="Scroll the display down">&darr;<small>Scroll down</small></button>
+      </div>
+      <div>
+        <div class="chead">Display</div>
+        <div class="crow r4">
+          <button type="button" class="cb" data-x="smaller" aria-label="Smaller text">A&minus;<small>smaller</small></button>
+          <button type="button" class="cb" data-x="larger" aria-label="Larger text">A+<small>larger</small></button>
+          <button type="button" class="cb" data-x="fill" aria-label="Fill the screen">&#x2922;<small>Fill</small></button>
+          <button type="button" class="cb warn" data-x="blank" id="cBlank" aria-pressed="false">&#x25A0;<small>Blank</small></button>
+        </div>
+      </div>
+      <div class="crow r3" id="cRowTools">
+        <button type="button" class="cb" data-x="pron" id="cPronBtn" aria-pressed="false">P<small>Pronounce</small></button>
+        <button type="button" class="cb" data-x="sbs" id="cSbsBtn" aria-pressed="false">S<small>Compare</small></button>
+        <button type="button" class="cb" data-x="copy">&#x2398;<small>Copy</small></button>
+      </div>
+      <div class="cpronbox" id="cPronBox" hidden>
+        <div class="cpr1" id="cPr1"></div><div class="cpr2" id="cPr2"></div>
+        <div class="crow r4">
+          <button type="button" class="cb" data-x="pl" aria-label="Previous word">&larr;</button>
+          <button type="button" class="cb" data-x="pu" aria-label="Word above">&uarr;</button>
+          <button type="button" class="cb" data-x="pd" aria-label="Word below">&darr;</button>
+          <button type="button" class="cb" data-x="pr" aria-label="Next word">&rarr;</button>
+        </div>
+        <div class="crow r3">
+          <button type="button" class="cb" data-x="mu" aria-label="Underline this word"><span style="text-decoration:underline">U</span><small>underline</small></button>
+          <button type="button" class="cb" data-x="my" aria-label="Highlight this word"><span style="background:#ffe066;color:#1a1a1a;padding:0 4px;border-radius:3px">Y</span><small>highlight</small></button>
+          <button type="button" class="cb" data-x="mi" aria-label="Hide this word (tap the cover on the preview to reveal it)">I<small>hide</small></button>
+        </div>
+        <p class="chint">Move to a word, then underline, highlight or hide it. Tap a hidden word in the preview to reveal it.</p>
+      </div>
+      <div id="cVerBox" hidden>
+        <div class="chead">Version</div>
+        <div class="cchips" id="cVers"></div>
+      </div>
+      <div id="cSlideBox" hidden>
+        <div class="chead">Slides</div>
+        <div class="cchips" id="cSlides"></div>
+      </div>
+      <div class="crow r2">
+        <button type="button" class="cb" data-x="clear">Clear display<small>show nothing</small></button>
+        <button type="button" class="cb" data-x="local">This screen<small>present here instead</small></button>
+      </div>
+    </div>
+  </div>
+  <div class="ctoast" id="cToast" hidden></div>
+</div>
+<div id="cSheet" hidden><div class="csp" role="dialog" aria-label="Show the verses on another screen"><div id="cSheetBody"></div></div></div>
 
 <div id="bar"><span class="cnt" id="barCount"></span><button type="button" class="ghost" id="barSel">Select all</button><button type="button" class="ghost" id="barPresent">Present</button><button type="button" id="barCopy">Copy all</button></div>
 
@@ -375,6 +517,9 @@
 
   <h3>Touch screens</h3>
   <p>Tap verses to select or deselect them. A bar at the bottom lets you <strong>Copy</strong> (the selected verses, or all listed if none are selected), <strong>Present</strong>, and <strong>Select all</strong> / <strong>Clear</strong>. In presentation mode, swipe left or right (or use the buttons) to change verse, <strong>A&minus;</strong> / <strong>A+</strong> to resize, <strong>Fill</strong> to fill the screen, and <strong>&times;</strong> to exit.</p>
+
+  <h3>External display</h3>
+  <p>Press <strong>Present</strong> with a display connected (a Chromecast or TV, a screen the browser can see, or a display window opened with <strong>Display&hellip;</strong>) and the verses fill that screen while this device becomes the control panel: a live preview, previous / next, the verse before or after in the Bible (and add it to the screen), text size, blank, pronunciation with underline / highlight / hide, version buttons, compare, slides and copy. Swipe the preview to change verse. The &times; button returns to the search while the display keeps showing the last verse; <strong>Clear display</strong> empties it. Choose <strong>This screen</strong> under Presenting in the cog panel to always fill the device&rsquo;s own screen. A web page cannot drive a wired display on an iPhone (it only mirrors), but an iPad with an external display set up works through the display window.</p>
 
   <h3>Mouse</h3>
   <p>Click a verse to select it, <kbd>Shift</kbd>+click to select a range, <kbd>Ctrl/Cmd</kbd>+click to add or remove one, double-click to present.</p>
@@ -1919,6 +2064,7 @@
   var VIM = { h: "ArrowLeft", j: "ArrowDown", k: "ArrowUp", l: "ArrowRight" };   // vim-style keys
   // presSize: chosen font size in px, or null = fill the screen. Remembered between presentations and visits.
   var presenting = false, pi = 0, presMax = 0;
+  var extPanel = false;   // true while the phone shows the control panel and the verses go to the external display
   var presSize = (function () {
     try { var v = localStorage.getItem("lsm_pres_size"); return v && v !== "fill" && +v >= 12 ? +v : null; } catch (e) { return null; }
   })();
@@ -1939,11 +2085,12 @@
       if (el.offsetHeight <= box.clientHeight && el.scrollWidth <= box.clientWidth) lo = mid; else hi = mid - 1;
     }
     presMax = lo;
-    el.style.fontSize = (presSize === null ? lo : Math.min(presSize, lo)) + "px";
+    el.style.fontSize = (extPanel || presSize === null ? lo : Math.min(presSize, lo)) + "px";
     if (pron.on) pronPlace();
   }
   var presBeforeFill = null;   // the size in use before "f" filled the screen
   function resizePresent(dir) {
+    if (extPanel) { extSize(dir); return; }
     presBeforeFill = null;
     var cur = parseFloat($("pinner").style.fontSize) || presMax, n;
     if (dir > 0) {
@@ -2043,6 +2190,7 @@
     presenting = true;
     var p = $("present");
     p.hidden = false;
+    extEnter();
     renderPresent();
   }
   var presSaved = null, presRestore = false;
@@ -2088,6 +2236,7 @@
     presStray = null; presExt = null; slideMode = false; slides = [];
     presenting = false;
     $("present").hidden = true;
+    extLeave();
     var wasFull = !!document.fullscreenElement;
     if (wasFull && document.exitFullscreen) document.exitFullscreen().catch(function () {});
     restorePresState();
@@ -2290,6 +2439,7 @@
     presIdx = []; presSubset = false; presStray = null; presExt = null;
     slideMode = true; presenting = true;
     $("present").hidden = false;
+    extEnter();
     renderPresent();
   }
   function renderSlide() {
@@ -2740,9 +2890,12 @@
     else if (k === "-" || k === "_") resizePresent(-1);
     else if (k === "F") toggleFullscreen();
     else if (k === "f") {   // fill the screen; pressing f again goes back to the size it had before
-      if (presSize === null) { if (presBeforeFill) { setPresSize(presBeforeFill); presBeforeFill = null; } }
-      else { presBeforeFill = presSize; setPresSize(null); }
-      fitPresent();
+      if (extPanel) extFillToggle();
+      else {
+        if (presSize === null) { if (presBeforeFill) { setPresSize(presBeforeFill); presBeforeFill = null; } }
+        else { presBeforeFill = presSize; setPresSize(null); }
+        fitPresent();
+      }
     }
     else if (/^[1-9]$/.test(k)) setVersion(+k - 1);
     else if (k === "Home") goPresent(0);
@@ -2814,6 +2967,403 @@
     var dx = e.changedTouches[0].clientX - tx, dy = e.changedTouches[0].clientY - ty;
     if (Math.abs(dx) > 50 && Math.abs(dx) > 1.5 * Math.abs(dy)) stepSearched(dx < 0 ? 1 : -1);
   }, { passive: true });
+
+  // ---- external display: the verses go to another screen, this device becomes the control panel ----
+  // The presentation keeps being built exactly as before (in #present, which is kept off screen while the panel is up).
+  // Whatever it shows is copied to display.html: over the Presentation API (Cast, TVs, connected displays), or to a display
+  // window on this device (BroadcastChannel). A small live preview of display.html sits at the top of the panel.
+  var EXT_CH = "verselookup-display";
+  var ext = { mode: "auto", conn: null, bc: null, peers: {}, avail: false, screens: false, scale: null, beforeFill: null, blank: false,
+              live: false, sent: "", logoSent: null, q: 0, req: null, win: null, frameOK: false, frameSet: false, wake: null, toastT: 0,
+              pscale: 1, slidesN: -1, versSig: "" };
+  var EXT_ORIGIN = location.origin === "null" ? "*" : location.origin;
+  try { var em = localStorage.getItem("lsm_ext_mode"); if (em === "local" || em === "ext") ext.mode = em; } catch (e) {}
+  try { var es = parseFloat(localStorage.getItem("lsm_ext_scale")); if (es > 0.05 && es < 1) ext.scale = es; } catch (e) {}
+  function extSaveScale() { try { localStorage.setItem("lsm_ext_scale", ext.scale === null ? "fill" : String(ext.scale)); } catch (e) {} }
+
+  function extPeers() {   // displays heard from lately (not counting the preview in the panel)
+    var now = Date.now(), out = [];
+    Object.keys(ext.peers).forEach(function (k) { if (now - ext.peers[k].t < 11000) out.push(ext.peers[k]); else delete ext.peers[k]; });
+    return out;
+  }
+  function extConnOk() { return !!(ext.conn && ext.conn.state === "connected"); }
+  function extLinked() { return extConnOk() || extPeers().length > 0; }
+  function extWant() {   // should Present open the control panel rather than fill this screen?
+    if (ext.mode === "local") return false;
+    if (ext.mode === "ext") return true;
+    if (extLinked()) return true;
+    return isCoarse() && (ext.avail || ext.screens);   // on a phone / tablet: when a display can be seen
+  }
+
+  // -- sending --
+  function extPost(m) {
+    var s = typeof m === "string" ? m : JSON.stringify(m);
+    if (extConnOk()) { try { ext.conn.send(s); } catch (e) {} }
+    if (ext.bc) { try { ext.bc.postMessage(s); } catch (e) {} }
+    var f = $("cFrame");
+    if (f && ext.frameOK && f.contentWindow) { try { f.contentWindow.postMessage(s, EXT_ORIGIN); } catch (e) {} }
+  }
+  function extBuild(idle) {   // what the display should show, read back from the presentation
+    var root = document.documentElement;
+    var st = { t: "state", theme: root.getAttribute("data-theme") || "", style: root.getAttribute("style") || "", logo: $("presLogo").getAttribute("src") || "", blank: ext.blank };
+    if (idle) { st.idle = true; return st; }
+    st.scale = ext.scale; st.ref = $("pref").textContent; st.html = $("pinner").innerHTML;
+    if (sbsEl && sbsGrid) {
+      var cards = [];
+      Array.prototype.forEach.call(sbsGrid.children, function (c) {
+        var g = function (k) { var n = c.querySelector("." + k); return n ? n.textContent : ""; };
+        cards.push({ name: g("sbsname"), ref: g("sbsref"), text: g("sbstext"), cur: c.classList.contains("cur") });
+      });
+      var base = Math.max(17, Math.min(30, 0.024 * Math.min(window.innerWidth, window.innerHeight)));
+      st.sbs = { title: sbsTitle.textContent, cards: cards, k: sbsFs ? sbsFs / base : 1 };
+    }
+    if (pron.on) st.pron = { l1: $("pr1").textContent, l2: $("pr2").textContent };
+    return st;
+  }
+  function extPublish(force) {
+    if (!ext.live) return;
+    var st = extBuild(false), logo = st.logo;
+    var key = JSON.stringify(Object.assign({}, st, { logo: logo.length }));
+    if (!force && key === ext.sent) return;
+    ext.sent = key;
+    if (!force && ext.logoSent === logo) delete st.logo;   // the logo only travels when it changes
+    else ext.logoSent = logo;
+    extPost(st);
+  }
+  function extQueue() {
+    if (ext.q) return;
+    ext.q = setTimeout(function () { ext.q = 0; extPublish(false); extUi(); }, 30);
+  }
+  new MutationObserver(extQueue).observe($("present"), { childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: ["class", "src", "style"] });
+  new MutationObserver(extQueue).observe(document.documentElement, { attributes: true, attributeFilter: ["style", "data-theme"] });
+  function extClear() {   // show nothing on the display
+    ext.live = false; ext.sent = ""; ext.blank = false;
+    extPost(extBuild(true));
+    extUi();
+  }
+
+  // -- receiving (hello / alive / bye from displays, commands from taps on a display) --
+  function extIn(raw, fromFrame) {
+    var m; try { m = typeof raw === "string" ? JSON.parse(raw) : raw; } catch (e) { return; }
+    if (!m || typeof m !== "object") return;
+    if (m.t === "hello") {
+      if (fromFrame || m.preview) { ext.frameOK = true; extPublishTo(); return; }
+      ext.peers[m.id] = { t: Date.now(), w: m.w, h: m.h, receiver: !!m.receiver, fs: !!m.fs };
+      extPublishTo(); extLayout(); extUi();
+    } else if (m.t === "alive") {
+      var known = !!ext.peers[m.id];
+      if (known) ext.peers[m.id].t = Date.now(); else extPost({ t: "who" });
+    } else if (m.t === "bye") { delete ext.peers[m.id]; extUi(); }
+    else if (m.t === "cmd") extCmd(m);
+  }
+  function extPublishTo() {   // a display (re)appeared: send it everything, logo included
+    if (ext.live) { ext.sent = ""; ext.logoSent = null; extPublish(true); }
+    else if (extPanel) extQueue();
+  }
+  function extCmd(m) {
+    if (!presenting && !ext.live) return;
+    if (m.c === "word" && pronAlive() && m.i >= 0 && m.i < pron.words.length) pronGo(m.i);
+    else if (m.c === "reveal") {
+      var el = $("pinner").querySelector('.mk.mi[data-s="' + m.s + '"]');
+      if (el) el.click();
+    }
+  }
+  if (window.BroadcastChannel) {
+    try { ext.bc = new BroadcastChannel(EXT_CH); ext.bc.onmessage = function (e) { extIn(e.data, false); }; } catch (e) { ext.bc = null; }
+  }
+  window.addEventListener("message", function (e) {
+    var f = $("cFrame");
+    if (f && e.source === f.contentWindow) extIn(e.data, true);
+  });
+
+  // -- Presentation API (Cast, smart TVs, displays the browser can see) --
+  function extRequest() {
+    if (!window.PresentationRequest) return null;
+    if (ext.req) return ext.req;
+    try {
+      var req = new PresentationRequest([new URL("display.html", location.href).href]);
+      ext.req = req;
+      try { navigator.presentation.defaultRequest = req; } catch (e) {}   // the browser's own Cast menu can start it too
+      req.addEventListener("connectionavailable", function (e) { extAdopt(e.connection); });
+      req.getAvailability().then(function (a) {
+        ext.avail = !!a.value;
+        a.addEventListener("change", function () { ext.avail = !!a.value; extUi(); });
+        extUi();
+      }).catch(function () {});
+      var pid = null; try { pid = sessionStorage.getItem("lsm_ext_pid"); } catch (e) {}
+      if (pid) req.reconnect(pid).then(extAdopt).catch(function () { try { sessionStorage.removeItem("lsm_ext_pid"); } catch (e) {} });
+      return req;
+    } catch (e) { ext.req = null; return null; }
+  }
+  function extAdopt(c) {
+    if (!c) return;
+    if (ext.conn && ext.conn !== c) { try { ext.conn.close(); } catch (e) {} }
+    ext.conn = c;
+    c.addEventListener("message", function (e) { extIn(e.data, false); });
+    var gone = function () {
+      if (ext.conn === c) ext.conn = null;
+      Object.keys(ext.peers).forEach(function (k) { if (ext.peers[k].receiver) delete ext.peers[k]; });
+      extUi();
+    };
+    c.addEventListener("close", gone); c.addEventListener("terminate", gone);
+    c.addEventListener("connect", function () { extPost({ t: "who" }); extUi(); });
+    try { sessionStorage.setItem("lsm_ext_pid", c.id); } catch (e) {}
+    if (c.state === "connected") extPost({ t: "who" });
+    extUi();
+  }
+  function extStartCast() {
+    var req = extRequest();
+    if (!req) { extToast("This browser cannot send to a display."); return; }
+    req.start().then(function (c) { extAdopt(c); extCloseSheet(); }).catch(function (err) {
+      if (err && err.name === "AbortError") return;
+      extToast(err && err.name === "NotFoundError" ? "No display found." : "Could not connect to the display.");
+    });
+  }
+  function extOpenWindow() {   // a display window on this device: drag it to the other screen (placed there automatically where the browser allows)
+    var url = new URL("display.html", location.href).href;
+    var w = null;
+    try { w = window.open(url, "vl_display", "popup=yes,width=1280,height=720"); } catch (e) {}
+    if (!w) { extToast("The display window was blocked. Allow pop-ups for this page."); return; }
+    ext.win = w; extCloseSheet();
+    try {
+      if (window.getScreenDetails && screen.isExtended) {
+        window.getScreenDetails().then(function (d) {
+          var s = d.screens.filter(function (x) { return !x.isPrimary; })[0];
+          if (!s) return;
+          try { w.moveTo(s.availLeft, s.availTop); w.resizeTo(s.availWidth, s.availHeight); } catch (e) {}
+        }).catch(function () {});
+      }
+    } catch (e) {}
+    setTimeout(function () { extPost({ t: "who" }); }, 600);
+  }
+  function extDisconnect() {
+    if (ext.conn) { try { ext.conn.terminate(); } catch (e) { try { ext.conn.close(); } catch (e2) {} } }
+    try { sessionStorage.removeItem("lsm_ext_pid"); } catch (e) {}
+  }
+  try { ext.screens = !!(window.screen && screen.isExtended); } catch (e) {}
+  try { if (window.screen && screen.addEventListener) screen.addEventListener("change", function () { ext.screens = !!screen.isExtended; extUi(); }); } catch (e) {}
+  if (ext.mode !== "local") { try { extRequest(); } catch (e) {} }
+
+  // -- the connect sheet --
+  function extSheetBuild() {
+    var box = $("cSheetBody"); box.textContent = "";
+    function el(tag, cls, txt, parent) { var n = document.createElement(tag); if (cls) n.className = cls; if (txt) n.textContent = txt; (parent || box).appendChild(n); return n; }
+    function opt(title, sub, fn) {
+      var b = el("button", "csopt", title); b.type = "button"; el("small", "", sub, b); b.onclick = fn; return b;
+    }
+    box.style.display = "flex"; box.style.flexDirection = "column"; box.style.gap = "10px";
+    el("h3", "", "Show the verses on another screen");
+    el("div", "csstat", extStatusText());
+    if (window.PresentationRequest) opt("Cast or connected display…", "A Chromecast, a smart TV, or a display this browser can see. It opens this page’s display view there.", extStartCast);
+    opt("Open a display window", "A second window on this device. Drag it to the other screen, then click it (or press F) for full screen.", extOpenWindow);
+    if (extLinked()) {
+      if (extConnOk()) opt("Disconnect the display", "Stops sending to the connected display.", function () { extDisconnect(); extCloseSheet(); });
+      opt("Clear the display", "Shows nothing (the logo, if you set one).", function () { extClear(); extCloseSheet(); });
+    }
+    if (extPanel) opt("Present on this screen instead", "Fills this screen as before.", function () { extCloseSheet(); extUseLocal(); });
+    var notes = [];
+    if (!window.PresentationRequest) notes.push("This browser cannot send a page to a separate screen by itself. Screen mirroring shows this whole device, not just the verses; on an iPad, an external display set up with Stage Manager works with the display window.");
+    else if (!window.isSecureContext) notes.push("Casting needs this page to be served over https.");
+    if (location.protocol === "file:") notes.push("display.html has to sit in the same folder as this page.");
+    notes.forEach(function (t) { el("p", "csnote", t); });
+    var x = el("button", "ghost", "Close"); x.type = "button"; x.onclick = extCloseSheet;
+  }
+  function extOpenSheet() { extRequest(); extSheetBuild(); $("cSheet").hidden = false; }
+  function extCloseSheet() { $("cSheet").hidden = true; }
+  $("cSheet").addEventListener("click", function (e) { if (e.target === this) extCloseSheet(); });
+
+  // -- the control panel --
+  function extToast(t) {
+    var el = $("cToast"); el.textContent = t; el.hidden = false;
+    clearTimeout(ext.toastT); ext.toastT = setTimeout(function () { el.hidden = true; }, 2600);
+  }
+  function extStatusText() {
+    var pe = extPeers();
+    if (extConnOk()) return "Display connected" + (pe.length && pe[0].w ? " · " + pe[0].w + "×" + pe[0].h : "");
+    if (pe.length) return (pe.length > 1 ? pe.length + " displays" : "Display") + " connected" + (pe[0].w ? " · " + pe[0].w + "×" + pe[0].h : "");
+    return ext.avail ? "No display connected · one is available" : "No display connected";
+  }
+  function extWake(on) {
+    try {
+      if (on) {
+        if (navigator.wakeLock && !ext.wake) navigator.wakeLock.request("screen").then(function (l) {
+          ext.wake = l; l.addEventListener("release", function () { if (ext.wake === l) ext.wake = null; });
+        }).catch(function () {});
+      } else if (ext.wake) { ext.wake.release(); ext.wake = null; }
+    } catch (e) {}
+  }
+  document.addEventListener("visibilitychange", function () { if (!document.hidden && extPanel) extWake(true); });
+  function extEnter() {
+    extPanel = false;
+    if (!extWant()) { ext.live = false; return; }
+    extPanel = true; ext.live = true; ext.blank = false; ext.sent = "";
+    document.body.classList.add("extp");
+    $("ctl").hidden = false;
+    if (!ext.frameSet) { ext.frameSet = true; $("cFrame").src = "display.html?preview=1"; }
+    extWake(true);
+    extPost({ t: "who" });
+    extLayout(); extUi(); extQueue();
+    requestAnimationFrame(extLayout);
+    if (!ext.sheetShown) setTimeout(function () { if (extPanel && !extLinked()) { ext.sheetShown = true; extOpenSheet(); } }, 700);   // once per visit
+  }
+  function extLeave() {   // the display keeps showing the last verse
+    if (!extPanel) return;
+    extPanel = false;
+    document.body.classList.remove("extp");
+    $("ctl").hidden = true; extCloseSheet(); extWake(false);
+  }
+  function extUseLocal() {   // present on this screen after all
+    extLeave(); ext.live = false;
+    if (presenting) { fitPresent(); }
+  }
+  function extLayout() {
+    if (!extPanel) return;
+    var f = $("cFrame"), box = $("cPrev"), pe = extPeers();
+    var w = (pe.length && pe[0].w) || 1280, h = (pe.length && pe[0].h) || 720;
+    var landscape = window.innerWidth > window.innerHeight && window.innerWidth >= 640;
+    var maxW = Math.max(120, $("cLeft").clientWidth || window.innerWidth - 24), maxH = Math.max(100, window.innerHeight * (landscape ? 0.6 : 0.34));
+    var s = Math.min(maxW / w, maxH / h);
+    ext.pscale = s;
+    f.style.width = w + "px"; f.style.height = h + "px"; f.style.transform = "scale(" + s + ")";
+    box.style.width = Math.floor(w * s) + "px"; box.style.height = Math.floor(h * s) + "px";
+  }
+  window.addEventListener("resize", extLayout);
+  window.addEventListener("orientationchange", function () { setTimeout(extLayout, 200); });
+
+  function extUi() {
+    var linked = extLinked(), txt = extStatusText();
+    $("cDot").classList.toggle("on", linked); $("cStat").textContent = txt;
+    var cs = $("extStat"); if (cs) cs.textContent = txt;
+    if (!$("cSheet").hidden) { var ss = document.querySelector("#cSheet .csstat"); if (ss) ss.textContent = txt; }
+    if (!extPanel) return;
+    var inSbs = !!sbsEl, pOn = pron.on;
+    var ref = $("pref").textContent;
+    $("cRef").textContent = ref || (slideMode ? "Slide " + (si + 1) : "");
+    $("cCount").textContent = $("pcount").textContent;
+    $("cRowBible").hidden = slideMode && slides[si] && slides[si].runs.length !== 1;
+    $("cRowBible").querySelectorAll('[data-x="eprev"],[data-x="enext"]').forEach(function (b) { b.hidden = inSbs; });
+    $("cRowEnds").hidden = inSbs; $("cRowScroll").hidden = !inSbs;
+    $("cRowTools").querySelector('[data-x="pron"]').hidden = inSbs;
+    $("cRowTools").querySelector('[data-x="copy"]').hidden = inSbs;
+    $("cPronBtn").classList.toggle("on", pOn); $("cPronBtn").setAttribute("aria-pressed", pOn ? "true" : "false");
+    $("cSbsBtn").classList.toggle("on", inSbs); $("cSbsBtn").setAttribute("aria-pressed", inSbs ? "true" : "false");
+    $("cBlank").classList.toggle("on", ext.blank); $("cBlank").setAttribute("aria-pressed", ext.blank ? "true" : "false");
+    $("cPronBox").hidden = !pOn || inSbs;
+    if (pOn) { $("cPr1").textContent = $("pr1").textContent; $("cPr2").textContent = $("pr2").textContent; }
+    // versions
+    var sig = versions.map(function (v) { return v.name; }).join("|") + "#" + cur;
+    $("cVerBox").hidden = versions.length < 2;
+    if (versions.length > 1 && sig !== ext.versSig) {
+      ext.versSig = sig;
+      var vb = $("cVers"); vb.textContent = "";
+      versions.forEach(function (v, i) {
+        var b = document.createElement("button"); b.type = "button"; b.className = "cb" + (i === cur ? " on" : ""); b.dataset.v = String(i);
+        b.textContent = String(i + 1); var sm = document.createElement("small"); sm.textContent = v.name.replace(/\.[^.]+$/, ""); b.appendChild(sm);
+        vb.appendChild(b);
+      });
+    }
+    // slides
+    var sbx = $("cSlideBox"); sbx.hidden = !(slideMode && slides.length > 1);
+    if (slideMode && slides.length > 1) {
+      var sc = $("cSlides");
+      if (ext.slidesN !== slides.length) {
+        ext.slidesN = slides.length; sc.textContent = "";
+        slides.forEach(function (x, i) {
+          var b = document.createElement("button"); b.type = "button"; b.className = "cb"; b.dataset.s = String(i); b.textContent = String(i + 1); sc.appendChild(b);
+        });
+      }
+      Array.prototype.forEach.call(sc.children, function (b, i) { b.classList.toggle("on", i === si); });
+    } else ext.slidesN = -1;
+  }
+  setInterval(extUi, 3000);
+
+  // -- what the buttons do --
+  function extSize(dir) {
+    if (sbsEl) { sbsResize(dir); return; }
+    var s = ext.scale === null ? 1 : ext.scale;
+    s = dir > 0 ? s * 1.12 : s / 1.12;
+    ext.scale = s >= 0.995 ? null : Math.max(0.12, s);
+    ext.beforeFill = null; extSaveScale(); extPublish(false); extUi();
+  }
+  function extFill() { if (sbsEl) { sbsResize(0); return; } ext.beforeFill = null; ext.scale = null; extSaveScale(); extPublish(false); }
+  function extFillToggle() {   // the F key: fill the screen; again goes back to the size it had
+    if (ext.scale === null) { if (ext.beforeFill) { ext.scale = ext.beforeFill; ext.beforeFill = null; } }
+    else { ext.beforeFill = ext.scale; ext.scale = null; }
+    extSaveScale(); extPublish(false);
+  }
+  var extFakeKey = { preventDefault: function () {} };
+  function extDo(a) {
+    var sb = !!sbsEl;
+    switch (a) {
+      case "prev": if (sb) sbsSearched(-1); else stepSearched(-1); break;
+      case "next": if (sb) sbsSearched(1); else stepSearched(1); break;
+      case "bprev": if (sb) sbsBible(-1); else stepBible(-1); break;
+      case "bnext": if (sb) sbsBible(1); else stepBible(1); break;
+      case "eprev": extendBible(-1); break;
+      case "enext": extendBible(1); break;
+      case "first": goPresent(0); break;
+      case "last": goPresent(slideMode ? slides.length - 1 : presList().length - 1); break;
+      case "smaller": extSize(-1); break;
+      case "larger": extSize(1); break;
+      case "fill": extFill(); break;
+      case "blank": ext.blank = !ext.blank; ext.sent = ""; extPublish(true); break;
+      case "pron": if (pronAlive()) pronOff(); else pronStart(); break;
+      case "pl": pronKey(extFakeKey, "ArrowLeft"); break;
+      case "pr": pronKey(extFakeKey, "ArrowRight"); break;
+      case "pu": pronKey(extFakeKey, "ArrowUp"); break;
+      case "pd": pronKey(extFakeKey, "ArrowDown"); break;
+      case "mu": case "my": case "mi":
+        if (!pronAlive()) { extToast("Press P, move to a word, then mark it."); break; }
+        markPresent(a === "mu" ? "u" : a === "my" ? "h" : "i"); break;
+      case "sbs": sbsToggle(presVerse()); break;
+      case "copy": copyPresent(false); extToast("Copied"); break;
+      case "sup": extPost({ t: "scroll", d: -0.8 }); break;
+      case "sdown": extPost({ t: "scroll", d: 0.8 }); break;
+      case "clear": extClear(); extToast("Display cleared"); break;
+      case "local": extUseLocal(); break;
+    }
+    extQueue();
+  }
+  $("ctl").addEventListener("click", function (e) {
+    var b = e.target.closest ? e.target.closest("button") : null;
+    if (!b) return;
+    if (b.dataset.x) extDo(b.dataset.x);
+    else if (b.dataset.v !== undefined) { setVersion(+b.dataset.v); extQueue(); }
+    else if (b.dataset.s !== undefined) { goPresent(+b.dataset.s); }
+    else if (b.id === "cConn") extOpenSheet();
+    else if (b.id === "cClose") closePresent();
+  });
+  var extTx = 0, extTy = 0;   // swipe the preview to change verse; a tap passes through to the word / cover under the finger
+  $("cShield").addEventListener("touchstart", function (e) { if (e.touches.length === 1) { extTx = e.touches[0].clientX; extTy = e.touches[0].clientY; } }, { passive: true });
+  $("cShield").addEventListener("touchend", function (e) {
+    if (!e.changedTouches.length) return;
+    var dx = e.changedTouches[0].clientX - extTx, dy = e.changedTouches[0].clientY - extTy;
+    if (Math.abs(dx) > 40 && Math.abs(dx) > 1.5 * Math.abs(dy)) { extDo(dx < 0 ? "next" : "prev"); e.preventDefault(); }
+  });
+  $("cShield").addEventListener("click", function (e) {
+    var f = $("cFrame"), r = this.getBoundingClientRect(), s = ext.pscale || 1;
+    try {
+      var t = f.contentDocument.elementFromPoint((e.clientX - r.left) / s, (e.clientY - r.top) / s);
+      if (t) t.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+    } catch (er) {}
+  });
+
+  // -- settings in the cog panel --
+  var EXT_MODES = [["Auto", "auto"], ["This screen", "local"], ["External display", "ext"]], extModeBtns = [];
+  EXT_MODES.forEach(function (m) {
+    var b = document.createElement("button"); b.type = "button"; b.textContent = m[0]; b.dataset.m = m[1];
+    b.onclick = function () {
+      ext.mode = m[1]; try { localStorage.setItem("lsm_ext_mode", m[1]); } catch (e) {}
+      if (m[1] !== "local") extRequest();
+      extModeUi();
+    };
+    $("extModeChips").appendChild(b); extModeBtns.push(b);
+  });
+  function extModeUi() { extModeBtns.forEach(function (b) { var on = b.dataset.m === ext.mode; b.classList.toggle("on", on); b.setAttribute("aria-pressed", on ? "true" : "false"); }); }
+  extModeUi();
+  $("extConnect").onclick = extOpenSheet;
+  $("extClearBtn").onclick = function () { extClear(); };
+  extUi();
 
   // ---- Greek pronunciation (approximate, Erasmian-style respelling) ----
   var G_V = { "\u03b1": ["ah", "a"], "\u03b5": ["eh", "e"], "\u03b7": ["ay", "\u0113"], "\u03b9": ["ee", "i"], "\u03bf": ["oh", "o"], "\u03c5": ["ew", "y"], "\u03c9": ["oh", "\u014d"] };
