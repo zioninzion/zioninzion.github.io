@@ -3,15 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
-<title>Pitch</title>
-<link rel="manifest" href="manifest.webmanifest">
-<meta name="theme-color" content="#f3f1ec" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#14181f" media="(prefers-color-scheme: dark)">
-<meta name="mobile-web-app-capable" content="yes">
+<title>Tunes</title>
+<meta name="application-name" content="Tunes">
+<meta name="apple-mobile-web-app-title" content="Tunes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Pitch">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="icon" type="image/png" href="icons/icon-192.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#14181f">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <style>
 :root{
@@ -25,7 +24,7 @@
 :root[data-theme="dark"]{--bg:#14181f;--fg:#e8e6df;--muted:#8a93a6;--track:#2a303b;--ok:#5fc79a;--off:#e8845a;--fill:rgba(95,199,154,.25);}
 html,body{height:100%;margin:0;overflow:hidden}
 html{height:100dvh}
-body{background:var(--bg);color:var(--fg);font-family:"Fraunces",Georgia,serif;display:flex;flex-direction:column;touch-action:pan-y}
+body{background:var(--bg);color:var(--fg);font-family:Georgia,'Iowan Old Style','Palatino Linotype',Palatino,'Times New Roman',serif;display:flex;flex-direction:column;touch-action:pan-y}
 #slider{flex:1;min-height:0;display:flex;width:100%;transition:transform .35s cubic-bezier(.3,.7,.2,1)}
 .view{flex:0 0 100%;width:100%;min-width:0;display:flex;align-items:center;justify-content:center;box-sizing:border-box;padding:0 4vw}
 .tuner{text-align:center;width:min(92vw,28rem)}
@@ -486,7 +485,7 @@ function colors(){
 }
 function grid(c, specH){
   g.clearRect(0, 0, CW, CH);
-  g.font = "12px Fraunces, Georgia, serif"; g.textAlign = "center";
+  g.font = "12px Georgia, 'Times New Roman', serif"; g.textAlign = "center";
   for (const f of [50,100,200,500,1000,2000,5000]){
     const x = xOf(f);
     g.strokeStyle = c.track; g.lineWidth = 1;
@@ -544,7 +543,7 @@ function draw(){
   }
   cand.sort((p, q) => spec[q] - spec[p]);
   const taken = [];
-  g.font = "12px Fraunces, Georgia, serif"; g.textAlign = "center"; g.fillStyle = c.fg;
+  g.font = "12px Georgia, 'Times New Roman', serif"; g.textAlign = "center"; g.fillStyle = c.fg;
   for (const b of cand){
     if (taken.length >= 6) break;
     const pa = spec[b-1], pm = spec[b], pz = spec[b+1], den = pa - 2*pm + pz;
@@ -627,6 +626,22 @@ function stop(){
   drawIdle();
 }
 $("btn").addEventListener("click", () => { if (!running) start(); });
+
+/* ---------- reconnect quietly when the app returns to the foreground ---------- */
+async function micState(){
+  try { return (await navigator.permissions.query({name:"microphone"})).state; } catch (e) { return "unknown"; }
+}
+async function reconnect(){
+  if (document.visibilityState !== "visible") return;
+  const live = stream && stream.getAudioTracks().some(t => t.readyState === "live");
+  if (running && live){ if (ctx && ctx.state === "suspended") ctx.resume(); return; }
+  if (await micState() === "prompt") return;      // never nag; the button stays available
+  if (running){ running = false; try { ctx && ctx.close(); } catch (e) {} }
+  start();
+}
+document.addEventListener("visibilitychange", reconnect);
+addEventListener("pageshow", reconnect);
+micState().then(st => { try { navigator.permissions.query({name:"microphone"}).then(p => p.addEventListener("change", () => { if (p.state === "granted" && !running) start(); })); } catch (e) {} });
 
 /* ---------- tone generator ---------- */
 (function(){
@@ -1250,11 +1265,7 @@ if (window.visualViewport) visualViewport.addEventListener('resize', fitH);
 
 go(Math.max(0, VIEWS.indexOf(location.hash.slice(1))), false);
 start();
-</script>
-<script>
-if ("serviceWorker" in navigator && location.protocol !== "file:") {
-  addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));
-}
+if ("serviceWorker" in navigator && location.protocol !== "file:") addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));
 </script>
 </body>
 </html>
