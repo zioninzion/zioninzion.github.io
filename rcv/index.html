@@ -3388,7 +3388,8 @@
       e.preventDefault();
       all.forEach(function (x) { x.classList.add("sel"); });
     } else if (key === "Tab" && !shift) {
-      if (all[i + 1]) { e.preventDefault(); focusVerse(all[i + 1]); }
+      e.preventDefault();   // never let Tab leave the page from the last verse: wrap to the book button
+      if (all[i + 1]) focusVerse(all[i + 1]); else $("gotoBtn").focus();
     } else if (key === "Tab" && shift) {
       e.preventDefault();
       if (all[i - 1]) focusVerse(all[i - 1]); else $("q").focus();
@@ -3402,6 +3403,13 @@
       e.preventDefault();
       copySelected(v, mod, e.shiftKey && !mod);
     }
+  });
+
+  // Shift+Tab from the book button wraps back to the last listed verse
+  $("gotoBtn").addEventListener("keydown", function (e) {
+    if (e.key !== "Tab" || !e.shiftKey || e.ctrlKey || e.metaKey || e.altKey) return;
+    var all = verses();
+    if (all.length) { e.preventDefault(); focusVerse(all[all.length - 1]); }
   });
 
   $("results").addEventListener("dblclick", function (e) {
