@@ -63,6 +63,10 @@
   mark { background: color-mix(in srgb, var(--accent) 30%, transparent); color: inherit; border-radius: 2px; }
   .verse.other { border-style: dashed; }
   .pw { border-radius: 3px; cursor: pointer; }
+  #present .mk.mu { text-decoration: underline; text-decoration-thickness: .07em; text-underline-offset: .14em; }
+  #present .mk.mh { background: #ffe066; color: #1a1a1a; border-radius: .12em; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+  #present .mk.mi { color: transparent; background: var(--accent); border-radius: .12em; cursor: pointer; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+  #present .mk.mi:hover { opacity: .85; }
   .pw.on { background: color-mix(in srgb, var(--accent) 35%, transparent); outline: 2px solid var(--accent); }
   #pron { position: fixed; z-index: 150; background: var(--surface); color: var(--text); border: 1px solid var(--accent); border-radius: 8px;
           padding: 6px 12px; box-shadow: 0 6px 20px rgba(0,0,0,.3); text-align: center; font-size: 16px; line-height: 1.35; pointer-events: none; max-width: 80vw; }
@@ -107,6 +111,9 @@
   #present .pref { color: var(--accent); font-weight: 700; font-size: clamp(20px, 4vmin, 44px); margin-bottom: 2vmin; flex: none; }
   #present .ptext { flex: 1; min-height: 0; width: 100%; display: flex; align-items: center; justify-content: center; overflow: hidden; }
   #present #pinner { width: 100%; line-height: 1.35; }
+  #present #pinner .pslh { font-size: .55em; font-weight: 700; color: var(--accent); margin: .7em 0 .1em; line-height: 1.2; }
+  #present #pinner .pslh:first-child { margin-top: 0; }
+  #present #pinner .pslp { margin: 0; }
   #present #pinner .pv { font-size: .6em; line-height: 0; vertical-align: super; font-weight: 700; color: var(--accent); }
   #present .pcount { position: absolute; top: 1.5vmin; right: 3vmin; color: var(--muted); font-size: 14px; }
   #help { position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,.55); display: flex; align-items: center; justify-content: center; padding: 16px; }
@@ -332,6 +339,9 @@
     <tr><td><kbd>O</kbd></td><td>Show the whole chapter of the selected verse, with that verse still selected; press <kbd>O</kbd> again to go back</td></tr>
     <tr><td><kbd>B</kbd> / <kbd>N</kbd></td><td>While the whole chapter is shown: previous / next chapter (after the last chapter of a book, N continues to the first chapter of the next book)</td></tr>
     <tr><td><kbd>Shift</kbd>+<kbd>B</kbd> / <kbd>N</kbd></td><td>Add the previous / next verse (or, while the whole chapter is shown, the previous / next chapter) to the view instead of switching to it; press again to keep adding. A lone verse (or one listed beside others) becomes a flowing passage; with several versions loaded, every version expands into its own passage</td></tr>
+    <tr><td><kbd>Ctrl</kbd>/<kbd>&#8984;</kbd>+<kbd>S</kbd></td><td>In slides (parts separated by <kbd>|</kbd>), download every slide as a 16:9 PDF with real, selectable text (underlines, highlights and covers as shown; a slide in Greek or other text the PDF fonts cannot hold is saved as a picture)</td></tr>
+    <tr><td><kbd>U</kbd> <kbd>Y</kbd> <kbd>I</kbd></td><td>In presentation mode, underline (<kbd>U</kbd>), highlight (<kbd>Y</kbd>) or make invisible (<kbd>I</kbd>: the words are covered, and clicking a cover reveals that word) the words you have selected with the mouse, or the word under the pronunciation cursor (<kbd>P</kbd>); press the same key again to take it off. Marks stay while you move between slides and come back when you return to them</td></tr>
+    <tr><td><kbd>|</kbd></td><td>Separate parts with a vertical bar, e.g. <kbd>eph 1:9-10; gen 1:26 | rev 4:11 | rev 22:1</kbd>, and press <kbd>Enter</kbd> to present one slide per part; arrows or <kbd>H</kbd><kbd>J</kbd><kbd>K</kbd><kbd>L</kbd> move between slides, and a slide of one verse or one run of verses can be extended with <kbd>Shift</kbd>+<kbd>N</kbd> / <kbd>B</kbd></td></tr>
     <tr><td><kbd>S</kbd></td><td>Show the current verse in every loaded version, one per row; press <kbd>S</kbd> (or <kbd>Esc</kbd>) again to go back; <kbd>B</kbd> / <kbd>N</kbd> show the previous / next verse in the Bible, <kbd>&larr;</kbd><kbd>&darr;</kbd><kbd>&uarr;</kbd><kbd>&rarr;</kbd> or <kbd>H</kbd><kbd>J</kbd><kbd>K</kbd><kbd>L</kbd> move between the searched verses (<kbd>PgUp</kbd> / <kbd>PgDn</kbd> scroll); <kbd>+</kbd> / <kbd>&minus;</kbd> change the text size (<kbd>0</kbd> resets)</td></tr>
     <tr><td><kbd>P</kbd></td><td>Show the pronunciation of each word: the first word is highlighted with a small box above or below it. Move between words with the arrow keys or <kbd>H</kbd> <kbd>J</kbd> <kbd>K</kbd> <kbd>L</kbd> (past the last word it continues into the next verse); <kbd>P</kbd> or <kbd>Esc</kbd> turns it off. The accented (stressed) syllable is in capitals. Greek is worked out on the page (approximate, Erasmian-style). Biblical names use the built-in pronunciation list (no internet needed). Other English words are looked up online at api.dictionaryapi.dev, so they need an internet connection and each word you look at is sent there; results are remembered in this browser</td></tr>
     <tr><td><kbd>Enter</kbd></td><td>Present the current verse, maximized in the window (<kbd>Shift</kbd>+<kbd>F</kbd> for true full screen). If two or more verses are selected, only those are cycled through</td></tr>
@@ -1062,11 +1072,26 @@
     return l + " " + c1 + ":" + v1 + "\u2013" + c2 + ":" + v2;
   }
 
+  // slides typed with "|": each part is looked up on its own; Enter presents them (see openSlides)
+  var slideGroups = null;
+  function runSlides(q) {
+    var out = [], notes = [], groups = [];
+    q.split("|").forEach(function (part) {
+      if (!part.trim()) return;
+      var r = runQuery(part);
+      notes = notes.concat(r.notes);
+      if (r.out.length) { groups.push(r.out); out = out.concat(r.out); }
+    });
+    return { out: out, notes: notes, groups: groups, bookSeen: true };
+  }
+
   function show(q, live) {
     var r, box = $("results"), explicit = /^\s*["\u201c?]/.test(q);
     if (explicit) {
       var tt = termsOf(q, true);
       r = tt.length ? textSearchAuto(tt) : { out: [], notes: ["Type words to search for"] };
+    } else if (q.indexOf("|") > -1) {
+      r = runSlides(q);   // "a | b | c": one presentation slide per part
     } else {
       r = runQuery(q);
       // Not a reference: search the words. While typing, Latin text waits for 3 letters
@@ -1085,9 +1110,10 @@
       r.notes = r.notes.filter(isMissing);
     }
     pronOff(); chapSaved = null;
+    slideGroups = r.groups || null;
     box.innerHTML = "";
     lastTerms = r.textMode ? r.terms : null;
-    var single = r.out.length === 1 && versions.length > 1;
+    var single = r.out.length === 1 && versions.length > 1 && !r.groups;
     compareMode = false; cmp = null;
     // Reference lookups: verses that run on in sequence are shown as one flowing passage
     var list = single ? [] : r.out, groups = [];
@@ -1911,8 +1937,12 @@
     return out;
   }
   function presVerse() {   // the verse on screen: a searched verse element, or a stand-in for a neighbouring verse
+    if (slideMode) { var sl = slides[si]; return standIn(sl.stray || sl.runs[0][0]); }
     if (!presStray) return presList()[pi];
-    var bi = presStray.bi, ch = presStray.ch, vs = presStray.v;
+    return standIn(presStray);
+  }
+  function standIn(pt) {
+    var bi = pt.bi, ch = pt.ch, vs = pt.v;
     var e = data[bi] && data[bi][ch] && data[bi][ch][vs];
     var ref = refOf({ bi: bi, ch: ch, v: vs }), txt = e ? e.text : "(not in this version)";
     return { dataset: { bi: String(bi), ch: String(ch), v: String(vs), ref: ref, text: txt, copy: ref + " " + txt } };
@@ -1922,6 +1952,7 @@
   // leaves the cursor on the last in-results verse that was shown.
   var presCursor = 0;
   function trackPresCursor() {
+    if (slideMode) return;
     if (!presStray) { if (presIdx[pi] !== undefined) presCursor = presIdx[pi]; return; }
     var all = verses();
     for (var k = 0; k < all.length; k++) {
@@ -1930,8 +1961,10 @@
     }
     // not in the results at all: presCursor stays on the last in-results verse shown
   }
-  function renderPresent() {
+  function renderPresent() { renderPresent0(); applyMarks(); }
+  function renderPresent0() {
     pronOff();
+    if (slideMode) { renderSlide(); return; }
     trackPresCursor();
     var all = presList(), v = presVerse();
     var items = presExt ? presExtItems() : null;
@@ -1955,6 +1988,7 @@
     fitPresent();
   }
   function openPresent(i) {
+    slideMode = false; slides = [];
     var list = verses();
     if (!list.length || i < 0) return;
     // two or more verses selected: cycle through only those; otherwise through every verse listed
@@ -2017,7 +2051,7 @@
         presSaved.anchor = presCursor;
       }
     }
-    presStray = null; presExt = null;
+    presStray = null; presExt = null; slideMode = false; slides = [];
     presenting = false;
     $("present").hidden = true;
     var wasFull = !!document.fullscreenElement;
@@ -2032,13 +2066,19 @@
     if (document.fullscreenElement) { if (document.exitFullscreen) document.exitFullscreen().catch(function () {}); }
     else { var p = $("present"); if (p.requestFullscreen) p.requestFullscreen().catch(function () {}); }
   }
-  function goPresent(n) {   // jump to a searched verse by position
+  function goPresent(n) {   // jump to a searched verse by position (or, in slide mode, to a slide)
+    if (slideMode) {
+      var ti = Math.max(0, Math.min(slides.length - 1, n));
+      slides.forEach(function (x) { x.stray = null; });
+      si = ti; renderPresent(); return;
+    }
     var t = Math.max(0, Math.min(presList().length - 1, n));
     if (t !== pi || presStray || presExt) { pi = t; presStray = null; presExt = null; renderPresent(); }
   }
   function posKey(bi, ch, v) { return bi * 1e9 + ch * 1e5 + v; }
   // arrows / H J K L: the next or previous searched verse (from the verse on screen if it is a stray neighbour)
   function stepSearched(dir) {
+    if (slideMode) { goPresent(si + dir); return; }
     if (!presStray) { goPresent(pi + dir); return; }
     var list = presList(), here = posKey(presStray.bi, presStray.ch, presStray.v), best = -1, bk = null;
     list.forEach(function (el, i) {
@@ -2071,6 +2111,7 @@
   }
   // N / B: the adjacent verse in the Bible, whether or not it was searched
   function stepBible(dir) {
+    if (slideMode) { slideBible(dir); return; }
     var d = presVerse().dataset, from = { bi: +d.bi, ch: +d.ch, v: +d.v };
     if (presExt) from = dir > 0 ? presExt.hi : presExt.lo;   // continue from the edge of what is shown
     var np = bibleStep(from, dir);
@@ -2087,6 +2128,7 @@
 
   // Shift+N / Shift+B: add the next / previous verse to the screen instead of switching to it
   function extendBible(dir) {
+    if (slideMode) { slideExtend(dir); return; }
     var d = presVerse().dataset, base = { bi: +d.bi, ch: +d.ch, v: +d.v };
     if (!presExt) presExt = { lo: base, hi: base };
     var np = bibleStep(dir > 0 ? presExt.hi : presExt.lo, dir);
@@ -2094,6 +2136,404 @@
     if (dir > 0) presExt.hi = np; else presExt.lo = np;
     renderPresent();
   }
+
+  // ---- U / Y: underline / highlight the selected words (mouse selection, or the pronunciation cursor) ----
+  // marks are kept per screen content (its exact text), so they come back when you return to the same slide or verse
+  var presMarks = {};
+  // in slides every slide has its own marks, even when two slides show the same verse
+  function markKey(text) { return slideMode ? "s" + si + "\u0001" + text : text; }
+  function applyMarks() {
+    var pin = $("pinner"), m = presMarks[markKey(pin.textContent)];
+    if (!m) return;
+    var tn = [], tw = document.createTreeWalker(pin, NodeFilter.SHOW_TEXT, null), nd, pos = 0;
+    while ((nd = tw.nextNode())) tn.push(nd);
+    tn.forEach(function (node) {
+      var t = node.nodeValue, base = pos, segs = [], i = 0;
+      pos += t.length;
+      while (i < t.length) {
+        var u = m.u[base + i], h = m.h[base + i], x = m.i[base + i], j = i + 1;
+        while (j < t.length && m.u[base + j] === u && m.h[base + j] === h && m.i[base + j] === x) j++;
+        segs.push([i, j, u, h, x]); i = j;
+      }
+      if (segs.length === 1 && !segs[0][2] && !segs[0][3] && !segs[0][4]) return;
+      var frag = document.createDocumentFragment();
+      segs.forEach(function (sg) {
+        var str = t.slice(sg[0], sg[1]);
+        if (!sg[2] && !sg[3] && !sg[4]) { frag.appendChild(document.createTextNode(str)); return; }
+        var cls = "mk" + (sg[2] ? " mu" : "") + (sg[3] ? " mh" : "");
+        if (!sg[4]) { var sp = document.createElement("span"); sp.className = cls; sp.textContent = str; frag.appendChild(sp); return; }
+        var at = sg[0];   // hidden: one clickable cover per word, so a click reveals just that word
+        str.split(/(\s+)/).forEach(function (tok) {
+          if (!tok) return;
+          var cv = document.createElement("span"), ws = /^\s+$/.test(tok);
+          cv.className = ws ? cls : cls + " mi"; cv.textContent = tok;   // spaces are never covered
+          if (!ws) { cv.dataset.s = String(base + at); cv.dataset.e = String(base + at + tok.length); }
+          frag.appendChild(cv); at += tok.length;
+        });
+      });
+      node.parentNode.replaceChild(frag, node);
+    });
+  }
+  function marksPrune(text) {   // forget the entry once nothing is marked on it any more
+    var m = presMarks[markKey(text)];
+    if (!m) return;
+    for (var i = 0; i < text.length; i++) if (m.u[i] || m.h[i] || m.i[i]) return;
+    delete presMarks[markKey(text)];
+  }
+  // a click on a hidden word's cover reveals it
+  $("pinner").addEventListener("click", function (e) {
+    var t = e.target.closest ? e.target.closest(".mk.mi") : null;
+    if (!t || t.dataset.s === undefined) return;
+    var text = $("pinner").textContent, m = presMarks[markKey(text)];
+    if (!m) return;
+    for (var i = +t.dataset.s; i < +t.dataset.e; i++) m.i[i] = 0;
+    marksPrune(text);
+    var was = pronAlive(), idx = pron.idx;
+    renderPresent();
+    if (was) pronBegin($("pinner"), null, idx);
+  });
+  function markOffset(root, node, off) {
+    var r = document.createRange(); r.setStart(root, 0); r.setEnd(node, off);
+    return r.toString().length;
+  }
+  function markPresent(kind) {   // kind: "u" underline, "h" highlight; pressing again takes it off
+    var pin = $("pinner"), text = pin.textContent, a, b, sel = window.getSelection();
+    if (sel && sel.rangeCount && !sel.isCollapsed) {
+      var r = sel.getRangeAt(0);
+      if (r.intersectsNode(pin)) {   // a selection can reach past the text (select all): use the part inside it
+        a = pin.contains(r.startContainer) ? markOffset(pin, r.startContainer, r.startOffset) : 0;
+        b = pin.contains(r.endContainer) ? markOffset(pin, r.endContainer, r.endOffset) : text.length;
+      }
+    }
+    if (a === undefined && pronAlive()) {
+      var w = pron.words[pron.idx];
+      a = markOffset(pin, w, 0); b = a + w.textContent.length;
+    }
+    if (a === undefined || b <= a) { pronMsg("Select words with the mouse, or press P and move to a word"); return; }
+    var isL = function (c) { return !!c && /[\p{L}\p{M}'\u2019]/u.test(c); };
+    while (a > 0 && isL(text.charAt(a - 1)) && isL(text.charAt(a))) a--;   // never cut a word in two
+    while (b < text.length && isL(text.charAt(b - 1)) && isL(text.charAt(b))) b++;
+    while (a < b && /\s/.test(text.charAt(a))) a++;
+    while (b > a && /\s/.test(text.charAt(b - 1))) b--;
+    if (b <= a) return;
+    var m = presMarks[markKey(text)];
+    if (!m) m = presMarks[markKey(text)] = { u: new Uint8Array(text.length), h: new Uint8Array(text.length), i: new Uint8Array(text.length) };
+    var arr = m[kind], all = true, i;
+    for (i = a; i < b; i++) if (!/\s/.test(text.charAt(i)) && !arr[i]) { all = false; break; }
+    for (i = a; i < b; i++) arr[i] = all ? 0 : 1;
+    marksPrune(text);
+    var was = pronAlive(), idx = pron.idx;
+    renderPresent();   // redraws the screen with the marks (and switches pronunciation off)
+    if (was) pronBegin(pin, null, idx);   // ... which comes straight back on the same word
+    if (sel) sel.removeAllRanges();
+  }
+
+  // ---- slides: "eph 1:9-10; gen 1:26 | rev 4:11 | rev 22:1" presents one slide per part ----
+  var slideMode = false, slides = [], si = 0;   // slide: { runs: [[{bi, ch, v}, ...], ...], stray: {bi, ch, v} | null }
+  function itemOf(pt) {
+    var e = data[pt.bi] && data[pt.bi][pt.ch] && data[pt.bi][pt.ch][pt.v];
+    return { bi: pt.bi, ch: pt.ch, v: pt.v, ref: refOf(pt), text: e ? e.text : "(not in this version)" };
+  }
+  function slideItems() {   // every verse on the current slide, in order
+    var sl = slides[si];
+    if (sl.stray) return [itemOf(sl.stray)];
+    var out = [];
+    sl.runs.forEach(function (r) { r.forEach(function (pt) { out.push(itemOf(pt)); }); });
+    return out;
+  }
+  function openSlides() {
+    if (!slideGroups || !slideGroups.length) return;
+    slides = slideGroups.map(function (g) {
+      var runs = [];
+      g.forEach(function (e) {   // consecutive verses flow together as one run
+        var r = runs[runs.length - 1], prev = r && r[r.length - 1];
+        if (prev && follows(prev, e)) r.push({ bi: e.bi, ch: e.ch, v: e.v }); else runs.push([{ bi: e.bi, ch: e.ch, v: e.v }]);
+      });
+      return { runs: runs, stray: null };
+    });
+    si = 0;
+    presSaved = { focusIdx: 0, inBox: true, sel: [], anchor: anchor, moved: false, scrollX: window.scrollX, scrollY: window.scrollY };
+    presIdx = []; presSubset = false; presStray = null; presExt = null;
+    slideMode = true; presenting = true;
+    $("present").hidden = false;
+    renderPresent();
+  }
+  function renderSlide() {
+    var sl = slides[si], pin = $("pinner");
+    pin.textContent = "";
+    var count = (si + 1) + " / " + slides.length;
+    if (sl.stray) {
+      var it = itemOf(sl.stray);
+      $("pref").textContent = it.ref;
+      pin.textContent = it.text;
+      $("pcount").textContent = "not in slide  \u00b7  " + count;
+    } else if (sl.runs.length === 1) {
+      var run = sl.runs[0], its = run.map(itemOf);
+      $("pref").textContent = run.length > 1 ? rangeAny(run[0], run[run.length - 1]) : its[0].ref;
+      if (run.length > 1) fillRun(pin, its); else pin.textContent = its[0].text;
+      $("pcount").textContent = (run.length > 1 ? run.length + " verses  \u00b7  " : "") + count;
+    } else {
+      $("pref").textContent = "";
+      sl.runs.forEach(function (run) {
+        var its = run.map(itemOf);
+        var h = document.createElement("div"); h.className = "pslh";
+        h.textContent = run.length > 1 ? rangeAny(run[0], run[run.length - 1]) : its[0].ref;
+        var pp = document.createElement("div"); pp.className = "pslp";
+        if (run.length > 1) fillRun(pp, its); else pp.textContent = its[0].text;
+        pin.appendChild(h); pin.appendChild(pp);
+      });
+      $("pcount").textContent = count;
+    }
+    fitPresent();
+  }
+  function fillRun(el, items) {   // verses with small superscript numbers, flowing on
+    var prevI = null;
+    items.forEach(function (it, k) {
+      var n = !prevI ? it.v : (prevI.bi !== it.bi ? it.ref : (prevI.ch !== it.ch && !noChap[it.bi] ? it.ch + ":" + it.v : it.v));
+      prevI = it;
+      var sp = document.createElement("sup"); sp.className = "pv"; sp.textContent = String(n);
+      el.appendChild(sp);
+      el.appendChild(document.createTextNode("\u00a0" + it.text + (k < items.length - 1 ? " " : "")));
+    });
+  }
+  // N / B: the verse next to a slide that holds a single verse or a single run of verses
+  function slideBible(dir) {
+    var sl = slides[si];
+    if (sl.runs.length !== 1) return;
+    var run = sl.runs[0], np = bibleStep(sl.stray || (dir > 0 ? run[run.length - 1] : run[0]), dir);
+    if (!np) return;
+    sl.stray = np; renderPresent();
+  }
+  // Shift+N / Shift+B: add the next / previous verse to the slide
+  function slideExtend(dir) {
+    var sl = slides[si];
+    if (sl.runs.length !== 1) return;
+    if (sl.stray) { sl.runs = [[sl.stray]]; sl.stray = null; }
+    var run = sl.runs[0], np = bibleStep(dir > 0 ? run[run.length - 1] : run[0], dir);
+    if (!np) return;
+    if (dir > 0) run.push(np); else run.unshift(np);
+    renderPresent();
+  }
+
+  // ---- Ctrl/Cmd+S in slides: download every slide as a 16:9 PDF ----
+  // Each slide is read back from the screen (so marks, covers and extended verses come out as shown), laid out on a
+  // 1920x1080 canvas, and the pages are written into a small hand-made PDF (one JPEG image per page).
+  function slideBlocks() {   // what #pinner shows right now: [{ h: heading?, toks: [{ t, sup, u, h, i }] }]
+    var pin = $("pinner"), blocks = [];
+    function collect(node, fl, out) {
+      for (var c = node.firstChild; c; c = c.nextSibling) {
+        if (c.nodeType === 3) { if (c.nodeValue) out.push({ t: c.nodeValue, sup: fl.sup, u: fl.u, h: fl.h, i: fl.i }); }
+        else if (c.nodeType === 1) {
+          var cl = c.classList;
+          collect(c, { sup: fl.sup || cl.contains("pv"), u: fl.u || cl.contains("mu"), h: fl.h || cl.contains("mh"), i: fl.i || cl.contains("mi") }, out);
+        }
+      }
+    }
+    var kids = pin.children, multi = false, k;
+    for (k = 0; k < kids.length; k++) if (kids[k].classList.contains("pslh")) multi = true;
+    if (multi) {
+      for (k = 0; k < kids.length; k++) {
+        var toks = []; collect(kids[k], { sup: false, u: false, h: false, i: false }, toks);
+        blocks.push({ h: kids[k].classList.contains("pslh"), toks: toks });
+      }
+    } else {
+      var t2 = []; collect(pin, { sup: false, u: false, h: false, i: false }, t2);
+      blocks.push({ h: false, toks: t2 });
+    }
+    return blocks;
+  }
+  // lay a slide out on a W x H page: a list of drawing operations (filled rectangles and text at a baseline)
+  var measCtx = document.createElement("canvas").getContext("2d");
+  function layoutSlide(blocks, pref, count, col, fam, W, H) {
+    var ops = [];
+    function mw(str, sz, bold) { measCtx.font = (bold ? "bold " : "") + sz + "px " + fam; return measCtx.measureText(str).width; }
+    ops.push({ k: "r", x: 0, y: 0, w: W, h: H, c: col.bg });
+    if (pref) {
+      var ps = 44;
+      while (ps > 20 && mw(pref, ps, true) > W - 360) ps -= 2;
+      ops.push({ k: "t", x: W / 2 - mw(pref, ps, true) / 2, y: 84, sz: ps, b: true, s: pref, c: col.accent });
+    }
+    ops.push({ k: "t", x: W - 56 - mw(count, 22, false), y: 52, sz: 22, b: false, s: count, c: col.muted });
+    var left = 110, maxW = W - 220, top = pref ? 130 : 70, maxH = H - top - 70;
+    // break the text into unbreakable units (a verse number stays with the word after it)
+    function units(b) {
+      var out = [], cur = null;
+      b.toks.forEach(function (tk) {
+        tk.t.split(/( +)/).forEach(function (part) {
+          if (!part) return;
+          if (/^ +$/.test(part)) { if (cur) { cur.sp = { u: tk.u, h: tk.h, n: part.length }; out.push(cur); cur = null; } return; }
+          if (!cur) cur = { toks: [], sp: null };
+          cur.toks.push({ t: part, sup: tk.sup, u: tk.u, h: tk.h, i: tk.i });
+        });
+      });
+      if (cur) out.push(cur);
+      return out;
+    }
+    var bl = blocks.map(function (b) { return { h: b.h, units: units(b) }; }).filter(function (b) { return b.units.length; });
+    function layout(size) {
+      var lines = [], total = 0, ok = true;
+      bl.forEach(function (b, bi) {
+        var fs = b.h ? size * 0.55 : size, lh = b.h ? fs * 1.2 : fs * 1.35;
+        if (b.h && bi > 0) total += fs * 0.7;
+        var line = null, first = lines.length;
+        b.units.forEach(function (u) {
+          var w = 0;
+          u.toks.forEach(function (tk) { tk.w = mw(tk.t, tk.sup ? fs * 0.6 : fs, tk.sup || b.h); w += tk.w; });
+          u.w = w; u.spW = u.sp ? mw(" ", fs, false) * u.sp.n : 0;
+          if (w > maxW) ok = false;
+          if (!line || line.w + line.lastSp + w > maxW) {
+            line = { units: [u], w: w, lastSp: 0, fs: fs, lh: lh, h: b.h }; lines.push(line);
+          } else { line.units.push(u); line.w += line.lastSp + w; }
+          line.lastSp = u.spW;
+        });
+        total += (lines.length - first) * lh + (b.h ? fs * 0.1 : 0);
+      });
+      return ok ? { lines: lines, total: total } : null;
+    }
+    var size = 150, L = null;
+    for (; size >= 18; size -= 2) { L = layout(size); if (L && L.total <= maxH) break; L = null; }
+    if (!L) L = layout(18) || { lines: [], total: 0 };
+    var y = top + Math.max(0, (maxH - L.total) / 2), prevH = false;
+    L.lines.forEach(function (ln, li) {
+      if (ln.h && li > 0 && !prevH) y += ln.fs * 0.7;
+      prevH = ln.h;
+      var base = y + ln.lh / 2 + ln.fs * 0.32, x = W / 2 - ln.w / 2;
+      ln.units.forEach(function (u, ui) {
+        u.toks.forEach(function (tk) {
+          var by = tk.sup ? base - ln.fs * 0.38 : base, tcol = tk.sup || ln.h ? col.accent : col.text, tsz = tk.sup ? ln.fs * 0.6 : ln.fs;
+          if (tk.i && !tk.sup) {   // hidden word: a solid cover
+            ops.push({ k: "r", x: x, y: base - ln.fs * 0.95, w: tk.w, h: ln.fs * 1.2, c: col.accent });
+          } else {
+            if (tk.h) { ops.push({ k: "r", x: x, y: base - ln.fs * 0.95, w: tk.w, h: ln.fs * 1.2, c: "#ffe066" }); tcol = "#1a1a1a"; }
+            ops.push({ k: "t", x: x, y: by, sz: tsz, b: tk.sup || ln.h, s: tk.t, c: tcol });
+            if (tk.u) ops.push({ k: "r", x: x, y: base + ln.fs * 0.1, w: tk.w, h: Math.max(2, ln.fs * 0.06), c: tcol });
+          }
+          x += tk.w;
+        });
+        if (ui < ln.units.length - 1) {   // the space after the word (never covered)
+          if (u.sp && u.sp.h) ops.push({ k: "r", x: x, y: base - ln.fs * 0.95, w: u.spW, h: ln.fs * 1.2, c: "#ffe066" });
+          if (u.sp && u.sp.u) ops.push({ k: "r", x: x, y: base + ln.fs * 0.1, w: u.spW, h: Math.max(2, ln.fs * 0.06), c: u.sp.h ? "#1a1a1a" : col.text });
+          x += u.spW;
+        }
+      });
+      y += ln.lh;
+      if (ln.h) y += ln.fs * 0.1;
+    });
+    return ops;
+  }
+  // PDF text uses the built-in fonts (WinAnsi encoding). Anything outside that (Greek, Hebrew ...) cannot be
+  // written as text, so such a slide is saved as a picture instead.
+  var WINANSI = { 0x20AC: 0x80, 0x201A: 0x82, 0x0192: 0x83, 0x201E: 0x84, 0x2026: 0x85, 0x2020: 0x86, 0x2021: 0x87, 0x02C6: 0x88, 0x2030: 0x89, 0x0160: 0x8A,
+                  0x2039: 0x8B, 0x0152: 0x8C, 0x017D: 0x8E, 0x2018: 0x91, 0x2019: 0x92, 0x201C: 0x93, 0x201D: 0x94, 0x2022: 0x95, 0x2013: 0x96, 0x2014: 0x97,
+                  0x02DC: 0x98, 0x2122: 0x99, 0x0161: 0x9A, 0x203A: 0x9B, 0x0153: 0x9C, 0x017E: 0x9E, 0x0178: 0x9F };
+  function winEnc(str) {
+    var out = "";
+    for (var i = 0; i < str.length; i++) {
+      var c = str.charCodeAt(i);
+      if (c >= 32 && c < 127 || c >= 160 && c <= 255) out += str.charAt(i);
+      else if (WINANSI[c]) out += String.fromCharCode(WINANSI[c]);
+      else return null;
+    }
+    return out;
+  }
+  function pdfFace() {   // the built-in PDF font that goes with the chosen reading font
+    if (fontIdx === 4 || fontIdx === 5) return { reg: "Helvetica", bold: "Helvetica-Bold", css: 'Helvetica, Arial, "Liberation Sans", sans-serif' };
+    if (fontIdx === 6) return { reg: "Courier", bold: "Courier-Bold", css: '"Courier New", Courier, "Liberation Mono", monospace' };
+    return { reg: "Times-Roman", bold: "Times-Bold", css: '"Times New Roman", Times, "Liberation Serif", serif' };
+  }
+  function opsToPdf(ops) {   // 1920 x 1080 page units -> 960 x 540 pt content stream
+    var S = 0.5, H = 540, g = measCtx, out = [];
+    function rgb(c) {
+      g.fillStyle = "#000000"; g.fillStyle = c;
+      var h = String(g.fillStyle), m = /^#([0-9a-f]{6})$/i.exec(h);
+      if (!m) return "0 0 0";
+      return [0, 2, 4].map(function (k) { return (parseInt(m[1].substr(k, 2), 16) / 255).toFixed(3); }).join(" ");
+    }
+    function f(n) { return n.toFixed(2); }
+    ops.forEach(function (o) {
+      if (o.k === "r") out.push(rgb(o.c) + " rg " + f(o.x * S) + " " + f(H - (o.y + o.h) * S) + " " + f(o.w * S) + " " + f(o.h * S) + " re f");
+      else out.push("BT /" + (o.b ? "F2" : "F1") + " " + f(o.sz * S) + " Tf " + rgb(o.c) + " rg " + f(o.x * S) + " " + f(H - o.y * S) + " Td (" +
+                    winEnc(o.s).replace(/[\\()]/g, "\\$&") + ") Tj ET");
+    });
+    return out.join("\n");
+  }
+  function opsToCanvas(cv, ops, fam) {
+    var g = cv.getContext("2d");
+    g.textBaseline = "alphabetic"; g.textAlign = "left";
+    ops.forEach(function (o) {
+      g.fillStyle = o.c;
+      if (o.k === "r") g.fillRect(o.x, o.y, o.w, o.h);
+      else { g.font = (o.b ? "bold " : "") + o.sz + "px " + fam; g.fillText(o.s, o.x, o.y); }
+    });
+  }
+  // pages: { txt: content stream } or { w, h, bytes: JPEG }; 960 x 540 pt = 16:9
+  function buildPdf(pages, face) {
+    var chunks = [], len = 0, offs = [], next = 3, ids = [];
+    function put(x) {
+      if (typeof x === "string") { var a = new Uint8Array(x.length); for (var i = 0; i < x.length; i++) a[i] = x.charCodeAt(i) & 255; x = a; }
+      chunks.push(x); len += x.length;
+    }
+    function obj(id, body) { offs[id] = len; put(id + " 0 obj\n" + body + "\nendobj\n"); }
+    pages.forEach(function (pg) { ids.push({ page: next++, content: next++, image: pg.bytes ? next++ : 0 }); });
+    var fonts = "/Font << /F1 << /Type /Font /Subtype /Type1 /BaseFont /" + face.reg + " /Encoding /WinAnsiEncoding >> /F2 << /Type /Font /Subtype /Type1 /BaseFont /" +
+                face.bold + " /Encoding /WinAnsiEncoding >> >>";
+    put("%PDF-1.4\n");
+    obj(1, "<< /Type /Catalog /Pages 2 0 R >>");
+    obj(2, "<< /Type /Pages /Kids [" + ids.map(function (d) { return d.page + " 0 R"; }).join(" ") + "] /Count " + pages.length + " >>");
+    pages.forEach(function (pg, k) {
+      var d = ids[k], stream = pg.bytes ? "q 960 0 0 540 0 0 cm /Im0 Do Q" : pg.txt;
+      obj(d.page, "<< /Type /Page /Parent 2 0 R /MediaBox [0 0 960 540] /Resources << " + fonts + (pg.bytes ? " /XObject << /Im0 " + d.image + " 0 R >>" : "") + " >> /Contents " + d.content + " 0 R >>");
+      obj(d.content, "<< /Length " + stream.length + " >>\nstream\n" + stream + "\nendstream");
+      if (pg.bytes) {
+        offs[d.image] = len;
+        put(d.image + " 0 obj\n<< /Type /XObject /Subtype /Image /Width " + pg.w + " /Height " + pg.h + " /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length " + pg.bytes.length + " >>\nstream\n");
+        put(pg.bytes); put("\nendstream\nendobj\n");
+      }
+    });
+    var xref = len, x = "xref\n0 " + next + "\n0000000000 65535 f \n";
+    for (var j = 1; j < next; j++) x += ("0000000000" + offs[j]).slice(-10) + " 00000 n \n";
+    put(x + "trailer\n<< /Size " + next + " /Root 1 0 R >>\nstartxref\n" + xref + "\n%%EOF\n");
+    return new Blob(chunks, { type: "application/pdf" });
+  }
+  function exportSlidesPdf() {
+    if (!presenting || !slideMode || !slides.length) return;
+    pronOff();
+    var cs = getComputedStyle(document.documentElement);
+    var col = { bg: cs.getPropertyValue("--bg").trim() || "#ffffff", text: cs.getPropertyValue("--text").trim() || "#000000",
+                accent: cs.getPropertyValue("--accent").trim() || "#7a4b1e", muted: cs.getPropertyValue("--muted").trim() || "#666666" };
+    var appFam = getComputedStyle($("pinner")).fontFamily || "Georgia, serif", face = pdfFace();
+    var keepSi = si, strays = slides.map(function (sl) { return sl.stray; }), pages = [], pics = 0, cv = document.createElement("canvas");
+    cv.width = 1920; cv.height = 1080;
+    try {
+      slides.forEach(function (sl, k) {
+        sl.stray = null; si = k; renderPresent();   // draw the slide on screen, then read it back
+        var blocks = slideBlocks(), pref = $("pref").textContent, count = (k + 1) + " / " + slides.length;
+        var ops = layoutSlide(blocks, pref, count, col, face.css, 1920, 1080);
+        if (ops.every(function (o) { return o.k === "r" || winEnc(o.s) !== null; })) { pages.push({ txt: opsToPdf(ops) }); return; }
+        ops = layoutSlide(blocks, pref, count, col, appFam, 1920, 1080);   // text the PDF fonts cannot hold: a picture of the slide
+        opsToCanvas(cv, ops, appFam);
+        var bin = atob(cv.toDataURL("image/jpeg", 0.92).split(",")[1]), bytes = new Uint8Array(bin.length);
+        for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+        pages.push({ w: cv.width, h: cv.height, bytes: bytes }); pics++;
+      });
+    } finally {
+      slides.forEach(function (sl, k) { sl.stray = strays[k]; });
+      si = keepSi; renderPresent();
+    }
+    var url = URL.createObjectURL(buildPdf(pages, face)), a = document.createElement("a");
+    a.href = url; a.download = "verse-slides.pdf";
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
+    var pc = $("pcount"), old = pc.textContent;
+    pc.textContent = "Saved PDF (" + pages.length + (pages.length === 1 ? " slide" : " slides") + (pics ? "; " + pics + " as picture" + (pics === 1 ? "" : "s") : "") + ")";
+    setTimeout(function () { if (presenting && pc.textContent.indexOf("Saved PDF") === 0) pc.textContent = old; }, 2200);
+  }
+  document.addEventListener("keydown", function (e) {
+    if (!presenting || !slideMode || e.altKey || e.shiftKey || !(e.ctrlKey || e.metaKey)) return;
+    if (e.key !== "s" && e.key !== "S") return;
+    e.preventDefault(); e.stopPropagation();
+    if (!e.repeat) exportSlidesPdf();
+  }, true);
 
   // ---- S: every loaded version of a verse side by side; S (or Esc) again goes back ----
   var sbsEl = null, sbsPrev = null, sbsFs = 0, sbsSrc = null, sbsStray = null, sbsTitle = null, sbsGrid = null;   // sbsFs: chosen text size in px, 0 = automatic
@@ -2224,7 +2664,7 @@
   function copyPresent(rich, reading) {
     var v = presVerse();
     if (!v) return;
-    var items = presExt ? presExtItems() : [{ bi: +v.dataset.bi, ch: +v.dataset.ch, v: +v.dataset.v, ref: v.dataset.ref, text: v.dataset.text }];
+    var items = slideMode ? slideItems() : presExt ? presExtItems() : [{ bi: +v.dataset.bi, ch: +v.dataset.ch, v: +v.dataset.v, ref: v.dataset.ref, text: v.dataset.text }];
     var plain = items.map(function (it) { return it.ref + " " + it.text; }).join("\n");
     var font = String(getComputedStyle($("pinner")).fontFamily).replace(/"/g, "'");
     var html = '<div style="font-family:' + font + ';font-size:' + getComputedStyle(document.body).fontSize + '">' +
@@ -2256,6 +2696,7 @@
     if (k === "s" || k === "S") { if (!e.repeat) sbsToggle(presVerse()); return; }
     if (k === "n" || k === "N") { if (e.shiftKey) extendBible(1); else stepBible(1); return; }
     if (k === "b" || k === "B") { if (e.shiftKey) extendBible(-1); else stepBible(-1); return; }
+    if ("uUyYiI".indexOf(k) > -1 && k.length === 1) { if (!e.repeat) markPresent(k === "u" || k === "U" ? "u" : k === "y" || k === "Y" ? "h" : "i"); return; }
     if (k === "p" || k === "P") { if (pronAlive()) pronOff(); else pronStart(); return; }
     if (pronAlive() && pronKey(e, k)) return;
     if (k === "Enter" || k === "Escape") { if (!e.repeat) closePresent(); }
@@ -2840,6 +3281,16 @@
   });
 
   $("q").addEventListener("keydown", function (e) {
+    if (e.key === "Enter" && !e.isComposing && !e.shiftKey && !e.ctrlKey && !e.metaKey && !e.altKey) {
+      var raw = $("q").value;
+      if (raw.indexOf("|") > -1 && !/^\s*["\u201c?]/.test(raw)) {   // "a | b | c": present the parts as slides
+        e.preventDefault();
+        clearTimeout(liveTimer); liveTimer = null;
+        show(raw);
+        openSlides();
+        return;
+      }
+    }
     if ((e.key === "Tab" && !e.shiftKey) || e.key === "ArrowDown") {
       flushLive();
       if (verses().length) { e.preventDefault(); focusVerse(verses()[0]); }
