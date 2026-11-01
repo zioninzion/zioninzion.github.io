@@ -406,7 +406,7 @@ addEventListener("hashchange", () => { const i = VIEWS.indexOf(location.hash.sli
 function detect(x, sr){
   let rms = 0;
   for (let i = 0; i < x.length; i++) rms += x[i]*x[i];
-  if (Math.sqrt(rms / x.length) < 0.01) return -1;
+  if (Math.sqrt(rms / x.length) < 0.006) return -1;
   const W = x.length >> 1;
   const minT = Math.floor(sr / 2000), maxT = Math.min(W - 1, Math.floor(sr / 50));
   const d = new Float32Array(maxT + 1);
@@ -419,12 +419,17 @@ function detect(x, sr){
   for (let t = 1; t <= maxT; t++){ run += d[t]; d[t] = d[t] * t / (run || 1); }
   let tau = -1;
   for (let t = minT; t < maxT; t++){
-    if (d[t] < 0.15){
+    if (d[t] < 0.2){
       while (t + 1 < maxT && d[t+1] < d[t]) t++;
       tau = t; break;
     }
   }
-  if (tau < 0) return -1;
+  if (tau < 0){                                   // weak/noisy note: accept the deepest dip if it is clear enough
+    let bt = -1, bv = 1;
+    for (let t = minT; t < maxT; t++) if (d[t] < bv){ bv = d[t]; bt = t; }
+    if (bt < 0 || bv > 0.35) return -1;
+    tau = bt;
+  }
   const a = d[tau-1] ?? d[tau], b = d[tau], c = d[tau+1] ?? d[tau];
   const den = a + c - 2*b;
   return sr / (tau + (den ? (a - c) / (2*den) : 0));
@@ -560,7 +565,7 @@ function draw(){
   g.strokeStyle = c.track; g.beginPath(); g.moveTo(0, mid); g.lineTo(CW, mid); g.stroke();
   g.strokeStyle = c.fg; g.lineWidth = 1.2; g.beginPath();
   for (let x = 0; x < CW; x++){
-    const v = Math.max(-1, Math.min(1, buf[Math.floor(x * step)] * 2));
+    const v = Math.max(-1, Math.min(1, buf[Math.floor(x * step)] * 0.5));
     const y = mid - v * waveH / 2;
     x ? g.lineTo(x, y) : g.moveTo(x, y);
   }
@@ -606,8 +611,10 @@ async function start(){
   buf = new Float32Array(analyser.fftSize);
   spec = new Float32Array(analyser.frequencyBinCount);
   const micSrc = ctx.createMediaStreamSource(stream);
-  micSrc.connect(analyser);
-  window.chordHook && window.chordHook(ctx, micSrc);
+  const inGain = ctx.createGain();
+  inGain.gain.value = 4;                           // +12 dB so quiet instruments register
+  micSrc.connect(inGain); inGain.connect(analyser);
+  window.chordHook && window.chordHook(ctx, inGain);
   running = true;
   $("btn").hidden = true;
   $("hz").textContent = "Listening…";
