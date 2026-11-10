@@ -56,11 +56,10 @@
   #info { color: var(--muted); font-size: .85rem; margin: 8px 2px 0; }
   #status { margin: 18px 0 6px; font-size: .9rem; color: var(--muted); }
   #status.error { color: var(--error); }
-  .verse { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 10px 16px; margin: 10px 0; }
-  .ref { font-weight: 700; color: var(--accent); font-size: .95rem; }
-  .text { margin: 2px 0 0; }
+  .verse { background: none; border: 0; border-radius: 0; padding: 4px 16px; margin: 4px 0; }
+  .ref { display: inline; margin-right: .4em; font-weight: 700; color: var(--accent); font-size: .95rem; }
+  .text { display: inline; margin: 0; }
   mark { background: color-mix(in srgb, var(--accent) 30%, transparent); color: inherit; border-radius: 2px; }
-  .verse.other { border-style: dashed; }
   .pw { border-radius: 3px; cursor: pointer; }
   #present .mk.mu { text-decoration: underline; text-decoration-thickness: .07em; text-underline-offset: .14em; }
   #present .mk.mh { background: #ffe066; color: #1a1a1a; border-radius: .12em; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
@@ -72,7 +71,7 @@
   #pron .pr1 { font-weight: 700; font-size: 1.15em; }
   #pron .pr2 { color: var(--muted); font-style: italic; font-size: .9em; }
   /* sequential verses read as one passage */
-  .passage { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 12px 18px 14px; margin: 10px 0; }
+  .passage { background: none; border: 0; border-radius: 0; padding: 12px 18px 14px; margin: 10px 0; }
   .phead { font-weight: 700; color: var(--accent); margin-bottom: 6px; }
   .pbody { line-height: 1.8; }
   .passage .verse { display: inline; border: 0; border-radius: 4px; padding: 0 2px; margin: 0; background: none; }
@@ -113,6 +112,9 @@
   #present .ptext { flex: 1; min-height: 0; width: 100%; display: flex; align-items: center; justify-content: center; overflow: hidden; }
   #present.top .ptext { align-items: flex-start; }   /* slides with several steps: text starts at the top, so earlier steps stay put */
   #present #pinner { width: 100%; line-height: 1.35; text-align: left; }
+  #present.scrolling .ptext { align-items: flex-start; overflow-y: auto; overscroll-behavior: contain; }
+  #present.scrolling .scrollverse { margin: 0 0 .45em; }
+  #present.scrolling .scrollref { font-weight: 700; color: var(--accent); margin-right: .4em; }
   /* slides with several passages: each reference runs inline on the first line of its passage */
   #present #pinner .pslh { display: inline; font-size: 1em; font-weight: 700; color: var(--accent); margin: 0; line-height: inherit; }
   #present #pinner .pslh::after { content: "\00a0\00a0"; }
@@ -214,7 +216,7 @@
   @media (max-width: 600px) {
     body { font-size: 16px; }
     main { padding-top: 16px; }
-    .verse { padding: 10px 12px; }
+    .verse { padding: 4px 12px; }
     #help .panel { padding: 4px 16px 20px; }
     #help td:first-child { white-space: normal; }
     #help td { display: block; width: auto; border-bottom: 0; padding: 2px 0; }
@@ -517,6 +519,7 @@
     <tr><td><kbd>S</kbd></td><td>Show the current verse in every loaded version, one per row; press <kbd>S</kbd> (or <kbd>Esc</kbd>) again to go back; <kbd>B</kbd> / <kbd>N</kbd> show the previous / next verse in the Bible, <kbd>←</kbd><kbd>↓</kbd><kbd>↑</kbd><kbd>→</kbd> or <kbd>H</kbd><kbd>J</kbd><kbd>K</kbd><kbd>L</kbd> move between the searched verses (<kbd>PgUp</kbd> / <kbd>PgDn</kbd> scroll); <kbd>+</kbd> / <kbd>−</kbd> change the text size (<kbd>0</kbd> resets)</td></tr>
     <tr><td><kbd>P</kbd></td><td>Show the pronunciation of each word: the first word is highlighted with a small box above or below it. Move between words with the arrow keys or <kbd>H</kbd> <kbd>J</kbd> <kbd>K</kbd> <kbd>L</kbd> (past the last word it continues into the next verse); <kbd>P</kbd> or <kbd>Esc</kbd> turns it off. The accented (stressed) syllable is in capitals. Greek is worked out on the page (approximate, Erasmian-style). Biblical names use the built-in pronunciation list (no internet needed). Other English words are looked up online at api.dictionaryapi.dev, so they need an internet connection and each word you look at is sent there; results are remembered in this browser</td></tr>
     <tr><td><kbd>Enter</kbd></td><td>Present the current verse, maximized in the window (<kbd>Shift</kbd>+<kbd>F</kbd> for true full screen). If two or more verses are selected, only those are cycled through</td></tr>
+    <tr><td><kbd>Space</kbd></td><td>Open a scrollable presentation of the search results (or selected verses). Scroll with the mouse, touch, arrows, Space or Page Up/Down; press Esc to close.</td></tr>
     <tr><td><kbd>Esc</kbd></td><td>Clear the selection; press again to return to the box</td></tr>
   </tbody></table>
   <p><strong>Presentation mode</strong></p>
@@ -2857,7 +2860,7 @@
   // ---- presentation mode (Enter on a verse) ----
   var VIM = { h: "ArrowLeft", j: "ArrowDown", k: "ArrowUp", l: "ArrowRight" };   // vim-style keys
   // presSize: chosen font size in px, or null = fill the screen. Remembered between presentations and visits.
-  var presenting = false, pi = 0, presMax = 0;
+  var presenting = false, pi = 0, presMax = 0, scrollPresent = false;
   var extPanel = false;   // true while the phone shows the control panel and the verses go to the external display
   var presSize = (function () {
     try { var v = localStorage.getItem("lsm_pres_size"); return v && v !== "fill" && +v >= 12 ? +v : null; } catch (e) { return null; }
@@ -2873,6 +2876,13 @@
   var slideFit = null;   // while a slide is part-way through its steps: the fullest stage (sent to the display too)
   function fitPresent() {
     var box = $("ptext"), el = $("pinner"), real = null, sl = slideMode && slides[si];
+    if (scrollPresent) {
+      slideFit = null;
+      el.removeAttribute("data-ref");
+      presMax = 160;
+      el.style.fontSize = (presSize === null ? Math.max(24, Math.min(48, window.innerWidth * .035)) : presSize) + "px";
+      return;
+    }
     slideFit = null;
     $("present").classList.toggle("top", !!(sl && sl.stages && !sl.stray));
     if (sl && sl.stages && !sl.stray && sl.stage < sl.stages.length - 1) {
@@ -2950,6 +2960,22 @@
   function renderPresent() { renderPresent0(); applyMarks(); }
   function renderPresent0() {
     pronOff();
+    if (scrollPresent) {
+      var pin = $("pinner");
+      pin.textContent = "";
+      presList().forEach(function (v) {
+        var row = document.createElement("div"); row.className = "scrollverse";
+        var ref = document.createElement("span"); ref.className = "scrollref";
+        ref.textContent = v.dataset.ref + (v.dataset.ver ? " · " + v.dataset.ver : "");
+        row.appendChild(ref);
+        row.appendChild(document.createTextNode(v.dataset.text));
+        pin.appendChild(row);
+      });
+      $("pref").textContent = "";
+      $("pcount").textContent = presList().length + " verses · Scroll to read · Esc to close";
+      fitPresent();
+      return;
+    }
     if (slideMode) { renderSlide(); return; }
     trackPresCursor();
     var all = presList(), v = presVerse();
@@ -2964,7 +2990,7 @@
     $("pcount").textContent = (items && items.length > 1 ? items.length + " verses  \u00b7  " : "") + (presStray ? "not in results" : (pi + 1) + " / " + all.length) + (versions.length > 1 && !v.dataset.ver ? "  \u00b7  " + (cur + 1) + ": " + versions[cur].name.replace(/\.[^.]+$/, "") : "");
     fitPresent();
   }
-  function openPresent(i) {
+  function openPresent(i, scroll) {
     slideMode = false; slides = [];
     var list = verses();
     if (!list.length || i < 0) return;
@@ -2984,10 +3010,17 @@
     pi = Math.max(0, presIdx.indexOf(i));
     presStray = null; presExt = null;
     presenting = true;
+    scrollPresent = !!scroll;
     var p = $("present");
+    p.classList.toggle("scrolling", scrollPresent);
+    p.classList.remove("top");
     p.hidden = false;
-    extEnter();
+    if (!scrollPresent) extEnter();
     renderPresent();
+    $("ptext").scrollTop = 0;
+    if (scrollPresent && $("pinner").children[pi]) {
+      $("ptext").scrollTop = $("pinner").children[pi].offsetTop - $("pinner").offsetTop;
+    }
   }
   var presSaved = null, presRestore = false;
   // put the cursor, selection and scroll back exactly as they were before presenting
@@ -3031,6 +3064,8 @@
     }
     presStray = null; presExt = null; slideMode = false; slides = [];
     presenting = false;
+    scrollPresent = false;
+    $("present").classList.remove("scrolling");
     $("present").hidden = true;
     extLeave();
     var wasFull = !!document.fullscreenElement;
@@ -3810,6 +3845,16 @@
     e.preventDefault(); e.stopPropagation();
     var k = e.key;
     if (VIM.hasOwnProperty(k.toLowerCase())) k = VIM[k.toLowerCase()];
+    if (scrollPresent && ["ArrowDown", "ArrowUp", "ArrowLeft", "ArrowRight", "PageDown", "PageUp", " ", "Home", "End"].indexOf(k) >= 0) {
+      var box = $("ptext");
+      if (k === "Home") box.scrollTop = 0;
+      else if (k === "End") box.scrollTop = box.scrollHeight;
+      else {
+        var dir = (k === "ArrowUp" || k === "ArrowLeft" || k === "PageUp" || (k === " " && e.shiftKey)) ? -1 : 1;
+        box.scrollBy({ top: dir * (k.indexOf("Arrow") === 0 ? 80 : box.clientHeight * .85), behavior: "smooth" });
+      }
+      return;
+    }
     if (k === "s" || k === "S") { if (!e.repeat) sbsToggle(presVerse()); return; }
     if (k === "n" || k === "N") { if (e.shiftKey) extendBible(1); else stepBible(1); return; }
     if (k === "b" || k === "B") { if (e.shiftKey) extendBible(-1); else stepBible(-1); return; }
@@ -3897,7 +3942,7 @@
     if (e.touches.length === 1) { tx = e.touches[0].clientX; ty = e.touches[0].clientY; }
   }, { passive: true });
   $("present").addEventListener("touchend", function (e) {
-    if (!presenting || !e.changedTouches.length) return;
+    if (!presenting || scrollPresent || !e.changedTouches.length) return;
     var dx = e.changedTouches[0].clientX - tx, dy = e.changedTouches[0].clientY - ty;
     if (Math.abs(dx) > 50 && Math.abs(dx) > 1.5 * Math.abs(dy)) stepSearched(dx < 0 ? 1 : -1);
   }, { passive: true });
@@ -4882,9 +4927,9 @@
     } else if (key === "Escape") {
       e.preventDefault();
       if (all.some(function (x) { return x.classList.contains("sel"); })) { clearSel(); } else { $("q").focus(); }
-    } else if (key === "Enter") {
+    } else if (key === "Enter" || (key === " " && !mod && !e.altKey)) {
       e.preventDefault();
-      openPresent(i);
+      if (!e.repeat) openPresent(i, key === " ");
     } else if (!e.altKey && key.toLowerCase() === "c" && !(mod && String(window.getSelection()))) {
       e.preventDefault();
       copySelected(v, mod, e.shiftKey && !mod);
