@@ -112,7 +112,7 @@
   #present .ptext { flex: 1; min-height: 0; width: 100%; display: flex; align-items: center; justify-content: center; overflow: hidden; }
   #present.top .ptext { align-items: flex-start; }   /* slides with several steps: text starts at the top, so earlier steps stay put */
   #present #pinner { width: 100%; line-height: 1.35; text-align: left; }
-  #present.scrolling .ptext { align-items: flex-start; overflow-y: auto; overscroll-behavior: contain; }
+  #present.scrolling .ptext { align-items: flex-start; overflow-y: auto; overscroll-behavior: contain; overflow-anchor: none; }
   #present.scrolling .scrollverse { margin: 0 0 .45em; }
   #present.scrolling .scrollref { font-weight: 700; color: var(--accent); margin-right: .4em; }
   /* slides with several passages: each reference runs inline on the first line of its passage */
@@ -330,7 +330,7 @@
     <div class="fonthead">Outline</div>
     <div class="chips"><button type="button" id="olUp" title="Shortcut: I">Import outline…</button></div>
     <input type="file" id="olFile" accept=".pdf,.txt,application/pdf,text/plain" hidden="">
-    <p class="scopehint" id="olHint">Choose a PDF or text outline. The verses each point cites go into the search box, one slide per point, separated by <b>|</b>; press <kbd>Enter</kbd> there to present them.</p>
+    <p class="scopehint" id="olHint">Choose a PDF or text outline. The verses each point cites go into the search box, one slide per point, separated by <b>|</b>; press <kbd>Enter</kbd> there to select the first verse, then <kbd>Enter</kbd> for slides or <kbd>Space</kbd> for scrolling slides.</p>
     <p id="olNote" hidden=""></p>
     <div class="fonthead">Presenting</div>
     <div class="chips" id="extModeChips" role="group" aria-label="Where to present"></div>
@@ -514,12 +514,14 @@
     <tr><td><kbd>Ctrl</kbd>/<kbd>⌘</kbd>+<kbd>/</kbd></td><td>Jump to the text box and clear it, from anywhere (presentation, full screen, side by side, help ...); <kbd>Ctrl</kbd>/<kbd>⌘</kbd>+<kbd>Z</kbd> in the empty box brings the cleared text back</td></tr>
     <tr><td><kbd>U</kbd></td><td>In every mode (list, chapter, side by side, version comparison, presentation): turn on or off the lowercasing of the first word of a verse that continues the previous verse’s sentence (“and God said” / “And God said”). In presentation mode, <kbd>U</kbd> underlines instead while words are selected or the pronunciation cursor (<kbd>P</kbd>) is on. The choice is remembered.</td></tr>
     <tr><td><kbd>U</kbd> <kbd>Y</kbd> <kbd>I</kbd></td><td>In presentation mode, underline (<kbd>U</kbd>), highlight (<kbd>Y</kbd>) or make invisible (<kbd>I</kbd>: the words are covered, and clicking a cover reveals that word) the words you have selected with the mouse, or the word under the pronunciation cursor (<kbd>P</kbd>); press the same key again to take it off. Marks stay while you move between slides and come back when you return to them</td></tr>
-    <tr><td>Cog → Import outline (or <kbd>I</kbd> with the cog open)</td><td>Choose a PDF or text outline (points ending “—Rom. 1:1; 2:3” or citing verses in parentheses). The verses of each point, and the Scripture Reading, are put in the search box as parts separated by <kbd>|</kbd>; press <kbd>Enter</kbd> to present one slide per part. <em>v.</em> / <em>vv.</em> and a bare <em>2:7</em> take their book or chapter from the verse before, so check those.</td></tr>
-    <tr><td><kbd>|</kbd></td><td>Separate parts with a vertical bar, e.g. <kbd>eph 1:9-10; gen 1:26 | rev 4:11 | rev 22:1</kbd>, and press <kbd>Enter</kbd> to present one slide per part; arrows or <kbd>H</kbd><kbd>J</kbd><kbd>K</kbd><kbd>L</kbd> move between slides, and a slide of one verse or one run of verses can be extended with <kbd>Shift</kbd>+<kbd>N</kbd> / <kbd>B</kbd> A part can lean on the one before it: <kbd>eph 1:5 | 6 | 5:3 | 7</kbd> reads as Eph. 1:5, 1:6, 5:3, 5:7 (a period straight after a comma or semicolon holds that part back until the next press: <kbd>rom 3:4,.5 | heb 2:4</kbd> shows Rom. 3:4, then 3:4–5 on the next press, with the text size unchanged; <kbd>rom 3:4, 5</kbd> shows both at once) (a bare number is a verse in the last chapter shown; after a whole chapter it is a chapter; a book name starts afresh). In any reference a period works like a colon (<kbd>3.16</kbd> = <kbd>3:16</kbd>), and <kbd>3:4, 5:3</kbd> means 3:4; 5:3 while <kbd>3:4, 5</kbd> means verses 3:4 and 3:5.</td></tr>
+    <tr><td>Cog → Import outline (or <kbd>I</kbd> with the cog open)</td><td>Choose a PDF or text outline (points ending “—Rom. 1:1; 2:3” or citing verses in parentheses). The verses of each point, and the Scripture Reading, are put in the search box as parts separated by <kbd>|</kbd>; press <kbd>Enter</kbd> to select the first verse, then <kbd>Enter</kbd> to present one slide per part or <kbd>Space</kbd> for scrolling slides. <em>v.</em> / <em>vv.</em> and a bare <em>2:7</em> take their book or chapter from the verse before, so check those.</td></tr>
+    <tr><td><kbd>|</kbd></td><td>Separate parts with a vertical bar, e.g. <kbd>eph 1:9-10; gen 1:26 | rev 4:11 | rev 22:1</kbd>, and press <kbd>Enter</kbd> to select the first verse, then <kbd>Enter</kbd> for fitted slides or <kbd>Space</kbd> for scrolling slides (Left/Right or <kbd>H</kbd>/<kbd>L</kbd> switches groups); arrows or <kbd>H</kbd><kbd>J</kbd><kbd>K</kbd><kbd>L</kbd> move between slides, and a slide of one verse or one run of verses can be extended with <kbd>Shift</kbd>+<kbd>N</kbd> / <kbd>B</kbd> A part can lean on the one before it: <kbd>eph 1:5 | 6 | 5:3 | 7</kbd> reads as Eph. 1:5, 1:6, 5:3, 5:7 (a period straight after a comma or semicolon holds that part back until the next press: <kbd>rom 3:4,.5 | heb 2:4</kbd> shows Rom. 3:4, then 3:4–5 on the next press, with the text size unchanged; <kbd>rom 3:4, 5</kbd> shows both at once) (a bare number is a verse in the last chapter shown; after a whole chapter it is a chapter; a book name starts afresh). In any reference a period works like a colon (<kbd>3.16</kbd> = <kbd>3:16</kbd>), and <kbd>3:4, 5:3</kbd> means 3:4; 5:3 while <kbd>3:4, 5</kbd> means verses 3:4 and 3:5.</td></tr>
     <tr><td><kbd>S</kbd></td><td>Show the current verse in every loaded version, one per row; press <kbd>S</kbd> (or <kbd>Esc</kbd>) again to go back; <kbd>B</kbd> / <kbd>N</kbd> show the previous / next verse in the Bible, <kbd>←</kbd><kbd>↓</kbd><kbd>↑</kbd><kbd>→</kbd> or <kbd>H</kbd><kbd>J</kbd><kbd>K</kbd><kbd>L</kbd> move between the searched verses (<kbd>PgUp</kbd> / <kbd>PgDn</kbd> scroll); <kbd>+</kbd> / <kbd>−</kbd> change the text size (<kbd>0</kbd> resets)</td></tr>
     <tr><td><kbd>P</kbd></td><td>Show the pronunciation of each word: the first word is highlighted with a small box above or below it. Move between words with the arrow keys or <kbd>H</kbd> <kbd>J</kbd> <kbd>K</kbd> <kbd>L</kbd> (past the last word it continues into the next verse); <kbd>P</kbd> or <kbd>Esc</kbd> turns it off. The accented (stressed) syllable is in capitals. Greek is worked out on the page (approximate, Erasmian-style). Biblical names use the built-in pronunciation list (no internet needed). Other English words are looked up online at api.dictionaryapi.dev, so they need an internet connection and each word you look at is sent there; results are remembered in this browser</td></tr>
     <tr><td><kbd>Enter</kbd></td><td>Present the current verse, maximized in the window (<kbd>Shift</kbd>+<kbd>F</kbd> for true full screen). If two or more verses are selected, only those are cycled through</td></tr>
+    <tr><td><kbd>Shift</kbd>+<kbd>O</kbd></td><td>Toggle presentation context (remembered). Scroll mode opens the selected verse within its full chapter. In scroll mode, <kbd>N</kbd> / <kbd>B</kbd> move to the next / previous chapter (B lands on the last verse); hold Shift to add the chapter while keeping your place.</td></tr>
     <tr><td><kbd>Space</kbd></td><td>Open a scrollable presentation of the search results (or selected verses). Scroll with the mouse, touch, arrows, Space or Page Up/Down; press Esc to close.</td></tr>
+    <tr><td><kbd>Shift</kbd>+<kbd>H</kbd> / <kbd>L</kbd> / <kbd>J</kbd> / <kbd>K</kbd></td><td>In slides: jump to the first / last slide with Shift+H / Shift+L. In any scrolling presentation, jump to the bottom / top with Shift+J / Shift+K.</td></tr>
     <tr><td><kbd>Esc</kbd></td><td>Clear the selection; press again to return to the box</td></tr>
   </tbody></table>
   <p><strong>Presentation mode</strong></p>
@@ -1694,7 +1696,7 @@
       var text = (/\.pdf$/i.test(f.name) || f.type === "application/pdf") ? await PdfText.extract(await f.arrayBuffer()) : await f.text();
       var r = outlineToQuery(text, function (n) { var bi = resolveBook(n); return bi !== null && bi !== undefined; });
       if (!r.parts.length) { olNote("No verse references found in " + f.name + "."); return; }
-      var msg = r.parts.length + " slide" + (r.parts.length === 1 ? "" : "s") + " from " + f.name + ". Press Enter in the box to present.";
+      var msg = r.parts.length + " slide" + (r.parts.length === 1 ? "" : "s") + " from " + f.name + ". Press Enter in the box to select the first verse, then Enter for slides or Space for scrolling slides.";
       if (r.inferred) msg += " " + (r.inferred === 1 ? "1 reference took its" : r.inferred + " references took their") + " book or chapter from the verse before (as in \u201cv. 4\u201d or \u201c2:7\u201d): worth a glance.";
       if (count) {
         var bad = runSlides(r.query).notes.filter(function (n) { return n.indexOf("is not in your text") < 0; });
@@ -1990,7 +1992,7 @@
     return l + " " + c1 + ":" + v1 + "\u2013" + c2 + ":" + v2;
   }
 
-  // slides typed with "|": each part is looked up on its own; Enter presents them (see openSlides)
+  // Slides typed with "|": each part is looked up on its own; present from a focused verse (see openSlides)
   var slideGroups = null;
   // A part may lean on the one before it: after "Eph 1:5", a part "6" means Eph 1:6, and "5:3" means Eph 5:3
   // (then "7" is Eph 5:7). After a whole chapter ("Rom 1") a bare number is a chapter. A book name starts afresh.
@@ -2542,7 +2544,7 @@
     if (!count) { $("status").textContent = "Load your text file first."; $("status").className = "error"; return; }
     show(raw);
     var vs = verses();
-    if (isCoarse()) $("q").blur(); else if (vs.length) focusVerse(vs[0]);   // Enter also jumps to the first verse
+    if (vs.length) focusVerse(vs[0]); else if (isCoarse()) $("q").blur();   // Enter also jumps to the first verse
   };
 
   // ---- keyboard: Tab from the box into the verses, Up/Down to move, Enter to copy ----
@@ -2861,6 +2863,73 @@
   var VIM = { h: "ArrowLeft", j: "ArrowDown", k: "ArrowUp", l: "ArrowRight" };   // vim-style keys
   // presSize: chosen font size in px, or null = fill the screen. Remembered between presentations and visits.
   var presenting = false, pi = 0, presMax = 0, scrollPresent = false;
+  var scrollChapter = null, scrollChapterLo = null, scrollChapterHi = null;
+  var contextPresent = (function () {
+    try { return localStorage.getItem("lsm_pres_context") === "1"; } catch (e) { return false; }
+  })();
+  function toggleContextPresent() {
+    contextPresent = !contextPresent;
+    scrollChapter = null; scrollChapterLo = scrollChapterHi = null;
+    try { localStorage.setItem("lsm_pres_context", contextPresent ? "1" : "0"); } catch (e) {}
+    if (presenting && scrollPresent) renderPresent();
+    flashCopied("Presentation context " + (contextPresent ? "on" : "off"));
+  }
+  function renderScrollChapter() {
+    var v = presVerse(), pt = scrollChapter || { bi: +v.dataset.bi, ch: +v.dataset.ch, v: +v.dataset.v };
+    var chapter = data[pt.bi] && data[pt.bi][pt.ch];
+    if (!chapter) return false;
+    var pin = $("pinner"), target = null, content = document.createDocumentFragment();
+    var current = scrollChapterLo || pt, last = scrollChapterHi || pt;
+    while (current) {
+      var bi = current.bi, ch = current.ch;
+      Object.keys(data[bi][ch]).map(Number).sort(function (a, b) { return a - b; }).forEach(function (n) {
+        var row = document.createElement("div"), ref = document.createElement("span");
+        row.className = "scrollverse"; ref.className = "scrollref";
+        row.dataset.pos = bi + ":" + ch + ":" + n;
+        ref.textContent = refOf({ bi: bi, ch: ch, v: n });
+        row.appendChild(ref); row.appendChild(document.createTextNode(itemOf({ bi: bi, ch: ch, v: n }).text));
+        content.appendChild(row);
+        if (bi === pt.bi && ch === pt.ch && n === pt.v) target = row;
+      });
+      if (bi === last.bi && ch === last.ch) break;
+      current = chapNeighbour(current, 1);
+    }
+    pin.replaceChildren(content);
+    $("pref").textContent = "";
+    $("pcount").textContent = "Chapter context · N/B: next/previous chapter · Shift+N/B: add chapter · Shift+O: context " + (contextPresent ? "on" : "off") + " · Esc to close";
+    fitPresent();
+    $("ptext").scrollTop = target ? target.offsetTop - pin.offsetTop : 0;
+    return true;
+  }
+  function stepScrollChapter(dir, extend) {
+    var v = presVerse(), pt = scrollChapter || { bi: +v.dataset.bi, ch: +v.dataset.ch, v: +v.dataset.v };
+    var edge = dir > 0 ? (scrollChapterHi || pt) : (scrollChapterLo || pt);
+    var next = chapNeighbour(edge, dir);
+    if (!next) return;
+    var box = $("ptext"), pin = $("pinner"), anchorRow = null, anchorTop = 0;
+    if (extend) {
+      // Preserve the visible verse's position even when a chapter is prepended.
+      var rows = pin.querySelectorAll("[data-pos]"), top = box.getBoundingClientRect().top;
+      for (var i = 0; i < rows.length; i++) {
+        if (rows[i].getBoundingClientRect().bottom > top) {
+          anchorRow = rows[i].dataset.pos; anchorTop = rows[i].getBoundingClientRect().top; break;
+        }
+      }
+      scrollChapter = pt;
+      scrollChapterLo = scrollChapterLo || pt;
+      scrollChapterHi = scrollChapterHi || pt;
+      if (dir > 0) scrollChapterHi = next; else scrollChapterLo = next;
+    } else {
+      var nums = Object.keys(data[next.bi][next.ch]).map(Number).sort(function (a, b) { return a - b; });
+      scrollChapter = { bi: next.bi, ch: next.ch, v: dir > 0 ? nums[0] : nums[nums.length - 1] };
+      scrollChapterLo = scrollChapterHi = null;
+    }
+    renderPresent();
+    if (anchorRow) {
+      var restored = pin.querySelector('[data-pos="' + anchorRow + '"]');
+      if (restored) box.scrollTop = restored.offsetTop - pin.offsetTop - (anchorTop - box.getBoundingClientRect().top);
+    }
+  }
   var extPanel = false;   // true while the phone shows the control panel and the verses go to the external display
   var presSize = (function () {
     try { var v = localStorage.getItem("lsm_pres_size"); return v && v !== "fill" && +v >= 12 ? +v : null; } catch (e) { return null; }
@@ -2910,7 +2979,7 @@
     var cur = parseFloat($("pinner").style.fontSize) || presMax, n;
     if (dir > 0) {
       n = Math.max(cur + 2, Math.round(cur * 1.12));
-      setPresSize(n >= presMax ? null : n);
+      setPresSize(Math.min(n, presMax));
     } else {
       setPresSize(Math.max(12, Math.min(Math.round(cur / 1.12), cur - 2)));
     }
@@ -2933,6 +3002,7 @@
     return out;
   }
   function presVerse() {   // the verse on screen: a searched verse element, or a stand-in for a neighbouring verse
+    if (scrollPresent && scrollChapter) return standIn(scrollChapter);
     if (slideMode) { var sl = slides[si]; return standIn(sl.stray || sl.runs[0][0]); }
     if (!presStray) return presList()[pi];
     return standIn(presStray);
@@ -2960,6 +3030,8 @@
   function renderPresent() { renderPresent0(); applyMarks(); }
   function renderPresent0() {
     pronOff();
+    if (scrollPresent && (contextPresent || scrollChapter) && renderScrollChapter()) return;
+    if (slideMode) { renderSlide(); return; }
     if (scrollPresent) {
       var pin = $("pinner");
       pin.textContent = "";
@@ -2976,7 +3048,6 @@
       fitPresent();
       return;
     }
-    if (slideMode) { renderSlide(); return; }
     trackPresCursor();
     var all = presList(), v = presVerse();
     var items = presExt ? presExtItems() : null;
@@ -2991,6 +3062,7 @@
     fitPresent();
   }
   function openPresent(i, scroll) {
+    scrollChapter = null; scrollChapterLo = scrollChapterHi = null;
     slideMode = false; slides = [];
     var list = verses();
     if (!list.length || i < 0) return;
@@ -3017,8 +3089,8 @@
     p.hidden = false;
     if (!scrollPresent) extEnter();
     renderPresent();
-    $("ptext").scrollTop = 0;
-    if (scrollPresent && $("pinner").children[pi]) {
+    if (!scrollPresent || !contextPresent) $("ptext").scrollTop = 0;
+    if (scrollPresent && !contextPresent && $("pinner").children[pi]) {
       $("ptext").scrollTop = $("pinner").children[pi].offsetTop - $("pinner").offsetTop;
     }
   }
@@ -3081,6 +3153,7 @@
     else { var p = $("present"); if (p.requestFullscreen) p.requestFullscreen().catch(function () {}); }
   }
   function goPresent(n, fromEnd) {   // jump to a searched verse by position (or, in slide mode, to a slide)
+    scrollChapter = null; scrollChapterLo = scrollChapterHi = null;
     if (slideMode) {
       var ti = Math.max(0, Math.min(slides.length - 1, n));
       slides.forEach(function (x) { x.stray = null; });
@@ -3280,7 +3353,8 @@
     sl.runs.forEach(function (r) { r.forEach(function (pt) { out.push(itemOf(pt)); }); });
     return out;
   }
-  function openSlides() {
+  function openSlides(i, scroll) {
+    scrollChapter = null; scrollChapterLo = scrollChapterHi = null;
     if (!slideGroups || !slideGroups.length) return;
     function runsOf(g) {
       var runs = [];
@@ -3294,12 +3368,24 @@
       if (g.stageOuts) { var st = g.stageOuts.map(runsOf); return { runs: st[0], stages: st, stage: 0, stray: null }; }
       return { runs: runsOf(g), stray: null };
     });
+    var list = verses(), selected = [];
+    list.forEach(function (v, k) { if (v.classList.contains("sel")) selected.push(k); });
+    var focused = list[i || 0];
     si = 0;
-    presSaved = { focusIdx: 0, inBox: true, sel: [], anchor: anchor, moved: false, scrollX: window.scrollX, scrollY: window.scrollY };
+    slideGroups.some(function (g, k) {
+      var found = focused && g.some(function (pt) {
+        return +focused.dataset.bi === pt.bi && +focused.dataset.ch === pt.ch && +focused.dataset.v === pt.v;
+      });
+      if (found) { si = k; return true; }
+      return false;
+    });
+    presSaved = { focusIdx: i || 0, inBox: document.activeElement === $("q"), sel: selected, anchor: anchor, moved: false, scrollX: window.scrollX, scrollY: window.scrollY };
     presIdx = []; presSubset = false; presStray = null; presExt = null;
-    slideMode = true; presenting = true;
+    slideMode = true; presenting = true; scrollPresent = !!scroll;
+    $("present").classList.toggle("scrolling", scrollPresent);
+    $("present").classList.remove("top");
     $("present").hidden = false;
-    extEnter();
+    if (!scrollPresent) extEnter();
     renderPresent();
   }
   // fill el with a slide's runs; returns the reference to show (empty when each run carries its own heading)
@@ -3337,6 +3423,10 @@
       var vr = viewRuns(sl.runs), one = vr.length === 1 && vr[0].length > 1;
       $("pref").textContent = slideFill(pin, sl.runs);
       $("pcount").textContent = (one ? vr[0].length + " verses  \u00b7  " : "") + count;
+    }
+    if (scrollPresent) {
+      $("pcount").textContent += " · Scroll to read · ←/→ or H/L for slides · Shift+H/L: first/last slide · Shift+J/K: bottom/top · Esc to close";
+      $("ptext").scrollTop = 0;
     }
     fitPresent();
   }
@@ -3792,6 +3882,15 @@
     if (!e.repeat) toggleGroup();
   }, true);
 
+  document.addEventListener("keydown", function (e) {
+    if (!e.shiftKey || e.key.toLowerCase() !== "o" || e.ctrlKey || e.metaKey || e.altKey) return;
+    var tag = e.target && e.target.tagName;
+    if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || (e.target && e.target.isContentEditable)) return;
+    if (sbsEl || helpOpen || !$("goto").hidden || !$("scope").hidden) return;
+    e.preventDefault(); e.stopImmediatePropagation();
+    if (!e.repeat) toggleContextPresent();
+  }, true);
+
   // while the comparison is open it owns the keyboard
   document.addEventListener("keydown", function (e) {
     if (!sbsEl) return;
@@ -3844,7 +3943,19 @@
     if (e.ctrlKey || e.metaKey || e.altKey) return;   // leave browser shortcuts (zoom etc.) alone
     e.preventDefault(); e.stopPropagation();
     var k = e.key;
+    if (e.shiftKey && ((slideMode && /^[hl]$/i.test(k)) || (scrollPresent && /^[jk]$/i.test(k)))) {
+      var jump = k.toLowerCase();
+      if (jump === "h" || jump === "l") goPresent(jump === "h" ? 0 : slides.length - 1, jump === "l");
+      else if (scrollPresent) {
+        var scrollBox = $("ptext");
+        scrollBox.scrollTop = jump === "k" ? 0 : scrollBox.scrollHeight;
+      }
+      return;
+    }
     if (VIM.hasOwnProperty(k.toLowerCase())) k = VIM[k.toLowerCase()];
+    if (scrollPresent && slideMode && (k === "ArrowLeft" || k === "ArrowRight")) {
+      stepSearched(k === "ArrowLeft" ? -1 : 1); return;
+    }
     if (scrollPresent && ["ArrowDown", "ArrowUp", "ArrowLeft", "ArrowRight", "PageDown", "PageUp", " ", "Home", "End"].indexOf(k) >= 0) {
       var box = $("ptext");
       if (k === "Home") box.scrollTop = 0;
@@ -3856,6 +3967,7 @@
       return;
     }
     if (k === "s" || k === "S") { if (!e.repeat) sbsToggle(presVerse()); return; }
+    if (scrollPresent && /^[nb]$/i.test(k)) { stepScrollChapter(k.toLowerCase() === "n" ? 1 : -1, e.shiftKey); return; }
     if (k === "n" || k === "N") { if (e.shiftKey) extendBible(1); else stepBible(1); return; }
     if (k === "b" || k === "B") { if (e.shiftKey) extendBible(-1); else stepBible(-1); return; }
     if ((k === "u" || k === "U") && !e.repeat && !hasMarkTarget()) { setDecap(!decapOn); return; }   // nothing selected to underline: U toggles start-of-verse capitals
@@ -4873,16 +4985,6 @@
     }
   }, true);
   $("q").addEventListener("keydown", function (e) {
-    if (e.key === "Enter" && !e.isComposing && !e.shiftKey && !e.ctrlKey && !e.metaKey && !e.altKey) {
-      var raw = $("q").value;
-      if (raw.indexOf("|") > -1 && !/^\s*["\u201c?]/.test(raw)) {   // "a | b | c": present the parts as slides
-        e.preventDefault();
-        clearTimeout(liveTimer); liveTimer = null;
-        show(raw);
-        openSlides();
-        return;
-      }
-    }
     if ((e.key === "Tab" && !e.shiftKey) || e.key === "ArrowDown") {
       flushLive();
       if (verses().length) { e.preventDefault(); focusVerse(verses()[0]); }
@@ -4929,7 +5031,10 @@
       if (all.some(function (x) { return x.classList.contains("sel"); })) { clearSel(); } else { $("q").focus(); }
     } else if (key === "Enter" || (key === " " && !mod && !e.altKey)) {
       e.preventDefault();
-      if (!e.repeat) openPresent(i, key === " ");
+      if (!e.repeat) {
+        if (slideGroups && slideGroups.length) openSlides(i, key === " ");
+        else openPresent(i, key === " ");
+      }
     } else if (!e.altKey && key.toLowerCase() === "c" && !(mod && String(window.getSelection()))) {
       e.preventDefault();
       copySelected(v, mod, e.shiftKey && !mod);
