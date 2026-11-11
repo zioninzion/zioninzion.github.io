@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-1Z7H2V5Q4Y"></script>
@@ -14,36 +14,20 @@
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Truth - Zion in Zion</title>
-    <link rel="icon" href="../img/favicon.png">
+    <link rel="icon" href="../clean-up/img/favicon.png">
     <link rel="stylesheet" href="../css/styles.css">
-    <script src="https://kit.fontawesome.com/90134a5084.js" crossorigin="anonymous"></script>
   </head>
   <body>
-    <div class="nav" id="myNav">
-      <a href="../index.html">Home</a>
-      <a href="../about.html">About</a>
-      <a href="../apogee.html" class=active>Apogee</a>
-      <div class="dd">
-        <button class="dbtn">
-          <a href="../music.html">Music</a>
-        </button>
-        <div class="dd-cont">
-          <a href="../music/withthose.html" id="withthose">With those</a>
-          <a href="../music/withgrace.html" id="withgrace">With grace</a>
-          <a href="../music/other.html">Other</a>
-        </div>
-      </div>
-      <a href="../settings.html" class="fas fa-cog" id="cog"></a>
-    </div>
-    <div class="body-content">
-      <div class="title">Is Truth What?</div>
+<a class="skip-link" href="#main">Skip to content</a><header class="site-header"><a class="brand" href="../index.html">Zion in Zion<span class="brand-dot">.</span></a><nav aria-label="Main navigation"><a href="../index.html">Home</a><a href="../about.html">About</a><a href="../apogee.html" aria-current="page">Apogee</a><a href="../music.html">Music</a></nav></header>
+    <main class="body-content" id="main">
+      <h1 class="title">Is Truth What?</h1>
       <p>There is an inescapable precondition to the question “What is truth?” That precondition is the person who is asking the question. The question “What is truth?”—or any question, for that matter—can only be asked by an agent, a person. Likewise, questions can only be answered by a person (either by oneself or someone else). Hence, <em>personhood</em> is inseparable from this question. And <em>who</em> is qualified to answer this question? Obviously, this question can only be answered by someone who knows truth. But that pushes the problem only one step further. How did that person come to know truth?</p>
       <p>Here, I would like to assert that <em>truth</em>, as the ultimate objective of every <em>person</em>‘s deepest inquiry for what is real, must <em>itself be a person</em>. This is the most elegant and intuitive way to find truth.</p>
       <p>Throughout history, many have claimed to have known truth, but one person stands apart from all the others in that he claimed himself to <em>be</em> <em>the</em> truth.<sup data-fn="441fabfd-ce45-4f4b-bb68-212b194ce345" class="fn"><a href="#441fabfd-ce45-4f4b-bb68-212b194ce345" id="441fabfd-ce45-4f4b-bb68-212b194ce345-link">1</a></sup> And that person is a Jewish man who grew up in Nazareth of Galilee in the first century Roman Empire by the name of Jesus. Either his claim is true, in which case we would have arrived at our answer, or is false, in which case we would need to continue our search.</p>
       <p>This is where it takes the most deliberation by each individual. Do not be like Pontius Pilate who, talking to Jesus, asked, rhetorically, What is truth? and went away before he could hear an answer. I implore you the reader to examine the Gospel of John and consider the words of Jesus. Then, I am convinced, “you shall <strong>know the truth</strong>,” and this “truth shall set you free.”<sup data-fn="ea7c60f2-f51e-4936-a1ea-1ce6339d6ae0" class="fn"><a href="#ea7c60f2-f51e-4936-a1ea-1ce6339d6ae0" id="ea7c60f2-f51e-4936-a1ea-1ce6339d6ae0-link">2</a></sup></p>
       <p>So, is truth what? No. Truth is a <em>who</em>. <strong>Truth is a person</strong> by the name of Jesus. And, as mentioned above, if Jesus is the truth, then we do not need to look anywhere else since the truth must be absolute and unique. Rather, we need to come to him as the truth and learn him (his person). Hence, the next question is “<strong>Truth, what is?</strong>” This is a question that engages truth himself directly to acquire personal and firsthand knowledge of the truth and all that is entailed in it (him). So, let us ask, <a class="withthose_pdf" href="truthwhatis.html"><strong>Truth, what is?</strong></a></p>
       <ol class="wp-block-footnotes"><li id="441fabfd-ce45-4f4b-bb68-212b194ce345"><em>The Gospel of John</em> chapter 14 verse 6. External assessment of the legitimacy of the Gospel of John as an eyewitness testimony concerning Jesus is irrelevant if its content establishes its own veracity with consistency and accuracy. See <em>The Authorship of the Bible</em>. <a href="#441fabfd-ce45-4f4b-bb68-212b194ce345-link">↩︎</a></li><li id="ea7c60f2-f51e-4936-a1ea-1ce6339d6ae0"><em>The Gospel of John</em> chapter 8 verse 32. <a href="#ea7c60f2-f51e-4936-a1ea-1ce6339d6ae0-link">↩︎</a></li></ol>
-    </div>
+    </main>
     <script>
       isKeyPressed = {
         'k': false,
@@ -51,7 +35,9 @@
         's': false,
       }
       document.onkeydown = (keyDownEvent) => {
-        isKeyPressed[keyDownEvent.key] = true;
+        if (keyDownEvent.ctrlKey || keyDownEvent.metaKey || keyDownEvent.altKey || /INPUT|TEXTAREA|SELECT/.test(keyDownEvent.target.tagName) || keyDownEvent.target.isContentEditable) return;
+              Object.keys(isKeyPressed).forEach(key => isKeyPressed[key] = false);
+              isKeyPressed[keyDownEvent.key] = true;
         if (isKeyPressed["k"]) {
           window.location.href = "truth.html";
         };
@@ -63,5 +49,6 @@
         }
       };
     </script>
-  </body>
+  <footer class="site-footer"><span>Zion in Zion</span><a href="mailto:dailybreadeater@gmail.com">Get in touch ↗</a><a href="../settings.html">Keyboard navigation</a></footer>
+</body>
 </html>

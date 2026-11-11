@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-1Z7H2V5Q4Y"></script>
@@ -14,35 +14,15 @@
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Music - Zion in Zion</title>
-    <link rel="icon" href="img/favicon.png">
+    <link rel="icon" href="clean-up/img/favicon.png">
     <link rel="stylesheet" href="css/styles.css">
-    <script src="https://kit.fontawesome.com/90134a5084.js" crossorigin="anonymous"></script>
   </head>
   <body>
-    <div class="nav" id="myNav">
-      <a href="index.html">Home</a>
-      <a href="about.html">About</a>
-      <a href="apogee.html">Apogee</a>
-      <div class="dd" class="active">
-        <button class="dbtn" style="color: white">
-          <a href="music.html" class="active">Music</a>
-        </button>
-        <div class="dd-cont">
-          <a href="music/withthose.html" id="withthose">With those</a>
-          <a href="music/withgrace.html" id="withgrace">With grace</a>
-          <a href="music/other.html">Other</a>
-        </div>
-      </div>
-      <a href="../settings.html" class="fas fa-cog" id="cog"></a>
-    </div>
-    <div class="body-content">
-      <div class="title">Music</div>
-      <div class="listed">
-        <a href="music/withthose.html" target=""><img src="music/withthose/img/With those.png" class="music-square-list"></img></a>
-        <a href="music/withgrace.html" target=""><img src="music/withgrace/img/With grace.png" class="music-square-list"></img></a>
-        <a href="music/other.html" target=""><img src="music/other/img/Other.png" class="music-square-list"></img></a>
-      </div>
-    </div>
+<a class="skip-link" href="#main">Skip to content</a><header class="site-header"><a class="brand" href="index.html">Zion in Zion<span class="brand-dot">.</span></a><nav aria-label="Main navigation"><a href="index.html">Home</a><a href="about.html">About</a><a href="apogee.html">Apogee</a><a href="music.html" aria-current="page">Music</a></nav></header>
+    <main class="body-content" id="main">
+      <h1 class="title">Music</h1>
+      <p class="intro">Hymns, recordings, and songs of faith.</p><div class="listed music-collections"><a class="album" href="music/withthose.html"><img src="clean-up/music/withthose/img/With those.png" alt="With those cover"><h2>With those <span>↗</span></h2><p>Songs to enjoy together.</p></a><a class="album" href="music/withgrace.html"><img src="clean-up/music/withgrace/img/With grace.png" alt="With grace cover"><h2>With grace <span>↗</span></h2><p>Music made with grace.</p></a></div>
+    </main>
     <script>
       isKeyPressed = {
               'l': false,
@@ -51,6 +31,8 @@
               's': false,
             }
       document.onkeydown = (keyDownEvent) => {
+              if (keyDownEvent.ctrlKey || keyDownEvent.metaKey || keyDownEvent.altKey || /INPUT|TEXTAREA|SELECT/.test(keyDownEvent.target.tagName) || keyDownEvent.target.isContentEditable) return;
+              Object.keys(isKeyPressed).forEach(key => isKeyPressed[key] = false);
               isKeyPressed[keyDownEvent.key] = true;
               if (isKeyPressed["l"]) {
                       window.location.href = "index.html";
@@ -66,5 +48,6 @@
                     }
             };
     </script>
-  </body>
+  <footer class="site-footer"><span>Zion in Zion</span><a href="mailto:dailybreadeater@gmail.com">Get in touch ↗</a><a href="settings.html">Keyboard navigation</a></footer>
+</body>
 </html>

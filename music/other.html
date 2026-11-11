@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-1Z7H2V5Q4Y"></script>
@@ -14,37 +14,21 @@
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Other Music - Zion in Zion</title>
-    <link rel="icon" href="other/img/Other.png">
+    <link rel="icon" href="../clean-up/music/other/img/Other.png">
     <link rel="stylesheet" href="../css/styles.css">
-    <script src="https://kit.fontawesome.com/90134a5084.js" crossorigin="anonymous"></script>
   </head>
   <body>
-    <div class="nav" id="myNav">
-      <a href="../index.html">Home</a>
-      <a href="../about.html">About</a>
-      <a href="../apogee.html">Apogee</a>
-      <div class="dd">
-        <button class="dbtn" style="color: white">
-          <a href="../music.html" class="active">Music</a>
-        </button>
-        <div class="dd-cont">
-          <a href="withthose.html" id="withthose">With those</a>
-          <a href="withgrace.html" id="withgrace">With grace</a>
-          <a href="other.html" class="active">Other</a>
-        </div>
-      </div>
-      <a href="../settings.html" class="fas fa-cog" id="cog"></a>
-    </div>
-    <div class="body-content">
-      <div class="title">Music
-        <p class="heading">Other</p>
-      </div>
-      <!---<a href="" target=""><img src="other/img/Other.png" class="music-square"></img></a>--->
-      <img src="img/other_white.png" class="music-square-static"></img>
-      <a href="withgrace.html"><img src="withgrace/img/With grace.png" class="music-square-little"></img></a>
-      <a href="withthose.html"><img src="withthose/img/With those.png" class="music-square-little"></img></a>
+<a class="skip-link" href="#main">Skip to content</a><header class="site-header"><a class="brand" href="../index.html">Zion in Zion<span class="brand-dot">.</span></a><nav aria-label="Main navigation"><a href="../index.html">Home</a><a href="../about.html">About</a><a href="../apogee.html">Apogee</a><a href="../music.html" aria-current="page">Music</a></nav></header>
+    <main class="body-content" id="main">
+      <h1 class="title">Music
+         Other
+      </h1>
+      <!---<a  target=""><img src="../clean-up/music/other/img/Other.png" class="music-square"></img></a>--->
+      <img src="../clean-up/music/img/other_white.png" class="music-square-static"></img>
+      <a href="withgrace.html"><img src="../clean-up/music/withgrace/img/With grace.png" class="music-square-little"></img></a>
+      <a href="withthose.html"><img src="../clean-up/music/withthose/img/With those.png" class="music-square-little"></img></a>
       <div class="texts"><p>Coming soon!</p></div>
-    </div>
+    </main>
     <script>
       isKeyPressed = {
               'l': false,
@@ -53,6 +37,8 @@
               's': false,
             }
       document.onkeydown = (keyDownEvent) => {
+              if (keyDownEvent.ctrlKey || keyDownEvent.metaKey || keyDownEvent.altKey || /INPUT|TEXTAREA|SELECT/.test(keyDownEvent.target.tagName) || keyDownEvent.target.isContentEditable) return;
+              Object.keys(isKeyPressed).forEach(key => isKeyPressed[key] = false);
               isKeyPressed[keyDownEvent.key] = true;
               if (isKeyPressed["l"]) {
                       window.location.href = "withthose.html";
@@ -68,5 +54,6 @@
                     }
             };
     </script>
-  </body>
+  <footer class="site-footer"><span>Zion in Zion</span><a href="mailto:dailybreadeater@gmail.com">Get in touch ↗</a><a href="../settings.html">Keyboard navigation</a></footer>
+</body>
 </html>

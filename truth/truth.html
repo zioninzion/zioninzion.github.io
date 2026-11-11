@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
         <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-1Z7H2V5Q4Y"></script>
@@ -14,29 +14,13 @@
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Truth - Zion in Zion</title>
-    <link rel="icon" href="../img/favicon.png">
+    <link rel="icon" href="../clean-up/img/favicon.png">
     <link rel="stylesheet" href="../css/styles.css">
-    <script src="https://kit.fontawesome.com/90134a5084.js" crossorigin="anonymous"></script>
   </head>
   <body>
-    <div class="nav" id="myNav">
-      <a href="../index.html">Home</a>
-      <a href="../about.html">About</a>
-      <a href="../apogee.html" class=active>Apogee</a>
-      <div class="dd">
-        <button class="dbtn">
-          <a href="../music.html">Music</a>
-        </button>
-        <div class="dd-cont">
-          <a href="../music/withthose.html" id="withthose">With those</a>
-          <a href="../music/withgrace.html" id="withgrace">With grace</a>
-          <a href="../music/other.html">Other</a>
-        </div>
-      </div>
-      <a href="../settings.html" class="fas fa-cog" id="cog"></a>
-    </div>
-    <div class="body-content">
-      <div class="title">Truth</div>
+<a class="skip-link" href="#main">Skip to content</a><header class="site-header"><a class="brand" href="../index.html">Zion in Zion<span class="brand-dot">.</span></a><nav aria-label="Main navigation"><a href="../index.html">Home</a><a href="../about.html">About</a><a href="../apogee.html" aria-current="page">Apogee</a><a href="../music.html">Music</a></nav></header>
+    <main class="body-content" id="main">
+      <h1 class="title">Truth</h1>
       <p>“What is <b>truth</b>?” This simple yet profound question embodies the perennial inquiry of the human race.</p>
       <p>Throughout history, many have made great attempts, if not strides, in the inquisition concerning truth.</p>
       <p>However, there is a preliminary question that must be asked before answering, or even asking, “What is truth?”</p>
@@ -46,7 +30,7 @@
         <li><p>“Is truth what?”</p></li>
         <li><p>“Truth, what is?”</p></li>
       </ol>
-      <img src="wit/wit.gif" alt="Wit GIF" style="width: 173px; height: auto;">
+      <img src="../clean-up/truth/wit/wit.gif" alt="Wit GIF" style="width: 173px; height: auto;">
       <p>In asking “What is truth?” it is presumed that <i>truth</i> is something to be mentally apprehended, such as a profound concept, a factual statement about the world, a particular way of thinking, or a logical conclusion of a deliberation.</p>
       <p>This conforms to the approach taken by the different major theories of truth. Though we can delve into them at this point, they will only render a minimal contribution to our inquiry. To summarize succinctly, they all boil down to this: <i>truth is a belief that is true according to a particular criterion</i>. And that criterion can be its correspondence to a fact, its coherence within a logical system, its practical applicability, or some other.</p>
       <p>In short, <i>truth</i> is considered to be an abstract entity, a “what.”</p>
@@ -57,7 +41,7 @@
       <p></p>
       <p></p>
       <p></p>
-    </div>
+    </main>
     <script>
       isKeyPressed = {
         'j': false,
@@ -67,7 +51,9 @@
         's': false,
       }
       document.onkeydown = (keyDownEvent) => {
-        isKeyPressed[keyDownEvent.key] = true;
+        if (keyDownEvent.ctrlKey || keyDownEvent.metaKey || keyDownEvent.altKey || /INPUT|TEXTAREA|SELECT/.test(keyDownEvent.target.tagName) || keyDownEvent.target.isContentEditable) return;
+              Object.keys(isKeyPressed).forEach(key => isKeyPressed[key] = false);
+              isKeyPressed[keyDownEvent.key] = true;
         if (isKeyPressed["j"]) {
           window.location.href = "istruthwhat.html";
         };
@@ -85,5 +71,6 @@
         }
       };
     </script>
-  </body>
+  <footer class="site-footer"><span>Zion in Zion</span><a href="mailto:dailybreadeater@gmail.com">Get in touch ↗</a><a href="../settings.html">Keyboard navigation</a></footer>
+</body>
 </html>
