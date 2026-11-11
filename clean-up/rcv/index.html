@@ -57,6 +57,8 @@
   #status { margin: 18px 0 6px; font-size: .9rem; color: var(--muted); }
   #status.error { color: var(--error); }
   .verse { background: none; border: 0; border-radius: 0; padding: 4px 16px; margin: 4px 0; }
+  #results > .verse.single-entry, #results > .verse:only-child { border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; margin: 10px 0; }
+  #results > .verse.single-entry:not(.sel), #results > .verse:only-child:not(.sel) { background: color-mix(in srgb, var(--accent) 5%, var(--surface)); }
   .ref { display: inline; margin-right: .4em; font-weight: 700; color: var(--accent); font-size: .95rem; }
   .text { display: inline; margin: 0; }
   mark { background: color-mix(in srgb, var(--accent) 30%, transparent); color: inherit; border-radius: 2px; }
@@ -519,7 +521,7 @@
     <tr><td><kbd>S</kbd></td><td>Show the current verse in every loaded version, one per row; press <kbd>S</kbd> (or <kbd>Esc</kbd>) again to go back; <kbd>B</kbd> / <kbd>N</kbd> show the previous / next verse in the Bible, <kbd>←</kbd><kbd>↓</kbd><kbd>↑</kbd><kbd>→</kbd> or <kbd>H</kbd><kbd>J</kbd><kbd>K</kbd><kbd>L</kbd> move between the searched verses (<kbd>PgUp</kbd> / <kbd>PgDn</kbd> scroll); <kbd>+</kbd> / <kbd>−</kbd> change the text size (<kbd>0</kbd> resets)</td></tr>
     <tr><td><kbd>P</kbd></td><td>Show the pronunciation of each word: the first word is highlighted with a small box above or below it. Move between words with the arrow keys or <kbd>H</kbd> <kbd>J</kbd> <kbd>K</kbd> <kbd>L</kbd> (past the last word it continues into the next verse); <kbd>P</kbd> or <kbd>Esc</kbd> turns it off. The accented (stressed) syllable is in capitals. Greek is worked out on the page (approximate, Erasmian-style). Biblical names use the built-in pronunciation list (no internet needed). Other English words are looked up online at api.dictionaryapi.dev, so they need an internet connection and each word you look at is sent there; results are remembered in this browser</td></tr>
     <tr><td><kbd>Enter</kbd></td><td>Present the current verse, maximized in the window (<kbd>Shift</kbd>+<kbd>F</kbd> for true full screen). If two or more verses are selected, only those are cycled through</td></tr>
-    <tr><td><kbd>Shift</kbd>+<kbd>O</kbd></td><td>Toggle presentation context (remembered). Scroll mode opens the selected verse within its full chapter. In scroll mode, <kbd>N</kbd> / <kbd>B</kbd> move to the next / previous chapter (B lands on the last verse); hold Shift to add the chapter while keeping your place.</td></tr>
+    <tr><td><kbd>O</kbd> (in presentation)</td><td>Toggle presentation context (on by default; remembered). Scroll mode opens the selected verse within its full chapter. In scroll mode, <kbd>N</kbd> / <kbd>B</kbd> move to the next / previous chapter (B lands on the last verse); hold Shift to add the chapter while keeping your place.</td></tr>
     <tr><td><kbd>Space</kbd></td><td>Open a scrollable presentation of the search results (or selected verses). Scroll with the mouse, touch, arrows, Space or Page Up/Down; press Esc to close.</td></tr>
     <tr><td><kbd>Shift</kbd>+<kbd>H</kbd> / <kbd>L</kbd> / <kbd>J</kbd> / <kbd>K</kbd></td><td>In slides: jump to the first / last slide with Shift+H / Shift+L. In any scrolling presentation, jump to the bottom / top with Shift+J / Shift+K.</td></tr>
     <tr><td><kbd>Esc</kbd></td><td>Clear the selection; press again to return to the box</td></tr>
@@ -2381,7 +2383,7 @@
       var e = ver.data[bi] && ver.data[bi][ch] && ver.data[bi][ch][v];
       var ref = refOfV(ver, bi, ch, v), txt = e ? e.text : "(not in this version)";
       var d = document.createElement("div");
-      d.className = "verse" + (k ? " other" : "");
+      d.className = "verse single-entry" + (k ? " other" : "");
       d.tabIndex = k === 0 ? 0 : -1;
       d.dataset.copy = ref + " " + txt; d.dataset.ref = ref; d.dataset.text = txt; d.dataset.ver = vname;
       d.dataset.bi = bi; d.dataset.ch = ch; d.dataset.v = v;
@@ -2865,7 +2867,7 @@
   var presenting = false, pi = 0, presMax = 0, scrollPresent = false;
   var scrollChapter = null, scrollChapterLo = null, scrollChapterHi = null;
   var contextPresent = (function () {
-    try { return localStorage.getItem("lsm_pres_context") === "1"; } catch (e) { return false; }
+    try { return localStorage.getItem("lsm_pres_context") !== "0"; } catch (e) { return true; }
   })();
   function toggleContextPresent() {
     contextPresent = !contextPresent;
@@ -2896,7 +2898,7 @@
     }
     pin.replaceChildren(content);
     $("pref").textContent = "";
-    $("pcount").textContent = "Chapter context · N/B: next/previous chapter · Shift+N/B: add chapter · Shift+O: context " + (contextPresent ? "on" : "off") + " · Esc to close";
+    $("pcount").textContent = "Chapter context · N/B: next/previous chapter · Shift+N/B: add chapter · O: context " + (contextPresent ? "on" : "off") + " · Esc to close";
     fitPresent();
     $("ptext").scrollTop = target ? target.offsetTop - pin.offsetTop : 0;
     return true;
@@ -3883,7 +3885,7 @@
   }, true);
 
   document.addEventListener("keydown", function (e) {
-    if (!e.shiftKey || e.key.toLowerCase() !== "o" || e.ctrlKey || e.metaKey || e.altKey) return;
+    if (!presenting || e.shiftKey || e.key.toLowerCase() !== "o" || e.ctrlKey || e.metaKey || e.altKey) return;
     var tag = e.target && e.target.tagName;
     if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || (e.target && e.target.isContentEditable)) return;
     if (sbsEl || helpOpen || !$("goto").hidden || !$("scope").hidden) return;
