@@ -13,7 +13,8 @@ Open the address once while online; the app caches itself. After that it works w
 
 ## Notes
 
-- Your verse text file is chosen once and stored on that device, just like the single-file version.
+- The American Standard Version (`asv.txt`) loads by default. ASV, KJV, and YLT text files are included; copyrighted modern translations are not bundled.
+- Additional verse text files can be imported and stored on that device.
 - When you replace `index.html` with a newer version, change `VERSION` in `sw.js` so devices pick it up.
 
 ## External display
